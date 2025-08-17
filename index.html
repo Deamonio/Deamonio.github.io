@@ -1,938 +1,271 @@
+<!--
+  offby1e 브랜드의 새로운 홈 화면 디자인입니다.
+  기존의 무작위 배치에서 벗어나, 논리적인 그리드 레이아웃을 사용해
+  정보를 체계적으로 전달하면서도 '비밀스러운 공간'의 분위기를 유지합니다.
+  각 카드는 호버 시 동적으로 반응하여 사용자에게 흥미로운 경험을 제공합니다.
+-->
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OB/E - Personal Projects & Digital Experiments</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>offby1e - Access Granted</title>
+
+    <!-- Google Fonts: Inter (메인) & IBM Plex Mono (포인트) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* CSS 변수: 브랜드 파란색 (#080AD1) */
+        :root {
+            --brand-blue: #080AD1;
         }
+
+        /* 배경 효과: 은은한 방사형 그라데이션 */
         body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden;
-            background: #0a0a0a;
-            color: #ffffff;
-            transition: opacity 0.4s ease;
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: #0d0d0d;
+            background: radial-gradient(circle at 10% 10%, rgba(8, 10, 15, 0.9) 0%, #0c0c0c 30%, #0d0d0d 100%);
+            color: #d1d5db; /* gray-300 */
         }
-        /* Header & Navigation */
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
+        
+        /* 포인트 폰트 설정 (제목, 로고 등) */
+        h1, h2, .logo-text {
+            font-family: 'IBM Plex Mono', monospace;
         }
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.2rem 2rem;
+
+        /* 터미널 커서 깜빡임 애니메이션 */
+        @keyframes blink {
+            50% { border-color: transparent; }
         }
-        .logo-nav {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #ffffff;
-            text-decoration: none;
-            letter-spacing: -1px;
-        }
-        .logo-nav .slash {
-            color: #ff1d1d;
-            margin: 0 2px;
-        }
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2.5rem;
-            align-items: center;
-        }
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: #ffffff;
-        }
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #ff1d1d;
-            transition: width 0.3s ease;
-        }
-        .nav-links a:hover::after,
-        .nav-links a.active::after {
-            width: 100%;
-        }
-        /* Dropdown Menu */
-        .dropdown {
-            position: relative;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            min-width: 200px;
-            padding: 0.8rem 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-        }
-        .dropdown-content a {
-            display: block;
-            padding: 0.7rem 1.5rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-        .dropdown-content a:hover {
-            color: #ffffff;
-            background: rgba(255, 29, 29, 0.1);
-            padding-left: 1.8rem;
-        }
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        /* Mobile Menu */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 4px;
-        }
-        .hamburger span {
-            width: 28px;
-            height: 3px;
-            background: #ffffff;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-        }
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            background: #0a0a0a;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(255, 29, 29, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(255, 29, 29, 0.05) 0%, transparent 50%);
-        }
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-        .hero-content h1 {
-            font-size: 4.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            letter-spacing: -3px;
-            line-height: 1.1;
-        }
-        .hero-content .logo-text {
-            color: #ffffff;
-        }
-        .hero-content .logo-text .slash {
-            color: #ff1d1d;
-        }
-        .hero-subtitle {
-            font-size: 1.3rem;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        .hero-description {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 3rem;
-            line-height: 1.7;
-        }
-        .cta-group {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        .btn {
-            padding: 1rem 2rem;
+
+        /* 터미널 스타일 */
+        #terminal-input {
+            background-color: transparent;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .btn-primary {
-            background: #ff1d1d;
-            color: #ffffff;
-        }
-        .btn-primary:hover {
-            background: #e01a1a;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 29, 29, 0.3);
-        }
-        .btn-secondary {
-            background: transparent;
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-        .hero-visual {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        .code-window {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            width: 100%;
-            max-width: 500px;
-            backdrop-filter: blur(10px);
-        }
-        .window-header {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .window-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        .dot-red { background: #ff5f57; }
-        .dot-yellow { background: #ffbd2e; }
-        .dot-green { background: #28ca42; }
-        .code-content {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-        .code-line {
-            margin-bottom: 0.5rem;
-        }
-        .keyword { color: #ff1d1d; }
-        .string { color: #a6e22e; }
-        .comment { color: rgba(255, 255, 255, 0.4); }
-        .function { color: #f92672; }
-        /* Services Section */
-        .services {
-            padding: 8rem 0;
-            background: #0a0a0a;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-        .section-title {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            letter-spacing: -1px;
-        }
-        .section-subtitle {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.6);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-        .service-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 2.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #ff1d1d, #ff4444);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        .service-card:hover::before {
-            transform: scaleX(1);
-        }
-        .service-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-5px);
-        }
-        .service-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 29, 29, 0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: #ff1d1d;
-        }
-        .service-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        .service-description {
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-        .service-features {
-            list-style: none;
-        }
-        .service-features li {
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 0.5rem;
-            padding-left: 1rem;
-            position: relative;
-        }
-        .service-features li::before {
-            content: '▶';
-            position: absolute;
-            left: 0;
-            color: #ff1d1d;
-            font-size: 0.8rem;
-        }
-        /* About Section */
-        .about {
-            padding: 8rem 0;
-            background: rgba(255, 255, 255, 0.01);
-        }
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6rem;
-            align-items: center;
-        }
-        .about-content h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            letter-spacing: -1px;
-        }
-        .about-content p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 1.5rem;
-            line-height: 1.7;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        .stat-item {
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ff1d1d;
-            display: block;
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 0.5rem;
-        }
-        .about-visual {
-            position: relative;
-        }
-        .tech-stack {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-        .tech-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .tech-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: #ff1d1d;
-        }
-        .tech-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .tech-name {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-        }
-        /* Contact Section */
-        .contact {
-            padding: 8rem 0;
-            background: #0a0a0a;
-        }
-        .contact-content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        .contact h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        .contact p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 3rem;
-        }
-        .contact-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .contact-input {
-            padding: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            color: #ffffff;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-        .contact-input:focus {
             outline: none;
-            border-color: #ff1d1d;
+            color: white;
+            padding-right: 5px;
+            width: 100%;
+            caret-color: var(--brand-blue);
         }
-        .contact-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+        
+        /* 커서 깜빡임 효과 */
+        .cursor {
+            border-right: 2px solid var(--brand-blue);
+            animation: blink 1s step-end infinite;
         }
-        .contact-message {
-            grid-column: 1 / -1;
-            resize: vertical;
-            min-height: 120px;
+
+        /* 카드 디자인: 반투명하고 둥근 모서리, 그림자 */
+        .glass-card {
+            background-color: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
         }
-        /* Footer */
-        .footer {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 3rem 0 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        .glass-card:hover {
+            border-color: var(--brand-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(8, 10, 209, 0.2);
         }
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
+
+        /* 호버 시 콘텐츠 보여주기 */
+        .hover-reveal-container {
+            position: relative;
         }
-        .footer-section h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #ffffff;
+        .hover-reveal-content {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease-out;
         }
-        .footer-section ul {
-            list-style: none;
+        .hover-reveal-container:hover .hover-reveal-content {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
+
+        /* 스크롤 애니메이션 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
         }
-        .footer-section ul li a {
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        .footer-section ul li a:hover {
-            color: #ffffff;
-        }
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            margin-top: 2rem;
-            padding-top: 2rem;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.9rem;
-        }
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(10, 10, 10, 0.98);
-                backdrop-filter: blur(10px);
-                padding: 1rem 2rem;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-                gap: 1.5rem;
-                z-index: 99;
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .hero-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .hero-content h1 {
-                font-size: 3rem;
-            }
-            .about-grid {
-                grid-template-columns: 1fr;
-                gap: 3rem;
-            }
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-            .contact-form {
-                grid-template-columns: 1fr;
-            }
-            .cta-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        .fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav">
-            <a href="index.html" class="logo-nav">OB<span class="slash">/</span>E</a>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <ul class="nav-links">
-                <!-- Home Dropdown -->
-                <li class="dropdown">
-                    <a href="index.html" class="active">Home</a>
-                    <div class="dropdown-content">
-                        <a href="index.html#home">Overview</a>
-                        <a href="index.html#projects">Featured Projects</a>
-                        <a href="index.html#about">About Me</a>
-                        <a href="index.html#contact">Get in Touch</a>
-                    </div>
-                </li>
-                <!-- About -->
-                <li class="dropdown">
-                    <a href="About/index.html">About</a>
-                    <div class="dropdown-content">
-                        <a href="About/index.html">Who I Am</a>
-                        <a href="About/skills.html">Skills & Stack</a>
-                        <a href="About/story.html">My Journey</a>
-                    </div>
-                </li>
-                <!-- Projects -->
-                <li class="dropdown">
-                    <a href="Projects/index.html">Projects</a>
-                    <div class="dropdown-content">
-                        <a href="Projects/index.html">All Projects</a>
-                        <a href="Projects/index.html#web">Web Apps</a>
-                        <a href="Projects/index.html#ai">AI Tools</a>
-                        <a href="Projects/index.html#design">Interactive Design</a>
-                    </div>
-                </li>
-                <!-- Blog -->
-                <li class="dropdown">
-                    <a href="Blog/index.html">Blog</a>
-                    <div class="dropdown-content">
-                        <a href="Blog/index.html">Latest Posts</a>
-                        <a href="Blog/category/tech.html">Tech Notes</a>
-                        <a href="Blog/category/life.html">Life & Learning</a>
-                        <a href="Blog/category/tutorials.html">Tutorials</a>
-                    </div>
-                </li>
-                <!-- Lab -->
-                <li class="dropdown">
-                    <a href="Lab/canvas-animation.html">Lab</a>
-                    <div class="dropdown-content">
-                        <a href="Lab/canvas-animation.html">Canvas Experiments</a>
-                        <a href="Lab/webgl-demo.html">WebGL & 3D</a>
-                        <a href="Lab/voice-ai.html">Voice & AI</a>
-                        <a href="Lab/ai-chat.html">Chat with Me</a>
-                    </div>
-                </li>
-                <!-- Contact -->
-                <li><a href="Contact/index.html">Contact</a></li>
-                <!-- Assets -->
-                <li><a href="Assets/index.html">Assets</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-grid">
-            <div class="hero-content">
-                <h1 class="logo-text">OB<span class="slash">/</span>E</h1>
-                <p class="hero-subtitle">Personal Projects, Code & Digital Experiments</p>
-                <p class="hero-description">
-                    I build things with code, curiosity, and a bit of chaos. 
-                    From clean web apps to experimental AI, this is where I create, break, and learn.
-                </p>
-                <div class="cta-group">
-                    <a href="Projects/index.html" class="btn btn-primary">See My Work</a>
-                    <a href="About/index.html" class="btn btn-secondary">Know Me</a>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="code-window">
-                    <div class="window-header">
-                        <div class="window-dot dot-red"></div>
-                        <div class="window-dot dot-yellow"></div>
-                        <div class="window-dot dot-green"></div>
-                    </div>
-                    <div class="code-content">
-                        <div class="code-line">
-                            <span class="keyword">class</span> <span class="function">Creator</span> {
-                        </div>
-                        <div class="code-line">
-                            &nbsp;&nbsp;<span class="keyword">constructor</span>() {
-                        </div>
-                        <div class="code-line">
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = <span class="string">'OB/E'</span>;
-                        </div>
-                        <div class="code-line">
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.focus = <span class="string">'Building & Learning'</span>;
-                        </div>
-                        <div class="code-line">
-                            &nbsp;&nbsp;}
-                        </div>
-                        <div class="code-line">
-                            <span class="comment">// Creating one step at a time</span>
-                        </div>
-                        <div class="code-line">
-                            }
-                        </div>
-                    </div>
-                </div>
+<body class="bg-[#0c0c0c] text-gray-300 leading-relaxed overflow-x-hidden">
+
+    <!-- 메인 컨테이너 -->
+    <div id="main-container" class="min-h-screen w-screen relative flex flex-col items-center justify-center p-4">
+        <!-- 터미널 컨테이너 (초기 화면) -->
+        <div id="terminal-container" class="absolute inset-0 flex flex-col justify-center items-center p-4 z-20">
+            <h1 class="logo-text text-4xl md:text-6xl font-bold mb-4 text-white uppercase text-center">
+                offby1e<span class="text-[--brand-blue] text-5xl md:text-6xl font-medium">.</span>
+            </h1>
+            <p class="text-sm md:text-base text-gray-500 mb-8 text-center">
+                Type 'access' to enter the system.
+            </p>
+            <div class="w-full max-w-lg mx-auto bg-[#1a1a1a] p-4 rounded-lg border border-gray-600">
+                <span class="text-gray-400">user@offby1e:~$</span>
+                <span id="typed-text" class="text-white"></span>
+                <input type="text" id="terminal-input" autofocus class="w-0">
             </div>
         </div>
-    </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="services">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Featured Projects</h2>
-                <p class="section-subtitle">
-                    A collection of personal builds, experiments, and real-world solutions
-                </p>
+        <!-- 콘텐츠 컨테이너 (홈 화면) -->
+        <div id="content-container" class="hidden min-h-screen w-full relative pt-20">
+            <!-- 로고 (상단 고정) -->
+            <div class="fixed top-4 left-4 z-50">
+                <a href="#" class="flex items-center space-x-2">
+                    <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-10 md:h-10">
+                        <circle cx="50" cy="50" r="50" fill="white"/>
+                        <rect x="0" y="42.5" width="100" height="15" transform="rotate(-45 50 50)" fill="black"/>
+                        <circle cx="95" cy="5" r="5" fill="var(--brand-blue)"/>
+                    </svg>
+                    <span class="logo-text text-xl font-semibold text-white">offby1e</span>
+                </a>
             </div>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🎨</div>
-                    <h3 class="service-title">Interactive Portfolio</h3>
-                    <p class="service-description">
-                        A dynamic, code-driven portfolio that evolves with every experiment I try.
+
+            <!-- 섹션 구성 -->
+            <section class="container mx-auto px-4 md:px-8 py-16 md:py-24">
+                <!-- 메인 소개 -->
+                <div class="max-w-4xl mx-auto text-center mb-16 fade-in">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                        The One Difference That Changes The World.
+                    </h2>
+                    <p class="text-gray-400 text-lg md:text-xl">
+                        A place where imperfections are celebrated and transformed into unique creations.
                     </p>
-                    <ul class="service-features">
-                        <li>Three.js & WebGL visuals</li>
-                        <li>Responsive & accessible</li>
-                        <li>Live code demos</li>
-                        <li>Self-hosted experiments</li>
-                    </ul>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🤖</div>
-                    <h3 class="service-title">AI-Powered Tools</h3>
-                    <p class="service-description">
-                        Small but smart tools that use AI to automate, assist, or surprise.
-                    </p>
-                    <ul class="service-features">
-                        <li>Custom GPT workflows</li>
-                        <li>Voice & text interaction</li>
-                        <li>Real-time processing</li>
-                        <li>Privacy-first design</li>
-                    </ul>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">⚡</div>
-                    <h3 class="service-title">Web Experiments</h3>
-                    <p class="service-description">
-                        Playground for testing new ideas — from shaders to AI, nothing is off-limits.
-                    </p>
-                    <ul class="service-features">
-                        <li>Canvas & WebGL</li>
-                        <li>Experimental UI</li>
-                        <li>Open-source code</li>
-                        <li>Fail fast, learn faster</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <div class="about-grid">
-                <div class="about-content">
-                    <h2>Who I Am</h2>
-                    <p>
-                        I'm a developer, designer, and tinkerer who loves building digital things 
-                        that are useful, beautiful, or just plain weird.
-                    </p>
-                    <p>
-                        This site is my lab, my sketchbook, and my resume — all in one. 
-                        I code for curiosity, not just for clients.
-                    </p>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-number">50+</span>
-                            <span class="stat-label">Projects Built</span>
+                
+                <!-- 핵심 철학 그리드 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 카드 1: Philosophy -->
+                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in">
+                        <h3 class="text-2xl font-bold text-white mb-2">/philosophy</h3>
+                        <div class="hover-reveal-content text-gray-400">
+                            Finding Uniqueness in Imperfection.
+                            <br><br>
+                            We believe that the courage to not fear mistakes and the wisdom to use errors as new starting points are the keys to true innovation.
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-number">8+</span>
-                            <span class="stat-label">Technologies</span>
+                    </div>
+                    <!-- 카드 2: Identity -->
+                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-100">
+                        <h3 class="text-2xl font-bold text-white mb-2">/identity</h3>
+                        <div class="hover-reveal-content text-gray-400">
+                            The Meaning of the Slash (/), One, and Dot (•).
+                            <br><br>
+                            Each element in our logo tells a part of our deep-rooted philosophy, a visual embodiment of our brand.
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-number">3+</span>
-                            <span class="stat-label">Years Learning</span>
+                    </div>
+                    <!-- 카드 3: Projects -->
+                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-200">
+                        <h3 class="text-2xl font-bold text-white mb-2">/projects</h3>
+                        <div class="hover-reveal-content text-gray-400">
+                            A Record of Our Journey.
+                            <br><br>
+                            We reject perfection and seek new possibilities in small errors.
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-number">∞</span>
-                            <span class="stat-label">Curiosity</span>
+                    </div>
+                    <!-- 카드 4: About Us (새롭게 추가) -->
+                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-300">
+                        <h3 class="text-2xl font-bold text-white mb-2">/about</h3>
+                        <div class="hover-reveal-content text-gray-400">
+                            Our Story.
+                            <br><br>
+                            offby1e was born from a realization that a small difference can create an extraordinary identity.
+                        </div>
+                    </div>
+                    <!-- 카드 5: Team (새롭게 추가) -->
+                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-400">
+                        <h3 class="text-2xl font-bold text-white mb-2">/team</h3>
+                        <div class="hover-reveal-content text-gray-400">
+                            The Creators.
+                            <br><br>
+                            We are a collective of designers and developers, united by a passion for continuous exploration.
+                        </div>
+                    </div>
+                    <!-- 카드 6: Contact -->
+                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-500">
+                        <h3 class="text-2xl font-bold text-white mb-2">/contact</h3>
+                        <div class="hover-reveal-content text-gray-400">
+                            Tell us about your "1".
+                            <br><br>
+                            We are always open to new ideas and collaborations.
                         </div>
                     </div>
                 </div>
-                <div class="about-visual">
-                    <div class="tech-stack">
-                        <div class="tech-item">
-                            <div class="tech-icon">⚛️</div>
-                            <div class="tech-name">React</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-icon">🟢</div>
-                            <div class="tech-name">Node.js</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-icon">🐍</div>
-                            <div class="tech-name">Python</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-icon">🌐</div>
-                            <div class="tech-name">Three.js</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-icon">🧠</div>
-                            <div class="tech-name">TensorFlow</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-icon">🎨</div>
-                            <div class="tech-name">Figma</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </section>
         </div>
-    </section>
+    </div>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <div class="contact-content">
-                <h2>Let’s Talk</h2>
-                <p>
-                    Have a project in mind? Want to collaborate or just say hi? 
-                    I’d love to hear from you.
-                </p>
-                <div class="contact-form">
-                    <input type="text" class="contact-input" placeholder="Your Name">
-                    <input type="email" class="contact-input" placeholder="Email Address">
-                    <textarea class="contact-input contact-message" placeholder="What’s on your mind?"></textarea>
-                </div>
-                <button class="btn btn-primary" onclick="alert('Thanks! I’ll get back to you soon.')">Send Message</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>OB<span style="color: #ff1d1d;">/</span>E</h3>
-                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 1rem;">
-                    A personal space for code, creativity, and curiosity.
-                </p>
-            </div>
-            <div class="footer-section">
-                <h3>Work</h3>
-                <ul>
-                    <li><a href="Projects/index.html">All Projects</a></li>
-                    <li><a href="Projects/index.html#web">Web Development</a></li>
-                    <li><a href="Projects/index.html#ai">AI Experiments</a></li>
-                    <li><a href="Lab/index.html">Lab Experiments</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>About</h3>
-                <ul>
-                    <li><a href="About/index.html">Who I Am</a></li>
-                    <li><a href="About/skills.html">Skills</a></li>
-                    <li><a href="About/story.html">My Story</a></li>
-                    <li><a href="Contact/index.html">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Elsewhere</h3>
-                <ul>
-                    <li><a href="https://github.com/obe" target="_blank">GitHub</a></li>
-                    <li><a href="https://linkedin.com/in/obe" target="_blank">LinkedIn</a></li>
-                    <li><a href="https://twitter.com/obe" target="_blank">Twitter</a></li>
-                    <li><a href="Blog/index.html">Blog</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 OB/E. Made with curiosity.</p>
-        </div>
-    </footer>
-
+    <!-- 자바스크립트 -->
     <script>
-        // Mobile Menu Toggle
-        const hamburger = document.querySelector('.hamburger');
-        const navLinks = document.querySelector('.nav-links');
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
+        // 터미널 입력, 터미널 텍스트, 콘텐츠 컨테이너 가져오기
+        const terminalContainer = document.getElementById('terminal-container');
+        const contentContainer = document.getElementById('content-container');
+        const terminalInput = document.getElementById('terminal-input');
+        const typedTextSpan = document.getElementById('typed-text');
+        
+        // 터미널 타이핑 애니메이션
+        let fullText = 'access';
+        let charIndex = 0;
 
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    navLinks.classList.remove('active');
-                }
-            });
-        });
-
-        // Highlight active section in nav
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 50) {
-                header.style.background = 'rgba(10, 10, 10, 0.98)';
-                header.style.boxShadow = '0 5px 20px rgba(0,0,0,0.2)';
+        function typeEffect() {
+            if (charIndex < fullText.length) {
+                typedTextSpan.textContent += fullText.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeEffect, 100);
             } else {
-                header.style.background = 'rgba(10, 10, 10, 0.95)';
-                header.style.boxShadow = 'none';
+                terminalInput.focus();
+                typedTextSpan.classList.add('cursor');
             }
+        }
 
-            document.querySelectorAll('section').forEach(sec => {
-                const top = sec.offsetTop - 100;
-                const bottom = top + sec.offsetHeight;
-                if (window.scrollY >= top && window.scrollY < bottom) {
-                    const id = sec.getAttribute('id');
-                    document.querySelectorAll('.nav-links a').forEach(a => {
-                        a.classList.remove('active');
-                        if (a.getAttribute('href') === `#${id}` || a.getAttribute('href').includes(`#${id}`)) {
-                            a.classList.add('active');
-                        }
-                    });
+        // 터미널 명령 처리
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = e.target.value.toLowerCase().trim();
+                if (command === 'access') {
+                    grantAccess();
+                } else {
+                    alert('Command not recognized. Please type "access" to proceed.');
+                    e.target.value = '';
                 }
-            });
+            }
         });
 
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+        // 홈 화면 콘텐츠 표시
+        function grantAccess() {
+            terminalContainer.classList.add('hidden');
+            contentContainer.classList.remove('hidden');
+            
+            // 스크롤 애니메이션
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            document.querySelectorAll('.fade-in').forEach(element => {
+                observer.observe(element);
+            });
+        }
+        
+        // 페이지 로드 후 애니메이션 시작
+        window.onload = function() {
+            typeEffect();
         };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-        document.querySelectorAll('.service-card, .tech-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
-        });
     </script>
 </body>
 </html>
