@@ -1,8 +1,8 @@
-<!--
-  offby1e 브랜드의 새로운 홈 화면 디자인입니다.
-  기존의 무작위 배치에서 벗어나, 논리적인 그리드 레이아웃을 사용해
-  정보를 체계적으로 전달하면서도 '비밀스러운 공간'의 분위기를 유지합니다.
-  각 카드는 호버 시 동적으로 반응하여 사용자에게 흥미로운 경험을 제공합니다.
+<!-- 
+  offby1e 브랜드의 새로운 홈 화면 디자인입니다. 
+  기존의 무작위 배치에서 벗어나, 논리적인 그리드 레이아웃을 사용해 
+  정보를 체계적으로 전달하면서도 '비밀스러운 공간'의 분위기를 유지합니다. 
+  각 카드는 호버 시 동적으로 반응하여 사용자에게 흥미로운 경험을 제공합니다. 
 -->
 <!DOCTYPE html>
 <html lang="ko" class="scroll-smooth">
@@ -98,6 +98,42 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* 로고 회전 애니메이션 */
+        @keyframes lively-rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .logo-rotate {
+            animation: lively-rotate 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--brand-blue);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 1000;
+            color: white;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
 </head>
 
@@ -107,11 +143,19 @@
     <div id="main-container" class="min-h-screen w-screen relative flex flex-col items-center justify-center p-4">
         <!-- 터미널 컨테이너 (초기 화면) -->
         <div id="terminal-container" class="absolute inset-0 flex flex-col justify-center items-center p-4 z-20">
-            <h1 class="logo-text text-4xl md:text-6xl font-bold mb-4 text-white uppercase text-center">
-                offby1e<span class="text-[--brand-blue] text-5xl md:text-6xl font-medium">.</span>
-            </h1>
-            <p class="text-sm md:text-base text-gray-500 mb-8 text-center">
-                Type 'access' to enter the system.
+            <!-- 로고와 타이틀을 감싸는 컨테이너 -->
+            <div class="flex flex-col items-center justify-center mb-2">
+                <svg id="intro-logo" width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 md:w-20 md:h-20 mb-6 cursor-pointer">
+                    <circle cx="50" cy="50" r="50" fill="white"/>
+                    <rect x="0" y="42.5" width="100" height="15" transform="rotate(-45 50 50)" fill="black"/>
+                    <circle cx="95" cy="5" r="5" fill="var(--brand-blue)"/>
+                </svg>
+                <h1 class="logo-text text-4xl md:text-6xl font-bold text-white uppercase">
+                    offby1e<span class="text-[--brand-blue] text-5xl md:text-6xl font-medium">.</span>
+                </h1>
+            </div>
+            <p class="text-sm md:text-base text-gray-400 mb-4 text-center">
+                Off By One Error
             </p>
             <div class="w-full max-w-lg mx-auto bg-[#1a1a1a] p-4 rounded-lg border border-gray-600">
                 <span class="text-gray-400">user@offby1e:~$</span>
@@ -125,7 +169,7 @@
             <!-- 로고 (상단 고정) -->
             <div class="fixed top-4 left-4 z-50">
                 <a href="#" class="flex items-center space-x-2">
-                    <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-10 md:h-10">
+                    <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-8 md:h-8">
                         <circle cx="50" cy="50" r="50" fill="white"/>
                         <rect x="0" y="42.5" width="100" height="15" transform="rotate(-45 50 50)" fill="black"/>
                         <circle cx="95" cy="5" r="5" fill="var(--brand-blue)"/>
@@ -135,7 +179,7 @@
             </div>
 
             <!-- 섹션 구성 -->
-            <section class="container mx-auto px-4 md:px-8 py-16 md:py-24">
+            <section class="container mx-auto px-4 md:px-8 py-20 md:py-32">
                 <!-- 메인 소개 -->
                 <div class="max-w-4xl mx-auto text-center mb-16 fade-in">
                     <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -206,6 +250,12 @@
             </section>
         </div>
     </div>
+    
+    <!-- 사용자에게 메시지를 보여주는 커스텀 메시지 박스 -->
+    <div id="message-box" class="message-box">
+        <p id="message-text"></p>
+        <button id="close-message" class="mt-4 px-4 py-2 bg-[--brand-blue] text-white rounded-md">OK</button>
+    </div>
 
     <!-- 자바스크립트 -->
     <script>
@@ -214,9 +264,13 @@
         const contentContainer = document.getElementById('content-container');
         const terminalInput = document.getElementById('terminal-input');
         const typedTextSpan = document.getElementById('typed-text');
+        const introLogo = document.getElementById('intro-logo');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const closeMessageBtn = document.getElementById('close-message');
         
         // 터미널 타이핑 애니메이션
-        let fullText = 'access';
+        let fullText = 'authenticating...';
         let charIndex = 0;
 
         function typeEffect() {
@@ -225,10 +279,23 @@
                 charIndex++;
                 setTimeout(typeEffect, 100);
             } else {
+                // Done. 문구를 삭제하고 커서만 표시
                 terminalInput.focus();
                 typedTextSpan.classList.add('cursor');
             }
         }
+
+        // 커스텀 메시지 박스 표시 함수
+        function showMessage(msg) {
+            messageText.textContent = msg;
+            messageBox.classList.add('show');
+        }
+
+        // 커스텀 메시지 박스 닫기
+        closeMessageBtn.addEventListener('click', () => {
+            messageBox.classList.remove('show');
+            terminalInput.focus();
+        });
 
         // 터미널 명령 처리
         terminalInput.addEventListener('keydown', (e) => {
@@ -237,10 +304,22 @@
                 if (command === 'access') {
                     grantAccess();
                 } else {
-                    alert('Command not recognized. Please type "access" to proceed.');
+                    showMessage('Command not recognized. Please type "access" to proceed.');
                     e.target.value = '';
                 }
             }
+        });
+
+        // 로고 클릭 시 애니메이션 및 메시지 표시
+        introLogo.addEventListener('click', () => {
+            // 애니메이션 클래스 추가 및 제거
+            introLogo.classList.add('logo-rotate');
+            setTimeout(() => {
+                introLogo.classList.remove('logo-rotate');
+            }, 800); // 애니메이션 지속 시간과 동일하게 설정
+
+            // 메시지를 로고 클릭 이벤트에 추가
+            showMessage("Dial unlocked. Type 'access' to enter the system.");
         });
 
         // 홈 화면 콘텐츠 표시
@@ -264,7 +343,7 @@
         
         // 페이지 로드 후 애니메이션 시작
         window.onload = function() {
-            typeEffect();
+            typeEffect(); 
         };
     </script>
 </body>
