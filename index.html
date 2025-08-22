@@ -1,149 +1,16 @@
-<!-- 
-  offby1e 브랜드의 새로운 홈 화면 디자인입니다. 
-  기존의 무작위 배치에서 벗어나, 논리적인 그리드 레이아웃을 사용해 
-  정보를 체계적으로 전달하면서도 '비밀스러운 공간'의 분위기를 유지합니다. 
-  각 카드는 호버 시 동적으로 반응하여 사용자에게 흥미로운 경험을 제공합니다. 
--->
 <!DOCTYPE html>
 <html lang="ko" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>offby1e - Access Granted</title>
-
-    <!-- Google Fonts: Inter (메인) & IBM Plex Mono (포인트) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-        /* CSS 변수: 브랜드 파란색 (#080AD1) */
-        :root {
-            --brand-blue: #080AD1;
-        }
-
-        /* 배경 효과: 은은한 방사형 그라데이션 */
-        body {
-            font-family: 'IBM Plex Mono', monospace;
-            background-color: #0d0d0d;
-            background: radial-gradient(circle at 10% 10%, rgba(8, 10, 15, 0.9) 0%, #0c0c0c 30%, #0d0d0d 100%);
-            color: #d1d5db; /* gray-300 */
-        }
-        
-        /* 포인트 폰트 설정 (제목, 로고 등) */
-        h1, h2, .logo-text {
-            font-family: 'IBM Plex Mono', monospace;
-        }
-
-        /* 터미널 커서 깜빡임 애니메이션 */
-        @keyframes blink {
-            50% { border-color: transparent; }
-        }
-
-        /* 터미널 스타일 */
-        #terminal-input {
-            background-color: transparent;
-            border: none;
-            outline: none;
-            color: white;
-            padding-right: 5px;
-            width: 100%;
-            caret-color: var(--brand-blue);
-        }
-        
-        /* 커서 깜빡임 효과 */
-        .cursor {
-            border-right: 2px solid var(--brand-blue);
-            animation: blink 1s step-end infinite;
-        }
-
-        /* 카드 디자인: 반투명하고 둥근 모서리, 그림자 */
-        .glass-card {
-            background-color: rgba(26, 26, 26, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease-in-out;
-        }
-        .glass-card:hover {
-            border-color: var(--brand-blue);
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(8, 10, 209, 0.2);
-        }
-
-        /* 호버 시 콘텐츠 보여주기 */
-        .hover-reveal-container {
-            position: relative;
-        }
-        .hover-reveal-content {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s ease-out;
-        }
-        .hover-reveal-container:hover .hover-reveal-content {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 스크롤 애니메이션 */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-        }
-        .fade-in.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 로고 회전 애니메이션 */
-        @keyframes lively-rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .logo-rotate {
-            animation: lively-rotate 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-        }
-
-        .message-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--brand-blue);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            z-index: 1000;
-            color: white;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .message-box.show {
-            opacity: 1;
-            visibility: visible;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body class="bg-[#0c0c0c] text-gray-300 leading-relaxed overflow-x-hidden">
 
-    <!-- 메인 컨테이너 -->
     <div id="main-container" class="min-h-screen w-screen relative flex flex-col items-center justify-center p-4">
-        <!-- 터미널 컨테이너 (초기 화면) -->
         <div id="terminal-container" class="absolute inset-0 flex flex-col justify-center items-center p-4 z-20">
-            <!-- 로고와 타이틀을 감싸는 컨테이너 -->
             <div class="flex flex-col items-center justify-center mb-2">
                 <svg id="intro-logo" width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 md:w-20 md:h-20 mb-6 cursor-pointer">
                     <circle cx="50" cy="50" r="50" fill="white"/>
@@ -163,105 +30,14 @@
                 <input type="text" id="terminal-input" autofocus class="w-0">
             </div>
         </div>
-
-        <!-- 콘텐츠 컨테이너 (홈 화면) -->
-        <div id="content-container" class="hidden min-h-screen w-full relative pt-20">
-            <!-- 로고 (상단 고정) -->
-            <div class="fixed top-4 left-4 z-50">
-                <a href="#" class="flex items-center space-x-2">
-                    <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-8 md:h-8">
-                        <circle cx="50" cy="50" r="50" fill="white"/>
-                        <rect x="0" y="42.5" width="100" height="15" transform="rotate(-45 50 50)" fill="black"/>
-                        <circle cx="95" cy="5" r="5" fill="var(--brand-blue)"/>
-                    </svg>
-                    <span class="logo-text text-xl font-semibold text-white">offby1e</span>
-                </a>
-            </div>
-
-            <!-- 섹션 구성 -->
-            <section class="container mx-auto px-4 md:px-8 py-20 md:py-32">
-                <!-- 메인 소개 -->
-                <div class="max-w-4xl mx-auto text-center mb-16 fade-in">
-                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
-                        The One Difference That Changes The World.
-                    </h2>
-                    <p class="text-gray-400 text-lg md:text-xl">
-                        A place where imperfections are celebrated and transformed into unique creations.
-                    </p>
-                </div>
-                
-                <!-- 핵심 철학 그리드 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- 카드 1: Philosophy -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in">
-                        <h3 class="text-2xl font-bold text-white mb-2">/philosophy</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            Finding Uniqueness in Imperfection.
-                            <br><br>
-                            We believe that the courage to not fear mistakes and the wisdom to use errors as new starting points are the keys to true innovation.
-                        </div>
-                    </div>
-                    <!-- 카드 2: Identity -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-100">
-                        <h3 class="text-2xl font-bold text-white mb-2">/identity</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            The Meaning of the Slash (/), One, and Dot (•).
-                            <br><br>
-                            Each element in our logo tells a part of our deep-rooted philosophy, a visual embodiment of our brand.
-                        </div>
-                    </div>
-                    <!-- 카드 3: Projects -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-200">
-                        <h3 class="text-2xl font-bold text-white mb-2">/projects</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            A Record of Our Journey.
-                            <br><br>
-                            We reject perfection and seek new possibilities in small errors.
-                        </div>
-                    </div>
-                    <!-- 카드 4: About Us (새롭게 추가) -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-300">
-                        <h3 class="text-2xl font-bold text-white mb-2">/about</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            Our Story.
-                            <br><br>
-                            offby1e was born from a realization that a small difference can create an extraordinary identity.
-                        </div>
-                    </div>
-                    <!-- 카드 5: Team (새롭게 추가) -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-400">
-                        <h3 class="text-2xl font-bold text-white mb-2">/team</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            The Creators.
-                            <br><br>
-                            We are a collective of designers and developers, united by a passion for continuous exploration.
-                        </div>
-                    </div>
-                    <!-- 카드 6: Contact -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-500">
-                        <h3 class="text-2xl font-bold text-white mb-2">/contact</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            Tell us about your "1".
-                            <br><br>
-                            We are always open to new ideas and collaborations.
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
     </div>
     
-    <!-- 사용자에게 메시지를 보여주는 커스텀 메시지 박스 -->
     <div id="message-box" class="message-box">
         <p id="message-text"></p>
         <button id="close-message" class="mt-4 px-4 py-2 bg-[--brand-blue] text-white rounded-md">OK</button>
     </div>
 
-    <!-- 자바스크립트 -->
     <script>
-        // 터미널 입력, 터미널 텍스트, 콘텐츠 컨테이너 가져오기
-        const terminalContainer = document.getElementById('terminal-container');
-        const contentContainer = document.getElementById('content-container');
         const terminalInput = document.getElementById('terminal-input');
         const typedTextSpan = document.getElementById('typed-text');
         const introLogo = document.getElementById('intro-logo');
@@ -269,7 +45,6 @@
         const messageText = document.getElementById('message-text');
         const closeMessageBtn = document.getElementById('close-message');
         
-        // 터미널 타이핑 애니메이션
         let fullText = 'authenticating...';
         let charIndex = 0;
 
@@ -279,30 +54,26 @@
                 charIndex++;
                 setTimeout(typeEffect, 100);
             } else {
-                // Done. 문구를 삭제하고 커서만 표시
                 terminalInput.focus();
                 typedTextSpan.classList.add('cursor');
             }
         }
 
-        // 커스텀 메시지 박스 표시 함수
         function showMessage(msg) {
             messageText.textContent = msg;
             messageBox.classList.add('show');
         }
 
-        // 커스텀 메시지 박스 닫기
         closeMessageBtn.addEventListener('click', () => {
             messageBox.classList.remove('show');
             terminalInput.focus();
         });
 
-        // 터미널 명령 처리
         terminalInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const command = e.target.value.toLowerCase().trim();
                 if (command === 'access') {
-                    grantAccess();
+                    window.location.href = 'home.html';
                 } else {
                     showMessage('Command not recognized. Please type "access" to proceed.');
                     e.target.value = '';
@@ -310,38 +81,14 @@
             }
         });
 
-        // 로고 클릭 시 애니메이션 및 메시지 표시
         introLogo.addEventListener('click', () => {
-            // 애니메이션 클래스 추가 및 제거
             introLogo.classList.add('logo-rotate');
             setTimeout(() => {
                 introLogo.classList.remove('logo-rotate');
-            }, 800); // 애니메이션 지속 시간과 동일하게 설정
-
-            // 메시지를 로고 클릭 이벤트에 추가
+            }, 800);
             showMessage("Dial unlocked. Type 'access' to enter the system.");
         });
-
-        // 홈 화면 콘텐츠 표시
-        function grantAccess() {
-            terminalContainer.classList.add('hidden');
-            contentContainer.classList.remove('hidden');
-            
-            // 스크롤 애니메이션
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
-                });
-            }, { threshold: 0.2 });
-
-            document.querySelectorAll('.fade-in').forEach(element => {
-                observer.observe(element);
-            });
-        }
         
-        // 페이지 로드 후 애니메이션 시작
         window.onload = function() {
             typeEffect(); 
         };
