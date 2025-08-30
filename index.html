@@ -1,8 +1,7 @@
 <!-- 
   offby1e 브랜드의 새로운 홈 화면 디자인입니다. 
-  기존의 무작위 배치에서 벗어나, 논리적인 그리드 레이아웃을 사용해 
-  정보를 체계적으로 전달하면서도 '비밀스러운 공간'의 분위기를 유지합니다. 
-  각 카드는 호버 시 동적으로 반응하여 사용자에게 흥미로운 경험을 제공합니다. 
+  인트로 화면의 터미널/콘솔 컨셉을 이어받아 홈화면도 완전히 터미널 스타일로 구성했습니다.
+  명령어 기반 네비게이션과 콘솔 출력 스타일의 콘텐츠로 사용자에게 일관된 경험을 제공합니다.
 -->
 <!DOCTYPE html>
 <html lang="ko" class="scroll-smooth">
@@ -60,43 +59,88 @@
             animation: blink 1s step-end infinite;
         }
 
-        /* 카드 디자인: 반투명하고 둥근 모서리, 그림자 */
-        .glass-card {
-            background-color: rgba(26, 26, 26, 0.6);
-            backdrop-filter: blur(10px);
+        /* 터미널 출력 스타일 */
+        .terminal-output {
+            font-family: 'IBM Plex Mono', monospace;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .terminal-prompt {
+            color: var(--brand-blue);
+            font-weight: 600;
+        }
+
+        .terminal-command {
+            color: #00ff00;
+            font-weight: 600;
+        }
+
+        .terminal-text {
+            color: #d1d5db;
+        }
+
+        .terminal-error {
+            color: #ef4444;
+        }
+
+        .terminal-success {
+            color: #10b981;
+        }
+
+        .terminal-info {
+            color: #3b82f6;
+        }
+
+        /* 터미널 윈도우 스타일 */
+        .terminal-window {
+            background-color: rgba(26, 26, 26, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease-in-out;
-        }
-        .glass-card:hover {
-            border-color: var(--brand-blue);
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(8, 10, 209, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* 호버 시 콘텐츠 보여주기 */
-        .hover-reveal-container {
-            position: relative;
-        }
-        .hover-reveal-content {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s ease-out;
-        }
-        .hover-reveal-container:hover .hover-reveal-content {
-            opacity: 1;
-            transform: translateY(0);
+        .terminal-header {
+            background-color: rgba(40, 40, 40, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px 8px 0 0;
         }
 
-        /* 스크롤 애니메이션 */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
         }
-        .fade-in.is-visible {
-            opacity: 1;
-            transform: translateY(0);
+
+        .terminal-dot.red { background-color: #ef4444; }
+        .terminal-dot.yellow { background-color: #f59e0b; }
+        .terminal-dot.green { background-color: #10b981; }
+
+        /* 스크롤바 스타일 */
+        .terminal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal-content::-webkit-scrollbar-track {
+            background: rgba(40, 40, 40, 0.5);
+            border-radius: 4px;
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 명령어 힌트 스타일 */
+        .command-hint {
+            opacity: 0.6;
+            font-size: 0.9em;
+            margin-top: 0.5rem;
         }
 
         /* 로고 회전 애니메이션 */
@@ -113,12 +157,37 @@
             animation: lively-rotate 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
         }
 
+        /* 타이핑 애니메이션 */
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typewriter 2s steps(40, end);
+        }
+
+        /* 페이드 인 애니메이션 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease-out;
+        }
+
+        .fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 메시지 박스 */
         .message-box {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.9);
             border: 1px solid var(--brand-blue);
             padding: 20px;
             border-radius: 8px;
@@ -134,6 +203,419 @@
             opacity: 1;
             visibility: visible;
         }
+
+        /* 터미널 탭 스타일 */
+        .terminal-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .terminal-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            background-color: transparent;
+            color: #d1d5db;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9em;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .terminal-tab:hover {
+            color: var(--brand-blue);
+        }
+
+        .terminal-tab.active {
+            color: var(--brand-blue);
+            border-bottom: 2px solid var(--brand-blue);
+        }
+
+        /* 터미널 레이아웃 스타일 */
+        .terminal-layout {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .terminal-sidebar {
+            flex: 0 0 250px; /* 사이드바 너비 */
+            padding: 1rem;
+            background-color: rgba(30, 30, 30, 0.9);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.9em;
+            color: #9ca3af;
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+        }
+
+        .sidebar-item {
+            font-size: 0.85em;
+            color: #d1d5db;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--brand-blue);
+        }
+
+        .terminal-main {
+            flex: 1;
+            padding: 1rem;
+            background-color: rgba(26, 26, 26, 0.95);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 터미널 알림 스타일 */
+        .terminal-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--brand-blue);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            color: white;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .terminal-notification.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-online {
+            background-color: #10b981; /* Green for online */
+        }
+
+        /* 인트로 화면 전용 스타일 */
+        .intro-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 배경 파티클 효과 */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: var(--brand-blue);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 로고 호버 효과 */
+        .intro-logo-container {
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .intro-logo-container:hover {
+            transform: scale(1.1);
+        }
+
+        .intro-logo-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(8, 10, 209, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .intro-logo-container:hover::before {
+            opacity: 1;
+        }
+
+        /* 타이틀 애니메이션 */
+        .intro-title {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intro-title::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* 서브타이틀 타이핑 효과 */
+        .subtitle-typing {
+            overflow: hidden;
+            border-right: 2px solid var(--brand-blue);
+            white-space: nowrap;
+            animation: typing 3s steps(20, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--brand-blue); }
+        }
+
+        /* 터미널 입력창 개선 */
+        .terminal-input-container {
+            position: relative;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(40, 40, 40, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .terminal-input-container:hover {
+            border-color: var(--brand-blue);
+            box-shadow: 0 12px 40px rgba(8, 10, 209, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .terminal-input-container::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, var(--brand-blue), transparent, var(--brand-blue));
+            border-radius: 12px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .terminal-input-container:hover::before {
+            opacity: 1;
+        }
+
+        /* 입력 프롬프트 애니메이션 */
+        .input-prompt {
+            position: relative;
+            color: var(--brand-blue);
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .input-prompt::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background-color: var(--brand-blue);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: translateY(-50%) scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translateY(-50%) scale(1.2);
+            }
+        }
+
+        /* 힌트 텍스트 */
+        .input-hint {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(156, 163, 175, 0.7);
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .terminal-input-container:hover .input-hint {
+            opacity: 1;
+        }
+
+        /* 키보드 단축키 힌트 */
+        .keyboard-hints {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .terminal-input-container:hover .keyboard-hints {
+            opacity: 1;
+        }
+
+        .key-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(156, 163, 175, 0.8);
+            font-size: 0.75rem;
+        }
+
+        .key {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #d1d5db;
+        }
+
+        /* 로딩 애니메이션 */
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .loading-dot {
+            width: 4px;
+            height: 4px;
+            background-color: var(--brand-blue);
+            border-radius: 50%;
+            animation: loading-bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes loading-bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* 상태 표시 */
+        .status-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(156, 163, 175, 0.8);
+            font-size: 0.8rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            animation: status-pulse 2s infinite;
+        }
+
+        @keyframes status-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 반응형 개선 */
+        @media (max-width: 768px) {
+            .keyboard-hints {
+                flex-direction: column;
+                gap: 10px;
+                bottom: -80px;
+            }
+            
+            .particle {
+                display: none;
+            }
+        }
     </style>
 </head>
 
@@ -142,30 +624,86 @@
     <!-- 메인 컨테이너 -->
     <div id="main-container" class="min-h-screen w-screen relative flex flex-col items-center justify-center p-4">
         <!-- 터미널 컨테이너 (초기 화면) -->
-        <div id="terminal-container" class="absolute inset-0 flex flex-col justify-center items-center p-4 z-20">
-            <!-- 로고와 타이틀을 감싸는 컨테이너 -->
-            <div class="flex flex-col items-center justify-center mb-2">
-                <svg id="intro-logo" width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 md:w-20 md:h-20 mb-6 cursor-pointer">
-                    <circle cx="50" cy="50" r="50" fill="white"/>
-                    <rect x="0" y="42.5" width="100" height="15" transform="rotate(-45 50 50)" fill="black"/>
-                    <circle cx="95" cy="5" r="5" fill="var(--brand-blue)"/>
-                </svg>
-                <h1 class="logo-text text-4xl md:text-6xl font-bold text-white uppercase">
-                    offby1e<span class="text-[--brand-blue] text-5xl md:text-6xl font-medium">.</span>
-                </h1>
+        <div id="terminal-container" class="absolute inset-0 flex flex-col justify-center items-center p-4 z-20 intro-container">
+            <!-- 배경 파티클 효과 -->
+            <div class="particles" id="particles"></div>
+            
+            <!-- 상태 표시 -->
+            <div class="status-display">
+                <span class="status-dot"></span>
+                <span>System Ready</span>
             </div>
-            <p class="text-sm md:text-base text-gray-400 mb-4 text-center">
-                Off By One Error
-            </p>
-            <div class="w-full max-w-lg mx-auto bg-[#1a1a1a] p-4 rounded-lg border border-gray-600">
-                <span class="text-gray-400">user@offby1e:~$</span>
-                <span id="typed-text" class="text-white"></span>
-                <input type="text" id="terminal-input" autofocus class="w-0">
+            
+            <!-- 로고와 타이틀을 감싸는 컨테이너 -->
+            <div class="flex flex-col items-center justify-center mb-8">
+                <div class="intro-logo-container">
+                    <svg id="intro-logo" width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 md:w-24 md:h-24 mb-6 cursor-pointer">
+                        <circle cx="50" cy="50" r="50" fill="white"/>
+                        <rect x="0" y="42.5" width="100" height="15" transform="rotate(-45 50 50)" fill="black"/>
+                        <circle cx="95" cy="5" r="5" fill="var(--brand-blue)"/>
+                    </svg>
+                </div>
+                <h1 class="logo-text text-5xl md:text-7xl font-bold text-white uppercase intro-title mb-4">
+                    offby1e<span class="text-[--brand-blue] text-6xl md:text-7xl font-medium">.</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-400 mb-2 text-center subtitle-typing">
+                    Off By One Error
+                </p>
+                <p class="text-sm text-gray-500 text-center">
+                    The One Difference That Changes The World
+                </p>
+            </div>
+            
+            <!-- 개선된 터미널 입력창 -->
+            <div class="terminal-input-container w-full max-w-lg mx-auto">
+                <div class="flex items-center">
+                    <span class="input-prompt">user@offby1e:~$</span>
+                    <span id="typed-text" class="text-white"></span>
+                    <input type="text" id="terminal-input" autofocus class="w-0">
+                    <div class="loading-dots" id="loading-dots" style="display: none;">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                </div>
+                
+                <!-- 힌트 텍스트 -->
+                <div class="input-hint">
+                    Type 'access' to enter the system
+                </div>
+                
+                <!-- 키보드 단축키 힌트 -->
+                <div class="keyboard-hints">
+                    <div class="key-hint">
+                        <span class="key">Enter</span>
+                        <span>Execute</span>
+                    </div>
+                    <div class="key-hint">
+                        <span class="key">Tab</span>
+                        <span>Autocomplete</span>
+                    </div>
+                    <div class="key-hint">
+                        <span class="key">↑↓</span>
+                        <span>History</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 추가 정보 -->
+            <div class="mt-12 text-center">
+                <div class="text-xs text-gray-600 mb-2">
+                    Terminal v2.1.0 | Last updated: Dec 20, 2024
+                </div>
+                <div class="flex justify-center space-x-4 text-xs text-gray-600">
+                    <span>Status: <span class="text-green-400">Online</span></span>
+                    <span>Users: <span class="text-blue-400">1</span></span>
+                    <span>Uptime: <span class="text-yellow-400">24d 7h</span></span>
+                </div>
             </div>
         </div>
 
         <!-- 콘텐츠 컨테이너 (홈 화면) -->
-        <div id="content-container" class="hidden min-h-screen w-full relative pt-20">
+        <div id="content-container" class="hidden min-h-screen w-full relative p-4">
             <!-- 로고 (상단 고정) -->
             <div class="fixed top-4 left-4 z-50">
                 <a href="#" class="flex items-center space-x-2">
@@ -178,76 +716,193 @@
                 </a>
             </div>
 
-            <!-- 섹션 구성 -->
-            <section class="container mx-auto px-4 md:px-8 py-20 md:py-32">
-                <!-- 메인 소개 -->
-                <div class="max-w-4xl mx-auto text-center mb-16 fade-in">
-                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
-                        The One Difference That Changes The World.
-                    </h2>
-                    <p class="text-gray-400 text-lg md:text-xl">
-                        A place where imperfections are celebrated and transformed into unique creations.
-                    </p>
+            <!-- 메인 터미널 윈도우 -->
+            <div class="max-w-7xl mx-auto mt-20">
+                <div class="terminal-window">
+                    <!-- 터미널 헤더 -->
+                    <div class="terminal-header p-3 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="terminal-dot red"></div>
+                            <div class="terminal-dot yellow"></div>
+                            <div class="terminal-dot green"></div>
+                        </div>
+                        <div class="text-sm text-gray-400">offby1e@terminal:~</div>
+                        <div class="flex items-center space-x-2">
+                            <span class="status-indicator status-online"></span>
+                            <span class="text-xs text-gray-400">Online</span>
+                        </div>
+                    </div>
+
+                    <!-- 터미널 탭 -->
+                    <div class="terminal-tabs">
+                        <button class="terminal-tab active" data-tab="main">Main</button>
+                        <button class="terminal-tab" data-tab="projects">Projects</button>
+                        <button class="terminal-tab" data-tab="about">About</button>
+                        <button class="terminal-tab" data-tab="contact">Contact</button>
+                    </div>
+                    
+                    <!-- 터미널 레이아웃 -->
+                    <div class="terminal-layout flex">
+                        <!-- 사이드바 -->
+                        <div class="terminal-sidebar">
+                            <div class="sidebar-section">
+                                <div class="sidebar-title">Quick Commands</div>
+                                <div class="sidebar-item" data-command="help">help</div>
+                                <div class="sidebar-item" data-command="status">status</div>
+                                <div class="sidebar-item" data-command="neofetch">neofetch</div>
+                                <div class="sidebar-item" data-command="fortune">fortune</div>
+                            </div>
+                            
+                            <div class="sidebar-section">
+                                <div class="sidebar-title">Navigation</div>
+                                <div class="sidebar-item" data-command="ls -la">ls -la</div>
+                                <div class="sidebar-item" data-command="cd projects">cd projects</div>
+                                <div class="sidebar-item" data-command="cd about">cd about</div>
+                                <div class="sidebar-item" data-command="cd ..">cd ..</div>
+                            </div>
+                            
+                            <div class="sidebar-section">
+                                <div class="sidebar-title">System Info</div>
+                                <div class="sidebar-item" data-command="uname -a">uname -a</div>
+                                <div class="sidebar-item" data-command="date">date</div>
+                                <div class="sidebar-item" data-command="uptime">uptime</div>
+                                <div class="sidebar-item" data-command="df -h">df -h</div>
+                            </div>
+                            
+                            <div class="sidebar-section">
+                                <div class="sidebar-title">Fun Commands</div>
+                                <div class="sidebar-item" data-command="cmatrix">cmatrix</div>
+                                <div class="sidebar-item" data-command="sl">sl</div>
+                                <div class="sidebar-item" data-command="yes">yes</div>
+                                <div class="sidebar-item" data-command="telnet">telnet</div>
+                            </div>
+                        </div>
+
+                        <!-- 메인 터미널 영역 -->
+                        <div class="terminal-main">
+                            <!-- 터미널 콘텐츠 -->
+                            <div class="terminal-content p-6 max-h-[70vh] overflow-y-auto">
+                                <!-- 웰컴 메시지 -->
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">Welcome to offby1e terminal v2.1.0</div>
+                                    <div class="terminal-text">Type 'help' to see available commands</div>
+                                    <div class="terminal-text">Type 'clear' to clear the terminal</div>
+                                    <div class="terminal-text">Use Tab for autocomplete, ↑↓ for command history</div>
+                                    <br>
+                                </div>
+
+                                <!-- 초기 명령어 출력 -->
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">whoami</div>
+                                    <div class="terminal-text">offby1e - The One Difference That Changes The World</div>
+                                    <br>
+                                </div>
+
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">neofetch</div>
+                                    <div class="terminal-text">                    offby1e@terminal</div>
+                                    <div class="terminal-text">                   ------------------</div>
+                                    <div class="terminal-text">OS: offby1e Terminal v2.1.0</div>
+                                    <div class="terminal-text">Kernel: Philosophy 5.4.0</div>
+                                    <div class="terminal-text">Uptime: 24 days, 7 hours</div>
+                                    <div class="terminal-text">Packages: 1337 (imperfection)</div>
+                                    <div class="terminal-text">Shell: /bin/innovation</div>
+                                    <div class="terminal-text">Terminal: /dev/creativity</div>
+                                    <div class="terminal-text">CPU: Unique Identity x1</div>
+                                    <div class="terminal-text">Memory: 8GB of possibilities</div>
+                                    <div class="terminal-text">Disk: 1TB of errors</div>
+                                    <br>
+                                </div>
+
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">ls -la</div>
+                                    <div class="terminal-text">total 8</div>
+                                    <div class="terminal-text">drwxr-xr-x  2 user user 4096 Dec 20 10:00 .</div>
+                                    <div class="terminal-text">drwxr-xr-x  2 user user 4096 Dec 20 10:00 ..</div>
+                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 philosophy</div>
+                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 identity</div>
+                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 projects</div>
+                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 about</div>
+                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 team</div>
+                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 contact</div>
+                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 .hidden</div>
+                                    <br>
+                                </div>
+
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">cat philosophy</div>
+                                    <div class="terminal-text">Finding Uniqueness in Imperfection.</div>
+                                    <div class="terminal-text">We believe that the courage to not fear mistakes and the wisdom to use errors as new starting points are the keys to true innovation.</div>
+                                    <br>
+                                </div>
+
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">cat identity</div>
+                                    <div class="terminal-text">The Meaning of the Slash (/), One, and Dot (•).</div>
+                                    <div class="terminal-text">Each element in our logo tells a part of our deep-rooted philosophy, a visual embodiment of our brand.</div>
+                                    <br>
+                                </div>
+
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">cat projects</div>
+                                    <div class="terminal-text">A Record of Our Journey.</div>
+                                    <div class="terminal-text">We reject perfection and seek new possibilities in small errors.</div>
+                                    <br>
+                                </div>
+
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">cat about</div>
+                                    <div class="terminal-text">Our Story.</div>
+                                    <div class="terminal-text">offby1e was born from a realization that a small difference can create an extraordinary identity.</div>
+                                    <br>
+                                </div>
+
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">cat team</div>
+                                    <div class="terminal-text">The Creators.</div>
+                                    <div class="terminal-text">We are a collective of designers and developers, united by a passion for continuous exploration.</div>
+                                    <br>
+                                </div>
+
+                                <div class="terminal-output fade-in">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <div class="terminal-command">cat contact</div>
+                                    <div class="terminal-text">Tell us about your "1".</div>
+                                    <div class="terminal-text">We are always open to new ideas and collaborations.</div>
+                                    <br>
+                                </div>
+
+                                <!-- 현재 명령어 입력 라인 -->
+                                <div class="terminal-output" id="current-line">
+                                    <div class="terminal-prompt">user@offby1e:~$</div>
+                                    <input type="text" id="home-terminal-input" class="terminal-command bg-transparent border-none outline-none flex-1 ml-2" placeholder="Type a command...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <!-- 핵심 철학 그리드 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- 카드 1: Philosophy -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in">
-                        <h3 class="text-2xl font-bold text-white mb-2">/philosophy</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            Finding Uniqueness in Imperfection.
-                            <br><br>
-                            We believe that the courage to not fear mistakes and the wisdom to use errors as new starting points are the keys to true innovation.
-                        </div>
-                    </div>
-                    <!-- 카드 2: Identity -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-100">
-                        <h3 class="text-2xl font-bold text-white mb-2">/identity</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            The Meaning of the Slash (/), One, and Dot (•).
-                            <br><br>
-                            Each element in our logo tells a part of our deep-rooted philosophy, a visual embodiment of our brand.
-                        </div>
-                    </div>
-                    <!-- 카드 3: Projects -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-200">
-                        <h3 class="text-2xl font-bold text-white mb-2">/projects</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            A Record of Our Journey.
-                            <br><br>
-                            We reject perfection and seek new possibilities in small errors.
-                        </div>
-                    </div>
-                    <!-- 카드 4: About Us (새롭게 추가) -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-300">
-                        <h3 class="text-2xl font-bold text-white mb-2">/about</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            Our Story.
-                            <br><br>
-                            offby1e was born from a realization that a small difference can create an extraordinary identity.
-                        </div>
-                    </div>
-                    <!-- 카드 5: Team (새롭게 추가) -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-400">
-                        <h3 class="text-2xl font-bold text-white mb-2">/team</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            The Creators.
-                            <br><br>
-                            We are a collective of designers and developers, united by a passion for continuous exploration.
-                        </div>
-                    </div>
-                    <!-- 카드 6: Contact -->
-                    <div class="glass-card p-8 rounded-2xl hover-reveal-container hover:-translate-y-1 fade-in delay-500">
-                        <h3 class="text-2xl font-bold text-white mb-2">/contact</h3>
-                        <div class="hover-reveal-content text-gray-400">
-                            Tell us about your "1".
-                            <br><br>
-                            We are always open to new ideas and collaborations.
-                        </div>
+
+                <!-- 명령어 힌트 -->
+                <div class="mt-6 text-center">
+                    <div class="command-hint text-gray-500">
+                        Available commands: help, clear, about, projects, team, contact, exit, neofetch, status, fortune
                     </div>
                 </div>
-            </section>
+            </div>
+
+            <!-- 터미널 알림 -->
+            <div id="terminal-notification" class="terminal-notification">
+                <div class="text-sm font-semibold">System Notification</div>
+                <div id="notification-message" class="text-xs text-gray-300 mt-1"></div>
+            </div>
         </div>
     </div>
     
@@ -268,21 +923,95 @@
         const messageBox = document.getElementById('message-box');
         const messageText = document.getElementById('message-text');
         const closeMessageBtn = document.getElementById('close-message');
+        const homeTerminalInput = document.getElementById('home-terminal-input');
+        const terminalContent = document.querySelector('.terminal-content');
+        const terminalNotification = document.getElementById('terminal-notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const loadingDots = document.getElementById('loading-dots');
+        const particlesContainer = document.getElementById('particles');
         
+        // 명령어 히스토리와 자동완성
+        let commandHistory = [];
+        let historyIndex = -1;
+        let currentDirectory = '~';
+        
+        // 사용 가능한 명령어 목록
+        const availableCommands = [
+            'help', 'clear', 'about', 'projects', 'team', 'contact', 'exit',
+            'neofetch', 'status', 'fortune', 'ls', 'ls -la', 'cat', 'cd',
+            'pwd', 'whoami', 'date', 'uptime', 'uname -a', 'df -h',
+            'cmatrix', 'sl', 'yes', 'telnet', 'echo', 'history'
+        ];
+
         // 터미널 타이핑 애니메이션
         let fullText = 'authenticating...';
         let charIndex = 0;
 
+        // 파티클 생성 함수
+        function createParticles() {
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // 랜덤 위치와 애니메이션 지연
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                
+                particlesContainer.appendChild(particle);
+                
+                // 애니메이션 완료 후 파티클 제거
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 10000);
+            }
+        }
+
+        // 파티클 지속 생성
+        function startParticleSystem() {
+            createParticles();
+            setInterval(createParticles, 3000);
+        }
+
+        // 개선된 타이핑 애니메이션
         function typeEffect() {
             if (charIndex < fullText.length) {
                 typedTextSpan.textContent += fullText.charAt(charIndex);
                 charIndex++;
                 setTimeout(typeEffect, 100);
             } else {
-                // Done. 문구를 삭제하고 커서만 표시
-                terminalInput.focus();
-                typedTextSpan.classList.add('cursor');
+                // 타이핑 완료 후 잠시 대기
+                setTimeout(() => {
+                    // 텍스트를 지우고 커서만 표시
+                    typedTextSpan.textContent = '';
+                    typedTextSpan.classList.add('cursor');
+                    terminalInput.focus();
+                }, 1000);
             }
+        }
+
+        // 로딩 애니메이션 표시/숨김
+        function showLoading(show) {
+            if (show) {
+                loadingDots.style.display = 'flex';
+                typedTextSpan.textContent = '';
+            } else {
+                loadingDots.style.display = 'none';
+            }
+        }
+
+        // 터미널 알림 표시 함수
+        function showNotification(message, duration = 3000) {
+            notificationMessage.textContent = message;
+            terminalNotification.classList.add('show');
+            
+            setTimeout(() => {
+                terminalNotification.classList.remove('show');
+            }, duration);
         }
 
         // 커스텀 메시지 박스 표시 함수
@@ -294,7 +1023,11 @@
         // 커스텀 메시지 박스 닫기
         closeMessageBtn.addEventListener('click', () => {
             messageBox.classList.remove('show');
-            terminalInput.focus();
+            if (terminalContainer.classList.contains('hidden')) {
+                homeTerminalInput.focus();
+            } else {
+                terminalInput.focus();
+            }
         });
 
         // 터미널 명령 처리
@@ -302,12 +1035,458 @@
             if (e.key === 'Enter') {
                 const command = e.target.value.toLowerCase().trim();
                 if (command === 'access') {
-                    grantAccess();
+                    // 로딩 애니메이션 표시
+                    showLoading(true);
+                    
+                    // 잠시 후 접근 허용
+                    setTimeout(() => {
+                        showLoading(false);
+                        grantAccess();
+                    }, 1500);
                 } else {
                     showMessage('Command not recognized. Please type "access" to proceed.');
                     e.target.value = '';
                 }
             }
+        });
+
+        // 홈 터미널 명령 처리
+        homeTerminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = e.target.value.trim();
+                if (command) {
+                    executeCommand(command);
+                    e.target.value = '';
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateHistory('up');
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateHistory('down');
+            } else if (e.key === 'Tab') {
+                e.preventDefault();
+                autocomplete();
+            }
+        });
+
+        // 명령어 히스토리 네비게이션
+        function navigateHistory(direction) {
+            if (commandHistory.length === 0) return;
+            
+            if (direction === 'up') {
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                }
+            } else {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                } else if (historyIndex === 0) {
+                    historyIndex = -1;
+                    homeTerminalInput.value = '';
+                    return;
+                }
+            }
+            
+            homeTerminalInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+        }
+
+        // 자동완성
+        function autocomplete() {
+            const input = homeTerminalInput.value.toLowerCase();
+            const suggestions = availableCommands.filter(cmd => 
+                cmd.startsWith(input) && cmd !== input
+            );
+            
+            if (suggestions.length > 0) {
+                homeTerminalInput.value = suggestions[0];
+                homeTerminalInput.setSelectionRange(input.length, suggestions[0].length);
+            }
+        }
+
+        // 명령어 실행
+        function executeCommand(command) {
+            // 명령어를 히스토리에 추가
+            commandHistory.push(command);
+            historyIndex = -1;
+            
+            // 명령어 출력
+            addCommandOutput(command);
+            
+            // 명령어 처리
+            processCommand(command);
+        }
+
+        // 명령어 출력 추가
+        function addCommandOutput(command) {
+            const outputDiv = document.createElement('div');
+            outputDiv.className = 'terminal-output fade-in';
+            outputDiv.innerHTML = `
+                <div class="terminal-prompt">user@offby1e:${currentDirectory}$</div>
+                <div class="terminal-command">${command}</div>
+            `;
+            
+            terminalContent.insertBefore(outputDiv, document.getElementById('current-line'));
+            setTimeout(() => {
+                outputDiv.classList.add('is-visible');
+            }, 100);
+        }
+
+        // 명령어 처리 함수
+        function processCommand(command) {
+            const outputDiv = document.createElement('div');
+            outputDiv.className = 'terminal-output fade-in';
+            
+            let output = '';
+            const args = command.split(' ');
+            const cmd = args[0].toLowerCase();
+            
+            switch(cmd) {
+                case 'help':
+                    output = `
+                        <div class="terminal-prompt">Available Commands:</div>
+                        <div class="terminal-text">help     - Show this help message</div>
+                        <div class="terminal-text">clear    - Clear the terminal</div>
+                        <div class="terminal-text">about    - Show about information</div>
+                        <div class="terminal-text">projects - Show project information</div>
+                        <div class="terminal-text">team     - Show team information</div>
+                        <div class="terminal-text">contact  - Show contact information</div>
+                        <div class="terminal-text">exit     - Return to intro screen</div>
+                        <div class="terminal-text">neofetch - Show system information</div>
+                        <div class="terminal-text">status   - Show system status</div>
+                        <div class="terminal-text">fortune  - Show random fortune</div>
+                        <div class="terminal-text">ls       - List files</div>
+                        <div class="terminal-text">cat      - Display file contents</div>
+                        <div class="terminal-text">cd       - Change directory</div>
+                        <div class="terminal-text">pwd      - Show current directory</div>
+                        <div class="terminal-text">history  - Show command history</div>
+                    `;
+                    break;
+                    
+                case 'clear':
+                    // 터미널 내용을 모두 지우고 새로운 입력 라인만 표시
+                    const outputs = terminalContent.querySelectorAll('.terminal-output:not(#current-line)');
+                    outputs.forEach(output => output.remove());
+                    showNotification('Terminal cleared');
+                    return;
+                    
+                case 'about':
+                    output = `
+                        <div class="terminal-prompt">About offby1e:</div>
+                        <div class="terminal-text">offby1e was born from a realization that a small difference can create an extraordinary identity.</div>
+                        <div class="terminal-text">We celebrate imperfections and transform them into unique creations.</div>
+                        <div class="terminal-text">Our philosophy is finding uniqueness in imperfection.</div>
+                        <div class="terminal-text">Founded: 2024</div>
+                        <div class="terminal-text">Mission: To prove that one small error can change everything.</div>
+                    `;
+                    break;
+                    
+                case 'projects':
+                    output = `
+                        <div class="terminal-prompt">Projects:</div>
+                        <div class="terminal-text">We reject perfection and seek new possibilities in small errors.</div>
+                        <div class="terminal-text">Each project is a record of our journey towards innovation.</div>
+                        <div class="terminal-text">Current Projects:</div>
+                        <div class="terminal-text">  • Terminal Interface v2.1.0 [ACTIVE]</div>
+                        <div class="terminal-text">  • Error-Driven Design System [PLANNING]</div>
+                        <div class="terminal-text">  • Imperfection Gallery [DEVELOPMENT]</div>
+                        <div class="terminal-text">More details coming soon...</div>
+                    `;
+                    break;
+                    
+                case 'team':
+                    output = `
+                        <div class="terminal-prompt">Team:</div>
+                        <div class="terminal-text">We are a collective of designers and developers, united by a passion for continuous exploration.</div>
+                        <div class="terminal-text">Our team embraces the philosophy of learning from mistakes.</div>
+                        <div class="terminal-text">Team Members:</div>
+                        <div class="terminal-text">  • Creative Director [ONLINE]</div>
+                        <div class="terminal-text">  • Lead Developer [ONLINE]</div>
+                        <div class="terminal-text">  • UX Designer [BUSY]</div>
+                        <div class="terminal-text">  • Innovation Specialist [ONLINE]</div>
+                    `;
+                    break;
+                    
+                case 'contact':
+                    output = `
+                        <div class="terminal-prompt">Contact:</div>
+                        <div class="terminal-text">Tell us about your "1".</div>
+                        <div class="terminal-text">We are always open to new ideas and collaborations.</div>
+                        <div class="terminal-text">Email: hello@offby1e.com</div>
+                        <div class="terminal-text">GitHub: github.com/offby1e</div>
+                        <div class="terminal-text">Twitter: @offby1e</div>
+                        <div class="terminal-text">Discord: discord.gg/offby1e</div>
+                    `;
+                    break;
+
+                case 'neofetch':
+                    output = `
+                        <div class="terminal-text">                    offby1e@terminal</div>
+                        <div class="terminal-text">                   ------------------</div>
+                        <div class="terminal-text">OS: offby1e Terminal v2.1.0</div>
+                        <div class="terminal-text">Kernel: Philosophy 5.4.0</div>
+                        <div class="terminal-text">Uptime: 24 days, 7 hours</div>
+                        <div class="terminal-text">Packages: 1337 (imperfection)</div>
+                        <div class="terminal-text">Shell: /bin/innovation</div>
+                        <div class="terminal-text">Terminal: /dev/creativity</div>
+                        <div class="terminal-text">CPU: Unique Identity x1</div>
+                        <div class="terminal-text">Memory: 8GB of possibilities</div>
+                        <div class="terminal-text">Disk: 1TB of errors</div>
+                    `;
+                    break;
+
+                case 'status':
+                    output = `
+                        <div class="terminal-prompt">System Status:</div>
+                        <div class="terminal-text">🟢 Terminal: Online</div>
+                        <div class="terminal-text">🟢 Database: Connected</div>
+                        <div class="terminal-text">🟡 API: Limited</div>
+                        <div class="terminal-text">🟢 Security: Active</div>
+                        <div class="terminal-text">🟢 Innovation: Running</div>
+                        <div class="terminal-text">System Uptime: 24 days, 7 hours, 32 minutes</div>
+                        <div class="terminal-text">Last Error: 2 hours ago (successfully recovered)</div>
+                    `;
+                    break;
+
+                case 'fortune':
+                    const fortunes = [
+                        "A bug in the hand is better than one as yet undiscovered.",
+                        "The best error messages are the ones you never see.",
+                        "In programming, the only constant is change.",
+                        "Debugging is twice as hard as writing the code in the first place.",
+                        "The most damaging phrase in the language is 'We've always done it this way.'",
+                        "One small error can lead to one great discovery.",
+                        "Perfection is the enemy of innovation.",
+                        "The best code is no code at all."
+                    ];
+                    const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+                    output = `<div class="terminal-text">"${randomFortune}"</div>`;
+                    break;
+
+                case 'ls':
+                    if (args[1] === '-la') {
+                        output = `
+                            <div class="terminal-text">total 8</div>
+                            <div class="terminal-text">drwxr-xr-x  2 user user 4096 Dec 20 10:00 .</div>
+                            <div class="terminal-text">drwxr-xr-x  2 user user 4096 Dec 20 10:00 ..</div>
+                            <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 philosophy</div>
+                            <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 identity</div>
+                            <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 projects</div>
+                            <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 about</div>
+                            <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 team</div>
+                            <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 contact</div>
+                            <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 .hidden</div>
+                        `;
+                    } else {
+                        output = `
+                            <div class="terminal-text">philosophy  identity  projects  about  team  contact</div>
+                        `;
+                    }
+                    break;
+
+                case 'cat':
+                    if (args[1]) {
+                        switch(args[1]) {
+                            case 'philosophy':
+                                output = `
+                                    <div class="terminal-text">Finding Uniqueness in Imperfection.</div>
+                                    <div class="terminal-text">We believe that the courage to not fear mistakes and the wisdom to use errors as new starting points are the keys to true innovation.</div>
+                                `;
+                                break;
+                            case 'identity':
+                                output = `
+                                    <div class="terminal-text">The Meaning of the Slash (/), One, and Dot (•).</div>
+                                    <div class="terminal-text">Each element in our logo tells a part of our deep-rooted philosophy, a visual embodiment of our brand.</div>
+                                `;
+                                break;
+                            case 'projects':
+                                output = `
+                                    <div class="terminal-text">A Record of Our Journey.</div>
+                                    <div class="terminal-text">We reject perfection and seek new possibilities in small errors.</div>
+                                `;
+                                break;
+                            case 'about':
+                                output = `
+                                    <div class="terminal-text">Our Story.</div>
+                                    <div class="terminal-text">offby1e was born from a realization that a small difference can create an extraordinary identity.</div>
+                                `;
+                                break;
+                            case 'team':
+                                output = `
+                                    <div class="terminal-text">The Creators.</div>
+                                    <div class="terminal-text">We are a collective of designers and developers, united by a passion for continuous exploration.</div>
+                                `;
+                                break;
+                            case 'contact':
+                                output = `
+                                    <div class="terminal-text">Tell us about your "1".</div>
+                                    <div class="terminal-text">We are always open to new ideas and collaborations.</div>
+                                `;
+                                break;
+                            default:
+                                output = `<div class="terminal-error">cat: ${args[1]}: No such file or directory</div>`;
+                        }
+                    } else {
+                        output = `<div class="terminal-error">cat: missing file operand</div>`;
+                    }
+                    break;
+
+                case 'cd':
+                    if (args[1] === '..') {
+                        currentDirectory = '~';
+                        output = `<div class="terminal-text">Changed directory to home</div>`;
+                    } else if (args[1]) {
+                        currentDirectory = args[1];
+                        output = `<div class="terminal-text">Changed directory to ${args[1]}</div>`;
+                    } else {
+                        output = `<div class="terminal-text">Current directory: ${currentDirectory}</div>`;
+                    }
+                    break;
+
+                case 'pwd':
+                    output = `<div class="terminal-text">/home/user/${currentDirectory}</div>`;
+                    break;
+
+                case 'whoami':
+                    output = `<div class="terminal-text">offby1e - The One Difference That Changes The World</div>`;
+                    break;
+
+                case 'date':
+                    const now = new Date();
+                    output = `<div class="terminal-text">${now.toLocaleString()}</div>`;
+                    break;
+
+                case 'uptime':
+                    output = `
+                        <div class="terminal-text">up 24 days, 7 hours, 32 minutes</div>
+                        <div class="terminal-text">1 user</div>
+                        <div class="terminal-text">load average: 0.52, 0.58, 0.55</div>
+                    `;
+                    break;
+
+                case 'uname':
+                    if (args[1] === '-a') {
+                        output = `<div class="terminal-text">offby1e Philosophy 5.4.0 #1 SMP Mon Dec 20 10:00:00 UTC 2024 x86_64 GNU/Linux</div>`;
+                    } else {
+                        output = `<div class="terminal-text">offby1e</div>`;
+                    }
+                    break;
+
+                case 'df':
+                    if (args[1] === '-h') {
+                        output = `
+                            <div class="terminal-text">Filesystem      Size  Used Avail Use% Mounted on</div>
+                            <div class="terminal-text">/dev/errors     1.0T  856G  164G  84% /</div>
+                            <div class="terminal-text">/dev/ideas     500G  234G  266G  47% /home</div>
+                            <div class="terminal-text">/dev/creativity 250G  189G   61G  76% /usr</div>
+                        `;
+                    } else {
+                        output = `<div class="terminal-error">df: invalid option -- '${args[1] || ''}'</div>`;
+                    }
+                    break;
+
+                case 'history':
+                    output = `<div class="terminal-text">${commandHistory.slice(-10).map((cmd, i) => `${commandHistory.length - 10 + i + 1}  ${cmd}`).join('\n')}</div>`;
+                    break;
+
+                case 'cmatrix':
+                    output = `
+                        <div class="terminal-text">Matrix mode activated...</div>
+                        <div class="terminal-text">01010101 10101010 01010101 10101010</div>
+                        <div class="terminal-text">10101010 01010101 10101010 01010101</div>
+                        <div class="terminal-text">01010101 10101010 01010101 10101010</div>
+                        <div class="terminal-text">Matrix simulation complete.</div>
+                    `;
+                    showNotification('Matrix mode simulated');
+                    break;
+
+                case 'sl':
+                    output = `
+                        <div class="terminal-text">🚂</div>
+                        <div class="terminal-text">You've been SL'd! (steam locomotive)</div>
+                        <div class="terminal-text">This is a fun command that shows a train.</div>
+                    `;
+                    break;
+
+                case 'yes':
+                    output = `
+                        <div class="terminal-text">y</div>
+                        <div class="terminal-text">y</div>
+                        <div class="terminal-text">y</div>
+                        <div class="terminal-text">y</div>
+                        <div class="terminal-text">y</div>
+                        <div class="terminal-text">Command interrupted by user</div>
+                    `;
+                    break;
+
+                case 'telnet':
+                    output = `
+                        <div class="terminal-text">Trying 127.0.0.1...</div>
+                        <div class="terminal-text">Connected to localhost.</div>
+                        <div class="terminal-text">Escape character is '^]'.</div>
+                        <div class="terminal-text">Connection closed by foreign host.</div>
+                    `;
+                    break;
+
+                case 'echo':
+                    const echoText = args.slice(1).join(' ');
+                    output = `<div class="terminal-text">${echoText || ''}</div>`;
+                    break;
+                    
+                case 'exit':
+                    // 인트로 화면으로 돌아가기
+                    contentContainer.classList.add('hidden');
+                    terminalContainer.classList.remove('hidden');
+                    terminalInput.focus();
+                    showNotification('Returning to intro screen');
+                    return;
+                    
+                default:
+                    output = `
+                        <div class="terminal-error">Command not found: ${cmd}</div>
+                        <div class="terminal-text">Type 'help' to see available commands</div>
+                    `;
+                    break;
+            }
+            
+            outputDiv.innerHTML = output;
+            terminalContent.insertBefore(outputDiv, document.getElementById('current-line'));
+            
+            // 스크롤을 맨 아래로
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+            
+            // 페이드 인 애니메이션 적용
+            setTimeout(() => {
+                outputDiv.classList.add('is-visible');
+            }, 100);
+        }
+
+        // 사이드바 아이템 클릭 이벤트
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const command = this.getAttribute('data-command');
+                    if (command) {
+                        homeTerminalInput.value = command;
+                        homeTerminalInput.focus();
+                    }
+                });
+            });
+
+            // 탭 클릭 이벤트
+            const tabs = document.querySelectorAll('.terminal-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 모든 탭에서 active 클래스 제거
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // 클릭된 탭에 active 클래스 추가
+                    this.classList.add('active');
+                    
+                    const tabName = this.getAttribute('data-tab');
+                    showNotification(`Switched to ${tabName} tab`);
+                });
+            });
         });
 
         // 로고 클릭 시 애니메이션 및 메시지 표시
@@ -339,11 +1518,21 @@
             document.querySelectorAll('.fade-in').forEach(element => {
                 observer.observe(element);
             });
+            
+            // 홈 터미널에 포커스
+            setTimeout(() => {
+                homeTerminalInput.focus();
+                showNotification('Welcome to offby1e terminal!');
+            }, 500);
         }
         
         // 페이지 로드 후 애니메이션 시작
         window.onload = function() {
-            typeEffect(); 
+            // 파티클 시스템 시작
+            startParticleSystem();
+            
+            // 타이핑 애니메이션 시작
+            setTimeout(typeEffect, 1000);
         };
     </script>
 </body>
