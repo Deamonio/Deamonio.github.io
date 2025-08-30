@@ -277,6 +277,38 @@
             color: var(--brand-blue);
         }
 
+        .sidebar-item.disabled {
+            color: #6b7280; /* gray-500 */
+            cursor: not-allowed;
+        }
+
+        .recent-commands-list {
+            max-height: 150px; /* 최대 높이 */
+            overflow-y: auto; /* 스크롤 가능 */
+            padding-right: 5px; /* 스크롤바 여백 */
+        }
+
+        /* 탭 콘텐츠 스타일 */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 탭 전환 애니메이션 */
+        .tab-content {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .tab-content.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .terminal-main {
             flex: 1;
             padding: 1rem;
@@ -735,155 +767,249 @@
 
                     <!-- 터미널 탭 -->
                     <div class="terminal-tabs">
-                        <button class="terminal-tab active" data-tab="main">Main</button>
-                        <button class="terminal-tab" data-tab="projects">Projects</button>
-                        <button class="terminal-tab" data-tab="about">About</button>
-                        <button class="terminal-tab" data-tab="contact">Contact</button>
+                        <button class="terminal-tab active" data-tab="main">🏠 Main Terminal</button>
+                        <button class="terminal-tab" data-tab="projects">📁 Projects</button>
+                        <button class="terminal-tab" data-tab="about">ℹ️ About</button>
+                        <button class="terminal-tab" data-tab="contact">📧 Contact</button>
+                        <button class="terminal-tab" data-tab="help">❓ Help</button>
                     </div>
                     
                     <!-- 터미널 레이아웃 -->
                     <div class="terminal-layout flex">
                         <!-- 사이드바 -->
                         <div class="terminal-sidebar">
+                            <!-- Quick Commands 섹션 -->
                             <div class="sidebar-section">
-                                <div class="sidebar-title">Quick Commands</div>
+                                <div class="sidebar-title">🚀 Quick Commands</div>
                                 <div class="sidebar-item" data-command="help">help</div>
                                 <div class="sidebar-item" data-command="status">status</div>
                                 <div class="sidebar-item" data-command="neofetch">neofetch</div>
                                 <div class="sidebar-item" data-command="fortune">fortune</div>
+                                <div class="sidebar-item" data-command="clear">clear</div>
                             </div>
                             
+                            <!-- File System 섹션 -->
                             <div class="sidebar-section">
-                                <div class="sidebar-title">Navigation</div>
+                                <div class="sidebar-title">📁 File System</div>
+                                <div class="sidebar-item" data-command="ls">ls</div>
                                 <div class="sidebar-item" data-command="ls -la">ls -la</div>
+                                <div class="sidebar-item" data-command="pwd">pwd</div>
                                 <div class="sidebar-item" data-command="cd projects">cd projects</div>
                                 <div class="sidebar-item" data-command="cd about">cd about</div>
                                 <div class="sidebar-item" data-command="cd ..">cd ..</div>
                             </div>
                             
+                            <!-- File Contents 섹션 -->
                             <div class="sidebar-section">
-                                <div class="sidebar-title">System Info</div>
+                                <div class="sidebar-title">📄 File Contents</div>
+                                <div class="sidebar-item" data-command="cat philosophy">cat philosophy</div>
+                                <div class="sidebar-item" data-command="cat identity">cat identity</div>
+                                <div class="sidebar-item" data-command="cat projects">cat projects</div>
+                                <div class="sidebar-item" data-command="cat about">cat about</div>
+                                <div class="sidebar-item" data-command="cat team">cat team</div>
+                                <div class="sidebar-item" data-command="cat contact">cat contact</div>
+                            </div>
+                            
+                            <!-- System Info 섹션 -->
+                            <div class="sidebar-section">
+                                <div class="sidebar-title">💻 System Info</div>
                                 <div class="sidebar-item" data-command="uname -a">uname -a</div>
                                 <div class="sidebar-item" data-command="date">date</div>
                                 <div class="sidebar-item" data-command="uptime">uptime</div>
                                 <div class="sidebar-item" data-command="df -h">df -h</div>
+                                <div class="sidebar-item" data-command="whoami">whoami</div>
                             </div>
                             
+                            <!-- Fun Commands 섹션 -->
                             <div class="sidebar-section">
-                                <div class="sidebar-title">Fun Commands</div>
+                                <div class="sidebar-title">🎮 Fun Commands</div>
                                 <div class="sidebar-item" data-command="cmatrix">cmatrix</div>
                                 <div class="sidebar-item" data-command="sl">sl</div>
                                 <div class="sidebar-item" data-command="yes">yes</div>
                                 <div class="sidebar-item" data-command="telnet">telnet</div>
+                                <div class="sidebar-item" data-command="echo Hello World">echo Hello World</div>
+                            </div>
+                            
+                            <!-- Navigation 섹션 -->
+                            <div class="sidebar-section">
+                                <div class="sidebar-title">🧭 Navigation</div>
+                                <div class="sidebar-item" data-command="history">history</div>
+                                <div class="sidebar-item" data-command="exit">exit</div>
+                                <div class="sidebar-item" data-command="clear">clear</div>
+                            </div>
+                            
+                            <!-- Recent Commands 섹션 -->
+                            <div class="sidebar-section">
+                                <div class="sidebar-title">⏰ Recent Commands</div>
+                                <div id="recent-commands-list" class="recent-commands-list">
+                                    <div class="sidebar-item disabled">No recent commands</div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- 메인 터미널 영역 -->
                         <div class="terminal-main">
-                            <!-- 터미널 콘텐츠 -->
-                            <div class="terminal-content p-6 max-h-[70vh] overflow-y-auto">
-                                <!-- 웰컴 메시지 -->
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">Welcome to offby1e terminal v2.1.0</div>
-                                    <div class="terminal-text">Type 'help' to see available commands</div>
-                                    <div class="terminal-text">Type 'clear' to clear the terminal</div>
-                                    <div class="terminal-text">Use Tab for autocomplete, ↑↓ for command history</div>
-                                    <br>
-                                </div>
+                            <!-- Main Terminal 탭 -->
+                            <div class="tab-content active" id="main-tab">
+                                <!-- 터미널 콘텐츠 -->
+                                <div class="terminal-content p-6 max-h-[70vh] overflow-y-auto">
+                                    <!-- 웰컴 메시지 -->
+                                    <div class="terminal-output fade-in">
+                                        <div class="terminal-prompt">Welcome to offby1e terminal v2.1.0</div>
+                                        <div class="terminal-text">Type 'help' to see available commands</div>
+                                        <div class="terminal-text">Type 'clear' to clear the terminal</div>
+                                        <div class="terminal-text">Use Tab for autocomplete, ↑↓ for command history</div>
+                                        <br>
+                                    </div>
 
-                                <!-- 초기 명령어 출력 -->
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">whoami</div>
-                                    <div class="terminal-text">offby1e - The One Difference That Changes The World</div>
-                                    <br>
-                                </div>
+                                    <!-- 초기 명령어 출력 -->
+                                    <div class="terminal-output fade-in">
+                                        <div class="terminal-prompt">user@offby1e:~$</div>
+                                        <div class="terminal-command">whoami</div>
+                                        <div class="terminal-text">offby1e - The One Difference That Changes The World</div>
+                                        <br>
+                                    </div>
 
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">neofetch</div>
-                                    <div class="terminal-text">                    offby1e@terminal</div>
-                                    <div class="terminal-text">                   ------------------</div>
-                                    <div class="terminal-text">OS: offby1e Terminal v2.1.0</div>
-                                    <div class="terminal-text">Kernel: Philosophy 5.4.0</div>
-                                    <div class="terminal-text">Uptime: 24 days, 7 hours</div>
-                                    <div class="terminal-text">Packages: 1337 (imperfection)</div>
-                                    <div class="terminal-text">Shell: /bin/innovation</div>
-                                    <div class="terminal-text">Terminal: /dev/creativity</div>
-                                    <div class="terminal-text">CPU: Unique Identity x1</div>
-                                    <div class="terminal-text">Memory: 8GB of possibilities</div>
-                                    <div class="terminal-text">Disk: 1TB of errors</div>
-                                    <br>
-                                </div>
+                                    <div class="terminal-output fade-in">
+                                        <div class="terminal-prompt">user@offby1e:~$</div>
+                                        <div class="terminal-command">neofetch</div>
+                                        <div class="terminal-text">                    offby1e@terminal</div>
+                                        <div class="terminal-text">                   ------------------</div>
+                                        <div class="terminal-text">OS: offby1e Terminal v2.1.0</div>
+                                        <div class="terminal-text">Kernel: Philosophy 5.4.0</div>
+                                        <div class="terminal-text">Uptime: 24 days, 7 hours</div>
+                                        <div class="terminal-text">Packages: 1337 (imperfection)</div>
+                                        <div class="terminal-text">Shell: /bin/innovation</div>
+                                        <div class="terminal-text">Terminal: /dev/creativity</div>
+                                        <div class="terminal-text">CPU: Unique Identity x1</div>
+                                        <div class="terminal-text">Memory: 8GB of possibilities</div>
+                                        <div class="terminal-text">Disk: 1TB of errors</div>
+                                        <br>
+                                    </div>
 
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">ls -la</div>
-                                    <div class="terminal-text">total 8</div>
-                                    <div class="terminal-text">drwxr-xr-x  2 user user 4096 Dec 20 10:00 .</div>
-                                    <div class="terminal-text">drwxr-xr-x  2 user user 4096 Dec 20 10:00 ..</div>
-                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 philosophy</div>
-                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 identity</div>
-                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 projects</div>
-                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 about</div>
-                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 team</div>
-                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 contact</div>
-                                    <div class="terminal-text">-rw-r--r--  1 user user    0 Dec 20 10:00 .hidden</div>
-                                    <br>
+                                    <!-- 현재 명령어 입력 라인 -->
+                                    <div class="terminal-output" id="current-line">
+                                        <div class="terminal-prompt">user@offby1e:~$</div>
+                                        <input type="text" id="home-terminal-input" class="terminal-command bg-transparent border-none outline-none flex-1 ml-2" placeholder="Type a command...">
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">cat philosophy</div>
-                                    <div class="terminal-text">Finding Uniqueness in Imperfection.</div>
-                                    <div class="terminal-text">We believe that the courage to not fear mistakes and the wisdom to use errors as new starting points are the keys to true innovation.</div>
-                                    <br>
+                            <!-- Projects 탭 -->
+                            <div class="tab-content" id="projects-tab">
+                                <div class="terminal-content p-6 max-h-[70vh] overflow-y-auto">
+                                    <div class="terminal-output fade-in">
+                                        <div class="terminal-prompt">Projects Directory</div>
+                                        <div class="terminal-text">📁 Current Projects:</div>
+                                        <br>
+                                        <div class="terminal-text">🚀 Terminal Interface v2.1.0 [ACTIVE]</div>
+                                        <div class="terminal-text">   - A fully interactive terminal experience</div>
+                                        <div class="terminal-text">   - Command history and autocomplete</div>
+                                        <div class="terminal-text">   - Real-time system information</div>
+                                        <br>
+                                        <div class="terminal-text">🎨 Error-Driven Design System [PLANNING]</div>
+                                        <div class="terminal-text">   - Design principles based on imperfection</div>
+                                        <div class="terminal-text">   - Embracing errors as design elements</div>
+                                        <div class="terminal-text">   - Innovation through mistakes</div>
+                                        <br>
+                                        <div class="terminal-text">🖼️ Imperfection Gallery [DEVELOPMENT]</div>
+                                        <div class="terminal-text">   - Showcase of beautiful imperfections</div>
+                                        <div class="terminal-text">   - Community-driven content</div>
+                                        <div class="terminal-text">   - Celebrating uniqueness</div>
+                                        <br>
+                                        <div class="terminal-text">Type 'cat projects' in the main terminal for more details.</div>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">cat identity</div>
-                                    <div class="terminal-text">The Meaning of the Slash (/), One, and Dot (•).</div>
-                                    <div class="terminal-text">Each element in our logo tells a part of our deep-rooted philosophy, a visual embodiment of our brand.</div>
-                                    <br>
+                            <!-- About 탭 -->
+                            <div class="tab-content" id="about-tab">
+                                <div class="terminal-content p-6 max-h-[70vh] overflow-y-auto">
+                                    <div class="terminal-output fade-in">
+                                        <div class="terminal-prompt">About offby1e</div>
+                                        <div class="terminal-text">🌟 Our Story:</div>
+                                        <br>
+                                        <div class="terminal-text">offby1e was born from a realization that a small difference can create an extraordinary identity.</div>
+                                        <div class="terminal-text">We celebrate imperfections and transform them into unique creations.</div>
+                                        <br>
+                                        <div class="terminal-text">🎯 Our Philosophy:</div>
+                                        <div class="terminal-text">Finding Uniqueness in Imperfection</div>
+                                        <div class="terminal-text">We believe that the courage to not fear mistakes and the wisdom to use errors as new starting points are the keys to true innovation.</div>
+                                        <br>
+                                        <div class="terminal-text">🏗️ Founded: 2024</div>
+                                        <div class="terminal-text">🎯 Mission: To prove that one small error can change everything</div>
+                                        <div class="terminal-text">💡 Vision: A world where imperfections are celebrated</div>
+                                        <br>
+                                        <div class="terminal-text">Type 'cat about' in the main terminal for more details.</div>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">cat projects</div>
-                                    <div class="terminal-text">A Record of Our Journey.</div>
-                                    <div class="terminal-text">We reject perfection and seek new possibilities in small errors.</div>
-                                    <br>
+                            <!-- Contact 탭 -->
+                            <div class="tab-content" id="contact-tab">
+                                <div class="terminal-content p-6 max-h-[70vh] overflow-y-auto">
+                                    <div class="terminal-output fade-in">
+                                        <div class="terminal-prompt">Contact Information</div>
+                                        <div class="terminal-text">📧 Tell us about your "1":</div>
+                                        <br>
+                                        <div class="terminal-text">We are always open to new ideas and collaborations.</div>
+                                        <div class="terminal-text">Let's create something unique together!</div>
+                                        <br>
+                                        <div class="terminal-text">📮 Email: hello@offby1e.com</div>
+                                        <div class="terminal-text">🐙 GitHub: github.com/offby1e</div>
+                                        <div class="terminal-text">🐦 Twitter: @offby1e</div>
+                                        <div class="terminal-text">🎮 Discord: discord.gg/offby1e</div>
+                                        <br>
+                                        <div class="terminal-text">💬 Collaboration Opportunities:</div>
+                                        <div class="terminal-text">- Design Projects</div>
+                                        <div class="terminal-text">- Development Work</div>
+                                        <div class="terminal-text">- Creative Ideas</div>
+                                        <div class="terminal-text">- Innovation Projects</div>
+                                        <br>
+                                        <div class="terminal-text">Type 'cat contact' in the main terminal for more details.</div>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">cat about</div>
-                                    <div class="terminal-text">Our Story.</div>
-                                    <div class="terminal-text">offby1e was born from a realization that a small difference can create an extraordinary identity.</div>
-                                    <br>
-                                </div>
-
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">cat team</div>
-                                    <div class="terminal-text">The Creators.</div>
-                                    <div class="terminal-text">We are a collective of designers and developers, united by a passion for continuous exploration.</div>
-                                    <br>
-                                </div>
-
-                                <div class="terminal-output fade-in">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <div class="terminal-command">cat contact</div>
-                                    <div class="terminal-text">Tell us about your "1".</div>
-                                    <div class="terminal-text">We are always open to new ideas and collaborations.</div>
-                                    <br>
-                                </div>
-
-                                <!-- 현재 명령어 입력 라인 -->
-                                <div class="terminal-output" id="current-line">
-                                    <div class="terminal-prompt">user@offby1e:~$</div>
-                                    <input type="text" id="home-terminal-input" class="terminal-command bg-transparent border-none outline-none flex-1 ml-2" placeholder="Type a command...">
+                            <!-- Help 탭 -->
+                            <div class="tab-content" id="help-tab">
+                                <div class="terminal-content p-6 max-h-[70vh] overflow-y-auto">
+                                    <div class="terminal-output fade-in">
+                                        <div class="terminal-prompt">Help & Documentation</div>
+                                        <div class="terminal-text">📚 Available Commands:</div>
+                                        <br>
+                                        <div class="terminal-text">🔧 Basic Commands:</div>
+                                        <div class="terminal-text">  help     - Show this help message</div>
+                                        <div class="terminal-text">  clear    - Clear the terminal</div>
+                                        <div class="terminal-text">  exit     - Return to intro screen</div>
+                                        <br>
+                                        <div class="terminal-text">📁 File System:</div>
+                                        <div class="terminal-text">  ls       - List files</div>
+                                        <div class="terminal-text">  ls -la   - List files with details</div>
+                                        <div class="terminal-text">  cat      - Display file contents</div>
+                                        <div class="terminal-text">  cd       - Change directory</div>
+                                        <div class="terminal-text">  pwd      - Show current directory</div>
+                                        <br>
+                                        <div class="terminal-text">💻 System Info:</div>
+                                        <div class="terminal-text">  neofetch - Show system information</div>
+                                        <div class="terminal-text">  status   - Show system status</div>
+                                        <div class="terminal-text">  whoami   - Show current user</div>
+                                        <div class="terminal-text">  date     - Show current date/time</div>
+                                        <div class="terminal-text">  uptime   - Show system uptime</div>
+                                        <br>
+                                        <div class="terminal-text">🎮 Fun Commands:</div>
+                                        <div class="terminal-text">  fortune  - Show random fortune</div>
+                                        <div class="terminal-text">  cmatrix  - Matrix simulation</div>
+                                        <div class="terminal-text">  sl       - Steam locomotive</div>
+                                        <div class="terminal-text">  echo     - Display text</div>
+                                        <br>
+                                        <div class="terminal-text">⌨️ Keyboard Shortcuts:</div>
+                                        <div class="terminal-text">  Tab      - Autocomplete</div>
+                                        <div class="terminal-text">  ↑↓       - Command history</div>
+                                        <div class="terminal-text">  Enter   - Execute command</div>
+                                        <br>
+                                        <div class="terminal-text">Type 'help' in the main terminal for the same information.</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1485,6 +1611,15 @@
                     
                     const tabName = this.getAttribute('data-tab');
                     showNotification(`Switched to ${tabName} tab`);
+                    
+                    // 탭 콘텐츠 전환
+                    const allTabContents = document.querySelectorAll('.tab-content');
+                    allTabContents.forEach(content => content.classList.remove('active'));
+                    
+                    const targetTab = document.getElementById(`${tabName}-tab`);
+                    if (targetTab) {
+                        targetTab.classList.add('active');
+                    }
                 });
             });
         });
