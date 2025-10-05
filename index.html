@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deamon Software Group - The Power That Runs Unseen</title>
+    <title>Deamon - The Power That Runs Unseen</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
@@ -14,38 +14,37 @@
             --color-background: #FFFFFF; /* Pure White Background */
             --color-module-bg: #FAFAFA; /* Off-White for Modules (Subtle Depth) */
             --color-line-subtle: #EEEEEE; /* Very Light Gray Separators */
-            --color-text-dim: #6B7280; /* Darker gray for dim text */
+            --color-text-dim: #4B5563; /* Darker gray for dim text (gray-700) */
             --color-glow: #F0F0F0; /* Soft White/Silver Glow */
-            --color-accent: #191970; /* Adjusted: Softer, less vivid Navy Accent */
+            --color-accent: #191970; /* Navy Accent for conceptual highlights */
         }
         
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--color-background);
             color: var(--color-deep-black);
-            line-height: 1.8;
-            font-size: 1.1rem;
+            line-height: 1.7; /* Slightly tighter line height for professionalism */
+            font-size: 1.05rem; /* Adjusted for better reading balance */
         }
 
         /* Premium Module Style (Rounded and Soft Shadow) */
         .premium-card {
             background-color: var(--color-module-bg);
-            /* Increased boundary clarity */
-            border: 1px solid rgba(0, 0, 0, 0.1); /* Darker border for definition */
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); /* Slightly stronger initial shadow */
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .premium-card:hover {
             border-color: var(--color-deep-black); 
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
-            transform: translateY(-4px); /* Subtle lift on hover */
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1); 
+            transform: translateY(-2px); /* Reduced lift for subtlety */
         }
 
-        /* CTA Button refinement (Reverted to High Contrast Black/White) */
+        /* CTA Button refinement */
         .cta-primary {
-            background-color: var(--color-deep-black); /* Revert to Black */
-            color: var(--color-background); /* White text */
+            background-color: var(--color-deep-black); 
+            color: var(--color-background); 
             border: 2px solid var(--color-deep-black);
             transition: all 0.3s ease;
             font-weight: 700;
@@ -53,8 +52,8 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         .cta-primary:hover {
-            background-color: #333333; /* Slightly darker black on hover */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            background-color: #333333; 
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
             transform: translateY(-1px);
         }
         
@@ -72,29 +71,50 @@
             color: var(--color-background);
         }
         
-        /* Active Navigation Link Style (Monochrome Underline) */
+        /* ---------------------- NAVIGATION BAR STYLES ---------------------- */
+
+        /* Mobile Scroll Active Link Style (Now uses Accent Color Underline) */
         .active-nav {
             color: var(--color-deep-black) !important; 
-            border-bottom: 3px solid var(--color-deep-black);
+            border-bottom: 3px solid var(--color-accent); /* Use ACCENT for highlight */
             padding-bottom: 2px;
             font-weight: 700;
         }
         
-        /* Unified Navigation Panel Styles: Full Width, Click-to-Open */
+        /* Desktop Nav Link for drop-down trigger (Hover & Active) */
+        .nav-link {
+            transition: color 0.3s, border-bottom 0.3s;
+            border-bottom: 3px solid transparent; /* Default transparent border */
+        }
+
+        .nav-link:hover {
+            color: var(--color-deep-black);
+            border-bottom: 3px solid var(--color-deep-black); /* Black border on general hover */
+        }
+
+        .nav-link.active-button {
+            font-weight: 700;
+            color: var(--color-deep-black);
+            position: relative;
+            /* Use ACCENT color underline when the drop-down is active/open */
+            border-bottom: 3px solid var(--color-accent); 
+        }
+
+        /* Unified Navigation Panel Styles */
         #unified-menu-overlay {
             position: fixed;
-            top: 68px; /* Height of the header */
+            top: 68px;
             left: 0;
             right: 0;
             height: auto;
-            max-height: 400px; /* Max height for content */
+            max-height: 400px; 
             opacity: 0;
             visibility: hidden;
             transform: translateY(-100%);
             transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
             background-color: rgba(255, 255, 255, 0.98);
             border-bottom: 1px solid var(--color-line-subtle); 
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); 
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); 
             backdrop-filter: blur(5px);
             z-index: 35;
             padding: 2rem 0;
@@ -116,39 +136,40 @@
         }
 
         .menu-item {
-            color: var(--color-deep-black);
-            transition: background-color 0.2s, color 0.2s, border-left-color 0.2s;
+            color: var(--color-text-dim); /* Dimmer text color initially */
+            transition: background-color 0.2s, color 0.2s, padding-left 0.2s;
             padding: 0.25rem 0;
-            font-weight: 500;
+            font-weight: 600; /* Slightly bolder default */
             letter-spacing: 0.025em;
             display: block;
         }
         .menu-item:hover {
-            color: var(--color-deep-black);
+            color: var(--color-accent); /* Use ACCENT color on hover */
             font-weight: 700;
-            padding-left: 5px; /* Subtle movement */
+            padding-left: 8px; /* Subtle movement */
         }
-        .nav-link.active-button {
-            font-weight: 700;
-            color: var(--color-deep-black);
-            position: relative;
+        
+        /* Mobile Menu Link Hover (Uses Accent Color) */
+        #mobile-menu a:hover {
+            color: var(--color-accent) !important;
         }
 
 
-        /* ---------------------- Vertical Flow Styles (Accent Color for Flow) ---------------------- */
+        /* ---------------------- Vertical Flow Styles (Timeline) ---------------------- */
         .flow-container {
             position: relative;
             margin: 0 auto; 
         }
+        /* Vertical line */
         .flow-container::before {
             content: '';
             position: absolute;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 3px; /* Thinner line */
+            width: 3px; 
             height: 100%;
-            background-color: var(--color-accent); /* Accent for the line */
+            background-color: var(--color-accent); 
             z-index: 10;
         }
 
@@ -157,6 +178,7 @@
             z-index: 20; 
             margin-bottom: 8rem;
         }
+        /* Timeline marker */
         .flow-item::before {
             content: '';
             position: absolute;
@@ -166,40 +188,68 @@
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            background-color: var(--color-accent); /* Accent for the marker */
-            border: 4px solid var(--color-background); /* White background separation */
+            background-color: var(--color-accent); 
+            border: 4px solid var(--color-background); 
+            box-shadow: 0 0 0 2px var(--color-accent); /* Small outer ring for better visibility */
             z-index: 30;
+        }
+
+        /* Mobile Adjustment for Flow: Move line and markers to the left */
+        @media (max-width: 768px) {
+            .flow-container::before {
+                left: 20px;
+                transform: translateX(0);
+            }
+            .flow-item {
+                margin-bottom: 6rem; /* Slightly less vertical spacing */
+                padding-left: 40px; /* Shift content right to clear the timeline */
+            }
+            .flow-item::before {
+                left: 20px;
+                transform: translate(-50%, 0);
+            }
+            /* Remove center alignment for the card content */
+            .flow-item > div {
+                text-align: left;
+            }
         }
         /* ---------------------------------------------------------------------------------- */
 
-        /* ---------------------- Custom Animations for Flow and Glow ---------------------- */
+        /* ---------------------- Custom Animations for Logo and Slogan (UPDATED) ---------------------- */
 
-        /* 1. Logo Glow Animation (Monochrome - keeping B&W for the subtle nature) */
-        @keyframes subtle-glow {
-            0%, 100% { filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.05)); }
-            50% { filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.2)); }
-        }
-        
-        /* 2. Main Logo Drawing Animation (Monochrome) */
-        @keyframes draw-path {
-            from { stroke-dashoffset: 200; }
-            to { stroke-dashoffset: 0; }
+        /* 1. Main Hero Logo Drawing Animation (Black Stroke Only, with Shadow Effect) */
+        @keyframes draw-only-black {
+            0% { stroke-dashoffset: 200; filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0)); }
+            80% { stroke-dashoffset: 0; filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); } /* Stronger black shadow at the end of the draw */
+            100% { stroke-dashoffset: 0; filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2)); } /* Settle with subtle shadow */
         }
 
-        /* Main Hero Logo - Draw then Glow (Monochrome) */
         .logo-path-hero {
             stroke-dasharray: 200;
             stroke-dashoffset: 200;
-            stroke: var(--color-deep-black); 
-            animation: draw-path 1.5s ease-out forwards, subtle-glow 4s infinite ease-in-out 1.5s;
+            fill: none;
+            stroke: var(--color-deep-black); /* Ensure it is always black */
+            /* Animation only uses draw and shadow effects, no color change */
+            animation: draw-only-black 2.0s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
         }
 
-        /* Small Logo (Header/Footer) - Static Black */
+        /* 2. Slogan Gradient Effect (Smooth Transition) */
+        .slogan-gradient {
+            /* Smoother transition: Black fades out from 55% and Navy fades in by 75%, creating a soft blend over 20% range. */
+            background: linear-gradient(70deg, var(--color-deep-black) 55%, var(--color-accent) 75%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; 
+            text-shadow: 0 3px 6px rgba(25, 25, 112, 0.3); /* Slightly softer shadow from accent color */
+        }
+        
+        /* Small Logo (Header/Footer) - Static Black (NO ANIMATION as requested) */
         .logo-path-small {
             stroke: var(--color-deep-black);
         }
         
-        /* 4. Scroll Reveal Animation */
+        /* Scroll Reveal Animation (Kept the same) */
         @keyframes slideInUp {
             from { opacity: 0; transform: translateY(50px); }
             to { opacity: 1; transform: translateY(0); }
@@ -215,21 +265,13 @@
             animation: slideInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
-        /* Hero Background Effect for depth */
-        .hero-bg-effect {
-            background: var(--color-background);
-            position: relative;
-        }
-
-        /* -------------------------------------------------------------------------------- */
-
         /* Responsive Layout Adjustments (Increased Spacing) */
         .section-padding {
-            padding: 10rem 1rem;
+            padding: 8rem 1rem;
         }
         @media (min-width: 640px) {
             .section-padding {
-                padding: 15rem 6rem; /* Increased vertical padding */
+                padding: 12rem 6rem; /* Slightly adjusted vertical padding */
             }
         }
     </style>
@@ -242,15 +284,18 @@
             const menuPanel = document.getElementById('unified-menu-overlay');
             const navButtons = document.querySelectorAll('.nav-link');
 
+            // Find the button that was clicked
+            const isTargetActive = buttonElement.classList.contains('active-button');
+
             // Close all active buttons first
             navButtons.forEach(btn => btn.classList.remove('active-button'));
 
-            if (isMenuOpen) {
-                // If menu is open, close it
+            if (isMenuOpen && isTargetActive) {
+                // If the same active button is clicked, close the menu
                 menuPanel.classList.remove('open');
                 isMenuOpen = false;
             } else {
-                // If menu is closed, open it and set the active button
+                // Open the menu and set the active button
                 menuPanel.classList.add('open');
                 buttonElement.classList.add('active-button');
                 isMenuOpen = true;
@@ -263,14 +308,6 @@
             document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active-button'));
             isMenuOpen = false;
         }
-
-        // Close menu when clicking outside (Desktop only)
-        document.addEventListener('click', (event) => {
-            const header = document.querySelector('header');
-            if (isMenuOpen && !header.contains(event.target) && window.innerWidth >= 768) {
-                closeUnifiedMenu();
-            }
-        });
 
         // Mobile Menu Toggle (remains separate)
         function toggleMobileMenu() {
@@ -288,10 +325,11 @@
                 threshold: 0.1
             };
 
-            const observer = new IntersectionObserver((entries, observer) => {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Stop observing once revealed
                     }
                 });
             }, observerOptions);
@@ -300,9 +338,6 @@
 
             // --- 2. Active Navigation Observer setup ---
             const sections = document.querySelectorAll('section[id]');
-            // Target all relevant links: desktop buttons and mobile links
-            const navLinks = document.querySelectorAll('header nav button, #mobile-menu a'); 
-
             const navObserverOptions = {
                 root: null,
                 rootMargin: '-30% 0px -30% 0px', 
@@ -331,9 +366,10 @@
 <body class="antialiased">
     <!-- Header / Navigation (Fixed) -->
     <header class="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-md bg-white/95 border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <!-- Logo -->
-            <a href="#" class="flex items-center space-x-2">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center h-16">
+            <!-- Logo (Top Left Logo: No Animation) -->
+            <a href="#" class="flex items-center space-x-2" onclick="closeUnifiedMenu()">
+                <!-- SVG path is conceptual: the unseen path of the daemon -->
                 <svg class="h-6 w-6 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
                 </svg>
@@ -343,13 +379,13 @@
             <!-- Desktop Navigation Menu (Click-to-Open Unified Panel) -->
             <nav class="hidden md:flex relative space-x-4 text-gray-800"> 
                 <!-- 1. BRAND -->
-                <button class="py-2 px-3 text-sm font-medium hover:text-black transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">BRAND</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">BRAND</button>
                 <!-- 2. ARCHITECTURE -->
-                <button class="py-2 px-3 text-sm font-medium hover:text-black transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">ARCHITECTURE</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">ARCHITECTURE</button>
                 <!-- 3. LAB -->
-                <button class="py-2 px-3 text-sm font-medium hover:text-black transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">LAB</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">LAB</button>
                 <!-- 4. GROUP -->
-                <button class="py-2 px-3 text-sm font-medium hover:text-black transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">GROUP</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">GROUP</button>
             </nav>
 
             <!-- Mobile Menu Button (Hamburger) -->
@@ -398,47 +434,49 @@
         </div>
         
         <!-- Mobile Menu (Flat List - Unified) -->
-        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2">
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2 z-30">
             <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">BRAND</p>
-            <a href="#essence" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 hover:text-black font-semibold">Brand Essence</a>
-            <a href="#philosophy" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 hover:text-black font-semibold">Commitment & Principles</a>
+            <!-- Changed default text color to gray-600 and removed tailwind hover class to rely on custom CSS -->
+            <a href="#essence" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Brand Essence</a>
+            <a href="#philosophy" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Commitment & Principles</a>
             
             <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">ARCHITECTURE</p>
-            <a href="#connection" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 hover:text-black font-semibold">Fusion Architecture</a>
-            <a href="#team" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 hover:text-black font-semibold">Agility Posture</a>
+            <a href="#connection" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Fusion Architecture</a>
+            <a href="#team" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Agility Posture</a>
 
             <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">LAB</p>
-            <a href="#solutions" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 hover:text-black font-semibold">Research Outcomes</a>
-            <a href="#solutions" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 hover:text-black font-semibold">Technical Reports</a>
+            <a href="#solutions" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Research Outcomes</a>
+            <a href="#solutions" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Technical Reports</a>
             
             <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">GROUP</p>
-            <a href="#team" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 hover:text-black font-semibold">Vision & Structure</a>
-            <a href="#contact" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 hover:text-black font-semibold">Connect</a>
+            <a href="#team" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Vision & Structure</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Connect</a>
         </div>
     </header>
 
     <!-- 1. Hero Section -->
-    <section class="min-h-screen flex items-center justify-center text-center section-padding pt-32 hero-bg-effect">
+    <section class="min-h-screen flex items-center justify-center text-center section-padding pt-32 hero-bg-effect" id="hero">
         
         <div class="max-w-5xl mx-auto relative z-10">
             <!-- Animated Logo SVG (Large - Draw + Glow) -->
-            <svg class="h-40 w-40 sm:h-56 sm:w-56 mx-auto mb-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 20 20 C 50 10, 50 90, 80 80" stroke-width="10" stroke-linecap="round" fill="none" class="logo-path-hero"/>
-            </svg>
+            <div class="scroll-reveal">
+                 <svg class="h-40 w-40 sm:h-56 sm:w-56 mx-auto mb-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Main Logo Animation Applied: Black stroke draw effect only -->
+                    <path d="M 20 20 C 50 10, 50 90, 80 80" stroke-width="10" stroke-linecap="round" fill="none" class="logo-path-hero"/>
+                </svg>
+            </div>
 
-            <!-- Headline (Monochrome Contrast) - REMOVED ACCENT COLOR -->
-            <h1 class="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-8 scroll-reveal">
-                <span class="drop-shadow-sm text-black">
-                    THE POWER THAT RUNS UNSEEN.
-                </span>
+            <!-- Headline (Slogan Gradient Applied - More Distinct) -->
+            <h1 class="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-8 scroll-reveal slogan-gradient">
+                THE POWER THAT RUNS UNSEEN.
             </h1>
 
-            <!-- Sub-Head (Increased Spacing) -->
+            <!-- Sub-Head -->
             <p class="text-xl sm:text-2xl text-gray-700 mb-16 max-w-4xl mx-auto scroll-reveal" style="transition-delay: 0.2s;">
                 Deamon declares the true value of technology. We are a <b>Technical Declaration</b> completing the foundation of unyielding trust in the system's deepest layer: <b>the operating system's core</b>.
             </p>
 
-            <!-- CTA Buttons (Primary uses Black/White again) -->
+            <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 scroll-reveal" style="transition-delay: 0.4s;">
                 <a href="#solutions" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-primary uppercase">
                     VIEW OUR SOLUTIONS
@@ -450,13 +488,13 @@
         </div>
     </section>
 
-    <!-- 2. Core Essence Section (Our Pledge) - Title accent applied to the most important word -->
+    <!-- 2. Core Essence Section (Our Pledge) -->
     <section id="essence" class="section-padding border-t border-gray-200">
         <div class="max-w-6xl mx-auto text-center">
-            <h2 class="text-4xl font-extrabold mb-12 scroll-reveal uppercase text-black">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-12 scroll-reveal uppercase text-black">
                 DEAMON'S ESSENCE: A <span style="color: var(--color-accent);">TECHNICAL DECLARATION</span> SUSTAINING THE SYSTEM'S CORE
             </h2>
-            <div class="grid md:grid-cols-2 gap-12 text-left max-w-5xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-10 text-left max-w-5xl mx-auto">
                 <div class="p-8 premium-card rounded-2xl scroll-reveal">
                     <h3 class="text-2xl font-bold mb-3 text-black uppercase">THE DAEMON PRINCIPLE</h3>
                     <p class="text-gray-600">
@@ -473,10 +511,10 @@
         </div>
     </section>
 
-    <!-- 3. 기술 철학: 신뢰와 책임의 융합 (Triple Pillars - No Accent on Titles) -->
+    <!-- 3. Technical Philosophy: Fusion of Trust and Responsibility (Triple Pillars) -->
     <section id="philosophy" class="section-padding border-t border-gray-200">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-extrabold mb-20 text-center scroll-reveal uppercase">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-20 text-center scroll-reveal uppercase">
                 DEAMON'S UNWAVERING COMMITMENT: <span class="text-gray-800">PRINCIPLES OF ELEGANCE AND RESPONSIBILITY</span>
             </h2>
             
@@ -484,10 +522,10 @@
                 <!-- Pillar 1: Reliability -->
                 <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal">
                     <div class="md:col-span-3">
-                        <div class="text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">⚙️</div>
+                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">⚙️</div>
                     </div>
-                    <div class="md:col-span-9 premium-card p-10 rounded-2xl">
-                        <h3 class="text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">UNWAVERING RELIABILITY</h3>
+                    <div class="md:col-span-9 premium-card p-8 sm:p-10 rounded-2xl">
+                        <h3 class="text-2xl sm:text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">UNWAVERING RELIABILITY</h3>
                         <p class="text-gray-600">
                             Our code adheres to the <b>internal principle</b> of building an <b>unbreakable foundation</b> that never halts. Performing promised functions unseen is the commitment underlying all our work, ensuring systems run ceaselessly regardless of external volatility.
                         </p>
@@ -497,10 +535,10 @@
                 <!-- Pillar 2: Precision -->
                 <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal" style="transition-delay: 0.2s;">
                     <div class="md:col-span-3 order-1 md:order-none">
-                        <div class="text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">✨</div>
+                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">✨</div>
                     </div>
-                    <div class="md:col-span-9 order-2 md:order-none premium-card p-10 rounded-2xl">
-                        <h3 class="text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">RESPONSIBLE PRECISION</h3>
+                    <div class="md:col-span-9 order-2 md:order-none premium-card p-8 sm:p-10 rounded-2xl">
+                        <h3 class="text-2xl sm:text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">RESPONSIBLE PRECISION</h3>
                         <p class="text-gray-600">
                             We pursue <b>optimal and elegant code</b> achieved through the fusion of AI, Web, and Embedded systems. This precision is implemented to create good value, such as enhancing energy efficiency by eliminating resource waste and promoting technical accessibility.
                         </p>
@@ -510,10 +548,10 @@
                 <!-- Pillar 3: Function for Good -->
                 <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal" style="transition-delay: 0.4s;">
                     <div class="md:col-span-3">
-                        <div class="text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">🌍</div>
+                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">🌍</div>
                     </div>
-                    <div class="md:col-span-9 premium-card p-10 rounded-2xl">
-                        <h3 class="text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">FUNCTION FOR GOOD</h3>
+                    <div class="md:col-span-9 premium-card p-8 sm:p-10 rounded-2xl">
+                        <h3 class="text-2xl sm:text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">FUNCTION FOR GOOD</h3>
                         <p class="text-gray-600">
                             We declare our intent to utilize this unseen power to build solutions for a better life and a <b>sustainable society</b>, constantly expanding our positive technological influence. Our code is designed to serve a beneficial purpose, always prioritizing ethical outcomes.
                         </p>
@@ -523,10 +561,10 @@
         </div>
     </section>
 
-    <!-- 4. 핵심 역량: 보이지 않는 연결 (Vertical Flow Architecture) - Accent applied to flow -->
+    <!-- 4. Core Competency: The Unseen Connection (Vertical Flow Architecture) -->
     <section id="connection" class="section-padding border-t border-gray-200">
         <div class="max-w-5xl mx-auto">
-            <h2 class="text-4xl font-extrabold mb-20 text-center scroll-reveal uppercase text-black">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-20 text-center scroll-reveal uppercase text-black">
                 THE UNSEEN <span style="color: var(--color-accent);">CONNECTION</span>: THE CORE OF DEAMON'S FUSION ARCHITECTURE
             </h2>
             
@@ -534,36 +572,36 @@
             <div class="flow-container">
                 <!-- 1. Embedded System (Physical Root) -->
                 <div class="flow-item scroll-reveal" style="transition-delay: 0.2s;">
-                    <div class="premium-card p-10 rounded-2xl">
-                        <h3 class="text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
-                            <span class="text-4xl mr-3">🛠️</span> 1. EMBEDDED SYSTEM <span class="ml-3 text-gray-500">(PHYSICAL FOUNDATION)</span>
+                    <div class="premium-card p-8 sm:p-10 rounded-2xl">
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
+                            <span class="text-3xl sm:text-4xl mr-3">🛠️</span> 1. EMBEDDED SYSTEM <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(PHYSICAL FOUNDATION)</span>
                         </h3>
                         <p class="text-gray-600">
-                            The Embedded System is the <b>technical foundation</b> and the starting point for our <b>unwavering commitment</b>. We focus on building daemons that efficiently manage resources deep within the OS, securing the foundation for <b>robust and ultra-low-power reliability</b>.
+                            The Embedded System forms the <b>core pulse</b> of our architecture. Within it, <b>silent daemons</b> operate beneath the surface — coordinating sensors, managing signals, and maintaining the <b>heartbeat of the machine</b>. They ensure that even when unseen, the system’s rhythm never ceases. This is where <b>reliability begins</b> — deep in the circuitry, beyond what the eyes can see.
                         </p>
                     </div>
                 </div>
                 
                 <!-- 2. AI (Intelligence Core) -->
                 <div class="flow-item scroll-reveal" style="transition-delay: 0.4s;">
-                    <div class="premium-card p-10 rounded-2xl">
-                        <h3 class="text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
-                            <span class="text-4xl mr-3">🧠</span> 2. AI <span class="ml-3 text-gray-500">(INTELLIGENCE CORE: OPTIMIZATION)</span>
+                    <div class="premium-card p-8 sm:p-10 rounded-2xl">
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
+                            <span class="text-3xl sm:text-4xl mr-3">🧠</span> 2. AI <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(COGNITIVE OPTIMIZATION LAYER)</span>
                         </h3>
                         <p class="text-gray-600">
-                            Deamon's AI consists of <b>lightweight daemon processes</b> running autonomously deep within the system. It minimizes resource consumption while predicting states and optimizing loads in real-time, realizing intelligent flow control that implements <b>Responsible Precision</b>.
+                            Above that foundation, AI acts as the <b>thinking pattern</b> of Deamon’s architecture. It observes the system’s state, <b>predicts what comes next</b>, and <b>adapts its logic before a problem arises</b>. Through <b>continuous optimization</b>, it transforms raw operation into <b>intelligent motion</b>, bridging precision with foresight — the mind that keeps the machine alive and aware.
                         </p>
                     </div>
                 </div>
 
                 <!-- 3. Web Solution (Access Interface) -->
                 <div class="flow-item scroll-reveal" style="transition-delay: 0.6s;">
-                    <div class="premium-card p-10 rounded-2xl">
-                        <h3 class="text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
-                            <span class="text-4xl mr-3">🌐</span> 3. WEB SOLUTION <span class="ml-3 text-gray-500">(ACCESS LAYER: TRUST MONITORING)</span>
+                    <div class="premium-card p-8 sm:p-10 rounded-2xl">
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
+                            <span class="text-3xl sm:text-4xl mr-3">🌐</span> 3. WEB SOLUTION <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(INTERFACE OF TRUST)</span>
                         </h3>
                         <p class="text-gray-600">
-                            The Web Solution is the <b>access layer</b> that transparently reveals the <b>'unbreakable foundation'</b> built by the daemon processes. Focusing on <b>unseen stability</b> over visible complexity, it visualizes system status and autonomous recovery reports to confirm trust.
+                            Finally, the Web layer <b>unveils the invisible</b>. It is the <b>transparent reflection</b> of everything the daemons and AI are doing beneath. Here, users witness reliability in motion — data made visible, behavior made understandable. The interface doesn’t just display performance; it <b>conveys trust</b>, the final translation of Deamon’s <b>unseen power into human experience</b>.
                         </p>
                     </div>
                 </div>
@@ -571,23 +609,23 @@
         </div>
     </section>
 
-    <!-- 5. 혁신 솔루션 (Research Outcome) (Accent applied to key header/metrics) -->
+    <!-- 5. Innovation Solutions (Research Outcome) -->
     <section id="solutions" class="section-padding border-t border-gray-200">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-extrabold mb-12 scroll-reveal uppercase text-black">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-12 scroll-reveal uppercase text-black">
                 PROOF OF OUR <span style="color: var(--color-accent);">COMMITMENT</span>: DEAMON'S RESEARCH OUTCOMES
             </h2>
             <p class="text-lg text-gray-600 mb-16 max-w-4xl mx-auto text-center scroll-reveal" style="transition-delay: 0.2s;">
-                Every work at Deamon is a <b>proof of our technical philosophy</b>. We validate our professionalism and commitment through clear problem definition, our unique fusion methodology, and verifiable performance metrics.
+                Every work at Deamon is a proof of our technical philosophy. We leverage this technical prowess to define clear problems that benefit society, and through our unique fusion methodology, we validate our professionalism and commitment by generating verifiable, positive societal results.
             </p>
 
-            <!-- Project Cards (Performance Metrics use Accent) -->
+            <!-- Project Cards -->
             <div class="space-y-12">
                 <!-- Mock Project 1: Intelligent Energy Management System -->
                 <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal">
                     <div class="md:flex md:space-x-10">
                         <div class="md:w-1/3 mb-4 md:mb-0">
-                            <h4 class="text-2xl font-bold mb-2 uppercase text-black">Intelligent Energy Management System (IEMS)</h4>
+                            <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">Intelligent Energy Management System (IEMS)</h4>
                             <p class="text-sm text-gray-500">Research Outcome 2024-Q3</p>
                         </div>
                         <div class="md:w-2/3 space-y-4">
@@ -608,7 +646,7 @@
                 <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal" style="transition-delay: 0.2s;">
                     <div class="md:flex md:space-x-10">
                         <div class="md:w-1/3 mb-4 md:mb-0">
-                            <h4 class="text-2xl font-bold mb-2 uppercase text-black">Zero-Downtime Financial Backend Daemon</h4>
+                            <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">Zero-Downtime Financial Backend Daemon</h4>
                             <p class="text-sm text-gray-500">Research Outcome 2024-Q4</p>
                         </div>
                         <div class="md:w-2/3 space-y-4">
@@ -629,7 +667,7 @@
                 <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal" style="transition-delay: 0.4s;">
                     <div class="md:flex md:space-x-10">
                         <div class="md:w-1/3 mb-4 md:mb-0">
-                            <h4 class="text-2xl font-bold mb-2 uppercase text-black">Autonomous System Monitoring Daemon (ASMD)</h4>
+                            <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">Autonomous System Monitoring Daemon (ASMD)</h4>
                             <p class="text-sm text-gray-500">Research Outcome 2025-Q1</p>
                         </div>
                         <div class="md:w-2/3 space-y-4">
@@ -649,35 +687,35 @@
         </div>
     </section>
 
-    <!-- 6. Deamon Team (Revised to Developer Group) - Accent applied to key phrase -->
+    <!-- 6. Deamon Team (Revised to Developer Group) -->
     <section id="team" class="section-padding border-t border-gray-200">
         <div class="max-w-6xl mx-auto text-center">
             <!-- Title Revised to be brand-centric -->
-            <h2 class="text-4xl font-extrabold mb-6 scroll-reveal uppercase text-black">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-6 scroll-reveal uppercase text-black">
                 DEAMON: THE VISION OF AN <span style="color: var(--color-accent);">INDEPENDENT</span> ENGINEERING GROUP
             </h2>
-            <p class="text-xl text-gray-600 max-w-4xl mx-auto mb-16 scroll-reveal" style="transition-delay: 0.2s;">
+            <p class="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto mb-16 scroll-reveal" style="transition-delay: 0.2s;">
                 We are an independent engineering group united by <b>technical responsibility</b> and a <b>shared vision</b> that transcends mere code. Our works and research embody our philosophy, and each member realizes the commitment to Unwavering Reliability in their specialized field. Our Agility is the fundamental posture of flexibly absorbing and applying the latest trends.
             </p>
             <div class="scroll-reveal" style="transition-delay: 0.4s;">
-                <p class="text-2xl font-semibold text-black">
+                <p class="text-2xl font-semibold text-black italic">
                     "Though the code may be unseen, its influence must reach the whole of society."
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- 7. Partnership & Contact (Revised to Vision Sharing) - Accent applied to key phrase -->
+    <!-- 7. Partnership & Contact (Revised to Vision Sharing) -->
     <section id="contact" class="section-padding border-t border-gray-200">
-        <div class="max-w-6xl mx-auto text-center p-16 rounded-2xl premium-card" style="border-color: var(--color-deep-black);">
-            <h2 class="text-4xl font-extrabold mb-4 scroll-reveal uppercase text-black">
+        <div class="max-w-6xl mx-auto text-center p-8 sm:p-16 rounded-2xl premium-card" style="border-color: var(--color-deep-black);">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 scroll-reveal uppercase text-black">
                 SEEKING PARTNERS TO SHARE OUR VISION: <b style="color: var(--color-accent);">CONNECT WITH DEAMON.</b>
             </h2>
-            <p class="text-xl text-gray-600 mb-10 max-w-3xl mx-auto scroll-reveal" style="transition-delay: 0.2s;">
+            <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto scroll-reveal" style="transition-delay: 0.2s;">
                 We seek partners who resonate with our philosophy and aim to create <b>value for good</b> through system stabilization, energy efficiency optimization, or next-generation fusion architecture construction. If you believe in our commitment, connect with Deamon.
             </p>
             <div class="scroll-reveal" style="transition-delay: 0.4s;">
-                <a href="mailto:contact@deamon.com" class="px-12 py-4 rounded-2xl text-xl font-semibold cta-primary uppercase">
+                <a href="mailto:contact@deamon.com" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg sm:text-xl font-semibold cta-primary uppercase">
                     REQUEST CONNECTION AT CONTACT@DEAMON.COM
                 </a>
             </div>
@@ -703,6 +741,7 @@
                 <span class="mx-3">|</span>
                 <a href="#" class="hover:text-black transition duration-300">Privacy Policy</a>
             </div>
+            <p class="text-xs text-gray-400 mt-4">&copy; 2025 Deamon Software Group. All Rights Reserved.</p>
         </div>
     </footer>
 
