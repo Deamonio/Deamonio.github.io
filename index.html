@@ -30,7 +30,7 @@
         /* Premium Module Style (Rounded and Soft Shadow) */
         .premium-card {
             background-color: var(--color-module-bg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px rgba(0, 0, 0, 0.1);
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -714,11 +714,33 @@
             <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto scroll-reveal" style="transition-delay: 0.2s;">
                 We seek partners who resonate with our philosophy and aim to create <b>value for good</b> through system stabilization, energy efficiency optimization, or next-generation fusion architecture construction. If you believe in our commitment, connect with Deamon.
             </p>
-            <div class="scroll-reveal" style="transition-delay: 0.4s;">
-                <a href="mailto:contact@deamon.com" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg sm:text-xl font-semibold cta-primary uppercase">
-                    REQUEST CONNECTION AT CONTACT@DEAMON.COM
+            
+            <!-- Updated CTA Buttons with minimalist stroke SVGs -->
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 scroll-reveal" style="transition-delay: 0.4s;">
+                
+                <!-- Email/Contact (Stroke SVG) -->
+                <a href="mailto:deamon.software@gmail.com" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
+                    <!-- Email SVG Icon (Stroke/Outline style) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-none stroke-current stroke-2 mr-2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M22 6l-10 7L2 6"/></svg>
+                    CONTACT US
                 </a>
+                
+                <!-- Instagram (Stroke SVG) -->
+                <a href="https://www.instagram.com/deamon.software" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
+                    <!-- Instagram SVG Icon (Stroke/Outline style) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-none stroke-current stroke-2 mr-2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="5" ry="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7h.01" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    INSTAGRAM
+                </a>
+                
+                <!-- GitHub (Filled Clean SVG - Octocat is clearer when filled) -->
+                <a href="https://www.github.com/Deamonio" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
+                    <!-- GitHub SVG Icon (Clean filled style) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-current mr-2" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.205 11.385.6.11.82-.26.82-.577v-1.13c-3.23.704-3.925-1.55-4.138-1.986-.17-.417-.833-1.042-1.015-1.06-.68-.016-1.117-.66-.19-.676.65-.016 1.17.65 1.353.99.782 1.348 2.052.96 2.533.737.087-.577.307-1.047.56-1.288-2.05-.23-4.2-1.022-4.2-4.555 0-1.005.358-1.83.947-2.47-.095-.23-.41-1.168.09-2.44 0 0 .77-.246 2.525.945.728-.203 1.5-.304 2.25-.308.75.004 1.52.105 2.25.308 1.755-1.19 2.525-.945 2.525-.945.5 1.272.175 2.21.09 2.44.59.64.947 1.465.947 2.47 0 3.543-2.15 4.32-4.207 4.552.333.284.627.84.627 1.696v3.134c0 .317.22.687.82.577C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                    GITHUB
+                </a>
+                
             </div>
+            
         </div>
     </section>
 
