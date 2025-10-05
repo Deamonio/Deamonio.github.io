@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deamon Project Index: Research Outcomes Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Theme Configuration (Pure Black & White / Rounded Minimalism) */
+        :root {
+            --color-deep-black: #000000; /* Pure Black for Text/Accent */
+            --color-background: #FFFFFF; /* Pure White Background */
+            --color-module-bg: #FAFAFA; /* Off-White for Modules (Subtle Depth) */
+            --color-line-subtle: #EEEEEE; /* Very Light Gray Separators */
+            --color-text-dim: #4B5563; /* Darker gray for dim text (gray-700) */
+            --color-glow: #F0F0F0; /* Soft White/Silver Glow */
+            --color-accent: #191970; /* Navy Accent for conceptual highlights */
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-deep-black);
+            line-height: 1.7; 
+            font-size: 1.05rem; 
+        }
+        
+        /* Small Logo (Header/Footer) - Static Black */
+        .logo-path-small {
+            stroke: var(--color-deep-black);
+        }
+
+        /* ---------------------- NAVIGATION BAR STYLES (Restored) ---------------------- */
+
+        /* Desktop Nav Link for drop-down trigger (Hover & Active) */
+        .nav-link {
+            transition: color 0.3s, border-bottom 0.3s;
+            border-bottom: 3px solid transparent; /* Default transparent border */
+        }
+
+        .nav-link:hover {
+            color: var(--color-deep-black);
+            border-bottom: 3px solid var(--color-deep-black); /* Black border on general hover */
+        }
+        
+        /* Active button style when the unified menu is open */
+        .nav-link.active-button {
+            font-weight: 700;
+            color: var(--color-deep-black);
+            position: relative;
+            /* Use ACCENT color underline when the drop-down is active/open */
+            border-bottom: 3px solid var(--color-accent); 
+        }
+
+        /* Unified Navigation Panel Styles */
+        #unified-menu-overlay {
+            position: fixed;
+            top: 68px; /* Below the header height */
+            left: 0;
+            right: 0;
+            height: auto;
+            max-height: 400px; 
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-100%);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-bottom: 1px solid var(--color-line-subtle); 
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); 
+            backdrop-filter: blur(5px);
+            z-index: 35;
+            padding: 2rem 0;
+        }
+        #unified-menu-overlay.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .menu-column-title {
+            color: var(--color-deep-black);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid var(--color-line-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        .menu-item {
+            color: var(--color-text-dim); /* Dimmer text color initially */
+            transition: background-color 0.2s, color 0.2s, padding-left 0.2s;
+            padding: 0.25rem 0;
+            font-weight: 600; /* Slightly bolder default */
+            letter-spacing: 0.025em;
+            display: block;
+        }
+        .menu-item:hover {
+            color: var(--color-accent); /* Use ACCENT color on hover */
+            font-weight: 700;
+            padding-left: 8px; /* Subtle movement */
+        }
+
+
+        /* Mobile Menu Link Hover (Uses Accent Color) */
+        #mobile-menu a:hover {
+            color: var(--color-accent) !important;
+        }
+
+        /* Hero Section Glow Effect */
+        .hero-bg-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80vw; 
+            height: 80vw;
+            max-width: 800px;
+            max-height: 800px;
+            background: radial-gradient(circle at center, var(--color-glow) 0%, rgba(255, 255, 255, 0) 70%);
+            opacity: 0.6;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0; 
+        }
+        @media (min-width: 1024px) {
+            .hero-bg-effect::after {
+                width: 60vw;
+                height: 60vw;
+                opacity: 0.5;
+            }
+        }
+        .hero-bg-effect > div {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Project Card Style (Reused for main list and calls) */
+        .project-card {
+            background-color: var(--color-module-bg);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left; /* Ensure content is left-aligned in card */
+            display: block;
+        }
+
+        .project-card:hover {
+            border-color: var(--color-accent); /* Navy accent border on hover */
+            box-shadow: 0 10px 30px rgba(25, 25, 112, 0.1); 
+            transform: translateY(-4px); /* Noticeable lift */
+        }
+
+        /* CTA Button refinement */
+        .cta-primary {
+            background-color: var(--color-deep-black); 
+            color: var(--color-background); 
+            border: 2px solid var(--color-deep-black);
+            transition: all 0.3s ease;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .cta-primary:hover {
+            background-color: #333333; 
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        /* Secondary CTA remains B&W */
+        .cta-secondary {
+            background-color: transparent;
+            color: var(--color-deep-black);
+            border: 2px solid var(--color-deep-black);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+        .cta-secondary:hover {
+            background-color: var(--color-deep-black);
+            color: var(--color-background);
+        }
+        
+        /* Scroll Reveal Animation */
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transition: opacity 0.4s;
+            will-change: transform, opacity;
+        }
+
+        .scroll-reveal.visible {
+            animation: slideInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* Responsive Layout Adjustments (Increased Spacing) */
+        .section-padding {
+            padding: 8rem 1rem;
+        }
+        @media (min-width: 640px) {
+            .section-padding {
+                padding: 10rem 6rem;
+            }
+        }
+
+        /* Removed Gradient Text for Main Title, making it solid black/white */
+        .hero-project-subtitle {
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--color-text-dim);
+        }
+        
+        .hero-project-title {
+            font-weight: 900;
+            color: var(--color-deep-black);
+            text-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+
+    </style>
+    <script>
+        // Global state for open menu (Desktop) - Restored
+        let isMenuOpen = false;
+
+        // Toggles the visibility of the unified menu panel - Restored
+        function toggleUnifiedMenu(buttonElement) {
+            const menuPanel = document.getElementById('unified-menu-overlay');
+            const navButtons = document.querySelectorAll('.nav-link');
+
+            // Find the button that was clicked
+            const isTargetActive = buttonElement.classList.contains('active-button');
+
+            // Close all active buttons first
+            navButtons.forEach(btn => btn.classList.remove('active-button'));
+
+            if (isMenuOpen && isTargetActive) {
+                // If the same active button is clicked, close the menu
+                menuPanel.classList.remove('open');
+                isMenuOpen = false;
+            } else {
+                // Open the menu and set the active button
+                menuPanel.classList.add('open');
+                buttonElement.classList.add('active-button');
+                isMenuOpen = true;
+            }
+        }
+        
+        // Closes the unified menu and removes active state - Restored
+        function closeUnifiedMenu() {
+            document.getElementById('unified-menu-overlay').classList.remove('open');
+            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active-button'));
+            isMenuOpen = false;
+        }
+        
+        // Mobile Menu Toggle (Minimalist)
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Scroll Reveal Logic (Kept as is)
+        document.addEventListener('DOMContentLoaded', () => {
+            const revealElements = document.querySelectorAll('.scroll-reveal');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            revealElements.forEach(el => observer.observe(el));
+        });
+
+    </script>
+</head>
+<body class="antialiased">
+    <!-- Header / Navigation (Fixed) - Fully Restored to Original Index Style -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-md bg-white/95 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center h-16">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2" onclick="closeUnifiedMenu()">
+                <!-- SVG path is conceptual: the unseen path of the daemon -->
+                <svg class="h-6 w-6 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
+                </svg>
+                <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
+            </a>
+            
+            <!-- Desktop Navigation (Buttons that trigger the Unified Menu) - Restored -->
+            <nav class="hidden md:flex relative space-x-4 text-gray-800"> 
+                <!-- 1. BRAND -->
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">BRAND</button>
+                <!-- 2. ARCHITECTURE -->
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">ARCHITECTURE</button>
+                <!-- 3. LAB -->
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">LAB</button>
+                <!-- 4. GROUP -->
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">GROUP</button>
+            </nav>
+
+            <!-- Mobile Menu Button (Hamburger) -->
+            <button class="md:hidden text-black focus:outline-none" onclick="toggleMobileMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Unified Navigation Overlay Panel (Desktop Only) - Restored -->
+        <div id="unified-menu-overlay" class="hidden md:block">
+            <div class="max-w-7xl mx-auto px-8 py-8">
+                <div class="grid grid-cols-4 gap-12">
+
+                    <!-- Column 1: BRAND -->
+                    <div>
+                        <div class="menu-column-title">BRAND</div>
+                        <a href="index.html#essence" onclick="closeUnifiedMenu()" class="menu-item">Brand Essence</a>
+                        <a href="index.html#philosophy" onclick="closeUnifiedMenu()" class="menu-item">Commitment & Principles</a>
+                    </div>
+
+                    <!-- Column 2: ARCHITECTURE -->
+                    <div>
+                        <div class="menu-column-title">ARCHITECTURE</div>
+                        <a href="index.html#connection" onclick="closeUnifiedMenu()" class="menu-item">Fusion Architecture</a>
+                        <a href="index.html#team" onclick="closeUnifiedMenu()" class="menu-item">Agility Posture</a>
+                    </div>
+
+                    <!-- Column 3: LAB -->
+                    <div>
+                        <div class="menu-column-title">LAB</div>
+                        <!-- IMPORTANT: This link should point to the current project index page -->
+                        <a href="#projects" onclick="closeUnifiedMenu()" class="menu-item">Research Outcomes (Current)</a> 
+                        <a href="index.html#solutions" onclick="closeUnifiedMenu()" class="menu-item">Technical Reports (Main)</a>
+                    </div>
+
+                    <!-- Column 4: GROUP -->
+                    <div>
+                        <div class="menu-column-title">GROUP</div>
+                        <a href="index.html#team" onclick="closeUnifiedMenu()" class="menu-item">Vision & Structure</a>
+                        <a href="index.html#contact" onclick="closeUnifiedMenu()" class="menu-item">Connect</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Flat List) - Restored to Original Structure -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2 z-30">
+            
+            <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">BRAND</p>
+            <a href="index.html#essence" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Brand Essence</a>
+            <a href="index.html#philosophy" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Commitment & Principles</a>
+            
+            <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">ARCHITECTURE</p>
+            <a href="index.html#connection" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Fusion Architecture</a>
+            <a href="index.html#team" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Agility Posture</a>
+
+            <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">LAB</p>
+            <!-- Highlight current page in mobile menu -->
+            <a href="#projects" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-800 font-bold active-nav transition duration-200">Research Outcomes (Current)</a>
+            <a href="index.html#solutions" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Technical Reports (Main)</a>
+            
+            <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">GROUP</p>
+            <a href="index.html#team" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Vision & Structure</a>
+            <a href="index.html#contact" onclick="toggleMobileMenu()" class="block py-2 px-4 text-gray-600 font-semibold transition duration-200">Connect</a>
+        </div>
+    </header>
+
+    <!-- 1. Hero Section (Project Index Title) - New Symbolic Design -->
+    <section class="flex items-center justify-center text-center py-20 sm:py-32 pt-64 hero-bg-effect" id="hero">
+        
+        <div class="max-w-5xl mx-auto relative z-10">
+            
+            <!-- NEW: Conceptual Research Icon (Circuit/Flow) -->
+            <div class="scroll-reveal" style="transition-delay: 0.1s;">
+                <svg class="h-12 w-12 mx-auto mb-6 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="stroke: var(--color-accent); stroke-width: 8; stroke-linecap: round; opacity: 0.8;">
+                    <!-- Simple, conceptual circuit/data flow icon: a connecting loop with a node -->
+                    <path d="M 10 50 C 30 10, 70 10, 90 50 C 70 90, 30 90, 10 50" fill="none" class="scroll-reveal" style="stroke-dasharray: 251; stroke-dashoffset: 0;"/>
+                    <circle cx="50" cy="50" r="10" fill="var(--color-accent)" class="scroll-reveal" style="transition-delay: 0.4s;"/>
+                </svg>
+            </div>
+
+
+            <!-- Subtitle -->
+            <p class="text-lg sm:text-xl mb-4 scroll-reveal hero-project-subtitle" style="transition-delay: 0.2s;">
+                DEAMON RESEARCH & DEVELOPMENT PORTFOLIO
+            </p>
+
+            <!-- Title (Accent Color Emphasis: ACTION) -->
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl tracking-tighter mb-4 hero-project-title scroll-reveal" style="transition-delay: 0.4s;">
+                THE POWER IN <span style="color: var(--color-accent);">ACTION</span>.
+            </h1>
+            
+            <!-- Description -->
+            <p class="text-lg sm:text-xl text-gray-700 max-w-4xl mx-auto scroll-reveal mt-10" style="transition-delay: 0.6s;">
+                Deamon's research outcomes embody <b>Reliability</b> and <b>Efficiency</b> through our integrated Embedded, AI, and Web architecture. Discover our <b>Technical Declaration</b> that silently supports the system from the deepest layer.
+            </p>
+            
+        </div>
+    </section>
+
+    <!-- 2. Project List Section (3-column Grid) -->
+    <section id="projects" class="pt-16 sm:pt-24 pb-32 border-t border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-16 text-center scroll-reveal uppercase text-black">
+                Key <span style="color: var(--color-accent);">Research Outcomes</span>
+            </h2>
+            
+            <!-- Project Cards Container (6 cards total in a 3-column grid) -->
+            <div class="grid md:grid-cols-3 gap-10">
+
+                <!-- Project 1: GlAISeR -->
+                <a href="project_home.html" class="project-card p-8 rounded-2xl scroll-reveal">
+                    <!-- 미리보기 이미지 (GlAISeR - Navy/White) -->
+                    <img src="https://placehold.co/400x200/191970/FFFFFF?text=GlAISeR+%7C+Autonomous+Robot" 
+                         alt="GlAISeR Project Preview" 
+                         class="w-full rounded-xl mb-6 object-cover border border-gray-100">
+                    <!-- END 미리보기 이미지 -->
+                    <p class="text-sm font-medium text-gray-500 mb-2">2024 Q2</p>
+                    <h3 class="text-2xl font-bold mb-3 text-black uppercase">
+                        GlAISeR 🛡️
+                    </h3>
+                    <p class="text-lg font-semibold mb-4" style="color: var(--color-accent);">Autonomous Safety Robot</p>
+                    <p class="text-gray-600 mb-6">
+                        An autonomous system that achieves safety patrols and energy efficiency in educational environments through Embedded/AI/Web convergence. The <b>Non-stop Daemon Design</b> is key.
+                    </p>
+                    <span class="text-sm font-bold border-b-2 border-transparent hover:border-black transition duration-300">View Details &rarr;</span>
+                </a>
+
+                <!-- Project 2: DiSRHiT -->
+                <a href="disrhit_detail.html" class="project-card p-8 rounded-2xl scroll-reveal" style="transition-delay: 0.2s;">
+                    <!-- 미리보기 이미지 (DiSRHiT - Burnt Orange/White) -->
+                    <img src="https://placehold.co/400x200/CC5500/FFFFFF?text=DiSRHiT+%7C+Rescue+Hand" 
+                         alt="DiSRHiT Project Preview" 
+                         class="w-full rounded-xl mb-6 object-cover border border-gray-100">
+                    <!-- END 미리보기 이미지 -->
+                    <p class="text-sm font-medium text-gray-500 mb-2">2024 Q3</p>
+                    <h3 class="text-2xl font-bold mb-3 text-black uppercase">
+                        DiSRHiT 🦾
+                    </h3>
+                    <p class="text-lg font-semibold mb-4" style="color: var(--color-accent);">Disaster Search & Rescue Hand</p>
+                    <p class="text-gray-600 mb-6">
+                        A remote-controlled robotic arm system designed to perform search and rescue missions in dangerous environments such as disaster sites. Implementing the <b>Function for Good</b> principle.
+                    </p>
+                    <span class="text-sm font-bold border-b-2 border-transparent hover:border-black transition duration-300">View Details &rarr;</span>
+                </a>
+                
+                <!-- Project 3: SSCAS -->
+                <a href="sscas_detail.html" class="project-card p-8 rounded-2xl scroll-reveal" style="transition-delay: 0.4s;">
+                    <!-- 미리보기 이미지 (SSCAS - Teal/White) -->
+                    <img src="https://placehold.co/400x200/008080/FFFFFF?text=SSCAS+%7C+Urban+Analysis" 
+                         alt="SSCAS Project Preview" 
+                         class="w-full rounded-xl mb-6 object-cover border border-gray-100">
+                    <!-- END 미리보기 이미지 -->
+                    <p class="text-sm font-medium text-gray-500 mb-2">2024 Q4</p>
+                    <h3 class="text-2xl font-bold mb-3 text-black uppercase">
+                        SSCAS 🚇
+                    </h3>
+                    <p class="text-lg font-semibold mb-4" style="color: var(--color-accent);">Smart Subway Congestion Analysis</p>
+                    <p class="text-gray-600 mb-6">
+                        Analyzes real-time population density in subways using AI-based computer vision and provides predictive information via a dashboard to mitigate congestion. Implementing <b>Data-driven Urban Intelligence</b>.
+                    </p>
+                    <span class="text-sm font-bold border-b-2 border-transparent hover:border-black transition duration-300">View Details &rarr;</span>
+                </a>
+
+                <!-- Project 4: OptiFlow -->
+                <a href="optiflow_detail.html" class="project-card p-8 rounded-2xl scroll-reveal" style="transition-delay: 0.6s;">
+                    <!-- 미리보기 이미지 (OptiFlow - Sky Blue/Black) -->
+                    <img src="https://placehold.co/400x200/87CEEB/000000?text=OptiFlow+%7C+Resource+AI" 
+                         alt="OptiFlow Project Preview" 
+                         class="w-full rounded-xl mb-6 object-cover border border-gray-100">
+                    <!-- END 미리보기 이미지 -->
+                    <p class="text-sm font-medium text-gray-500 mb-2">2025 Q1</p>
+                    <h3 class="text-2xl font-bold mb-3 text-black uppercase">
+                        OptiFlow 📊
+                    </h3>
+                    <p class="text-lg font-semibold mb-4" style="color: var(--color-accent);">AI-driven Resource Management</p>
+                    <p class="text-gray-600 mb-6">
+                        A solution that minimizes operational costs by predicting cloud server resources and distributing them in real-time using deep learning. Implementing <b>Responsible Precision</b>.
+                    </p>
+                    <span class="text-sm font-bold border-b-2 border-transparent hover:border-black transition duration-300">View Details &rarr;</span>
+                </a>
+
+                <!-- Project 5: AetherLink -->
+                <a href="aetherlink_detail.html" class="project-card p-8 rounded-2xl scroll-reveal" style="transition-delay: 0.8s;">
+                    <!-- 미리보기 이미지 (AetherLink - Dark Gray/White) -->
+                    <img src="https://placehold.co/400x200/2C3E50/FFFFFF?text=AetherLink+%7C+Decentralized+Security" 
+                         alt="AetherLink Project Preview" 
+                         class="w-full rounded-xl mb-6 object-cover border border-gray-100">
+                    <!-- END 미리보기 이미지 -->
+                    <p class="text-sm font-medium text-gray-500 mb-2">2025 Q2</p>
+                    <h3 class="text-2xl font-bold mb-3 text-black uppercase">
+                        AetherLink 🕸️
+                    </h3>
+                    <p class="text-lg font-semibold mb-4" style="color: var(--color-accent);">Decentralized Security Framework</p>
+                    <p class="text-gray-600 mb-6">
+                        A security architecture that ensures communication reliability and guarantees integrity between devices using a blockchain-based distributed ledger. Implementing <b>Unwavering Reliability</b>.
+                    </p>
+                    <span class="text-sm font-bold border-b-2 border-transparent hover:border-black transition duration-300">View Details &rarr;</span>
+                </a>
+                
+                <!-- Project 6: TerraSens -->
+                <a href="terrasens_detail.html" class="project-card p-8 rounded-2xl scroll-reveal" style="transition-delay: 1.0s;">
+                    <!-- 미리보기 이미지 (TerraSens - Forest Green/White) -->
+                    <img src="https://placehold.co/400x200/38761D/FFFFFF?text=TerraSens+%7C+Environment+Monitor" 
+                         alt="TerraSens Project Preview" 
+                         class="w-full rounded-xl mb-6 object-cover border border-gray-100">
+                    <!-- END 미리보기 이미지 -->
+                    <p class="text-sm font-medium text-gray-500 mb-2">2025 Q3</p>
+                    <h3 class="text-2xl font-bold mb-3 text-black uppercase">
+                        TerraSens 🌱
+                    </h3>
+                    <p class="text-lg font-semibold mb-4" style="color: var(--color-accent);">Embedded Environmental Monitoring</p>
+                    <p class="text-gray-600 mb-6">
+                        An ultra-precision embedded sensor network for agriculture and smart city infrastructure. Sensor Daemons collect data to instantly respond to environmental changes. Implementing <b>Daemon Principle</b>.
+                    </p>
+                    <span class="text-sm font-bold border-b-2 border-transparent hover:border-black transition duration-300">View Details &rarr;</span>
+                </a>
+                
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- 3. Philosophy Callout (Reusing the CTA from the main page) -->
+    <section id="philosophy" class="section-padding border-t border-gray-200">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-6 scroll-reveal uppercase text-black">
+                Value Beyond Code: <span style="color: var(--color-accent);">DEAMON's Technical Philosophy</span>
+            </h2>
+            <p class="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto mb-10 scroll-reveal" style="transition-delay: 0.2s;">
+                All of our projects are founded on two core principles: <b>Unwavering Reliability</b> and <b>Responsible Precision</b>. Discover our comprehensive commitment.
+            </p>
+            <div class="scroll-reveal" style="transition-delay: 0.4s;">
+                 <a href="index.html#philosophy" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-secondary uppercase">
+                    Explore DEAMON's Philosophy &rarr;
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Contact / Next Steps -->
+    <section id="contact" class="section-padding border-t border-gray-200">
+        <div class="max-w-6xl mx-auto text-center p-8 sm:p-16 rounded-2xl project-card" style="border-color: var(--color-deep-black);">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 scroll-reveal uppercase text-black">
+                Research Integration Inquiry: <b style="color: var(--color-accent);">Create Value Together.</b>
+            </h2>
+            <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto scroll-reveal" style="transition-delay: 0.2s;">
+                Please contact us anytime if you are interested in integrating DEAMON's research outcomes or forming a new technical collaboration.
+            </p>
+            
+            <!-- Restored: Email, Instagram, GitHub Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 scroll-reveal" style="transition-delay: 0.4s;">
+                
+                <!-- Email/Contact (Stroke SVG) -->
+                <a href="mailto:deamon.software@gmail.com" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
+                    <!-- Email SVG Icon (Stroke/Outline style) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-none stroke-current stroke-2 mr-2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M22 6l-10 7L2 6"/></svg>
+                    CONTACT US
+                </a>
+                
+                <!-- Instagram (Stroke SVG) -->
+                <a href="https://www.instagram.com/deamon.software" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
+                    <!-- Instagram SVG Icon (Stroke/Outline style) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-none stroke-current stroke-2 mr-2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="5" ry="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7h.01" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    INSTAGRAM
+                </a>
+                
+                <!-- GitHub (Filled Clean SVG - Octocat is clearer when filled) -->
+                <a href="https://www.github.com/Deamonio" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
+                    <!-- GitHub SVG Icon (Clean filled style) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-current mr-2" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.205 11.385.6.11.82-.26.82-.577v-1.13c-3.23.704-3.925-1.55-4.138-1.986-.17-.417-.833-1.042-1.015-1.06-.68-.016-1.117-.66-.19-.676.65-.016 1.17.65 1.353.99.782 1.348 2.052.96 2.533.737.087-.577.307-1.047.56-1.288-2.05-.23-4.2-1.022-4.2-4.555 0-1.005.358-1.83.947-2.47-.095-.23-.41-1.168.09-2.44 0 0 .77-.246 2.525.945.728-.203 1.5-.304 2.25-.308.75.004 1.52.105 2.25.308 1.755-1.19 2.525-.945 2.525-.945.5 1.272.175 2.21.09 2.44.59.64.947 1.465.947 2.47 0 3.543-2.15 4.32-4.207 4.552.333.284.627.84.627 1.696v3.134c0 .317.22.687.82.577C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                    GITHUB
+                </a>
+                
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 mt-20 py-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-10">
+                <div class="flex items-center space-x-3">
+                    <svg class="h-4 w-4 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
+                    </svg>
+                    <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
+                </div>
+                <p class="text-gray-500 font-medium">The power that runs unseen.</p>
+            </div>
+            
+            <div class="text-sm text-gray-600 mt-6">
+                <a href="mailto:contact@deamon.com" class="hover:text-black transition duration-300">contact@deamon.com</a>
+                <span class="mx-3">|</span>
+                <a href="#" class="hover:text-black transition duration-300">Privacy Policy</a>
+            </div>
+            <p class="text-xs text-gray-400 mt-4">&copy; 2025 Deamon Software Group. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
