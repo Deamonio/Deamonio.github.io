@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deamon - Unseen Flow Architecture: Embedded, AI, Web 3-Stage Deep Analysis</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Theme Configuration (Pure Black & White / Rounded Minimalism) */
+        :root {
+            --color-deep-black: #000000; /* Pure Black for Text/Accent */
+            --color-background: #FFFFFF; /* Pure White Background */
+            --color-module-bg: #FAFAFA; /* Off-White for Modules (Subtle Depth) */
+            --color-line-subtle: #EEEEEE; /* Very Light Gray Separators */
+            --color-text-dim: #4B5563; /* Darker gray for dim text (gray-700) */
+            --color-glow: #F0F0F0; /* Soft White/Silver Glow */
+            --color-accent: #191970; /* Navy Accent for conceptual highlights */
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-deep-black);
+            line-height: 1.7; 
+            font-size: 1.05rem;
+        }
+
+        /* Module Style for Content Sections */
+        .premium-card {
+            background-color: var(--color-module-bg);
+            border: 1px solid var(--color-line-subtle); 
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cta-primary {
+            background-color: var(--color-deep-black); 
+            color: var(--color-background); 
+            border: 2px solid var(--color-deep-black);
+            transition: all 0.3s ease;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .cta-primary:hover {
+            background-color: #333333; 
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        .cta-secondary {
+            background-color: transparent;
+            color: var(--color-deep-black);
+            border: 2px solid var(--color-deep-black);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+        .cta-secondary:hover {
+            background-color: var(--color-deep-black);
+            color: var(--color-background);
+        }
+        
+        /* Navigation & Menu Styles (from index.html) */
+        .active-nav {
+            color: var(--color-deep-black) !important; 
+            border-bottom: 3px solid var(--color-accent); 
+            padding-bottom: 2px;
+            font-weight: 700;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom 0.3s;
+            border-bottom: 3px solid transparent; 
+            white-space: nowrap;
+        }
+        .nav-link:hover {
+            color: var(--color-deep-black);
+            border-bottom: 3px solid var(--color-deep-black); 
+        }
+        .nav-link.active-button {
+            font-weight: 700;
+            color: var(--color-deep-black);
+            position: relative;
+            border-bottom: 3px solid var(--color-accent); 
+        }
+        #unified-menu-overlay {
+            position: fixed; top: 68px; left: 0; right: 0; max-height: calc(100vh - 68px); 
+            overflow-y: auto; -webkit-overflow-scrolling: touch; opacity: 0;
+            visibility: hidden; transform: translateY(-100%);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-bottom: 1px solid var(--color-line-subtle); 
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); 
+            backdrop-filter: blur(5px); z-index: 35; padding: 2rem 0;
+        }
+        #unified-menu-overlay.open { opacity: 1; visibility: visible; transform: translateY(0); }
+        .menu-column-title { color: var(--color-deep-black); font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; padding-bottom: 0.5rem; font-size: 1.125rem; }
+        .sub-category-title { color: var(--color-deep-black); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.5rem 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-line-subtle); margin-top: 0.5rem; transition: color 0.2s; }
+        .sub-category-title:hover { color: var(--color-accent); }
+        .sub-category-title .arrow { transition: transform 0.3s ease; }
+        .sub-category-title.open .arrow { transform: rotate(180deg); color: var(--color-accent); }
+        .sub-menu-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease-out; padding-top: 0; }
+        .sub-menu-content.open { padding-top: 0.75rem; }
+        .menu-item-indented {
+            padding-left: 1.5rem; display: block; color: var(--color-text-dim); transition: color 0.2s, padding-left 0.2s; 
+            padding-top: 0.5rem; padding-bottom: 0.5rem; font-weight: 600; letter-spacing: 0.025em;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .menu-item-indented:hover { color: var(--color-accent); font-weight: 700; padding-left: 1.75rem; }
+        #mobile-menu a:hover { color: var(--color-accent) !important; }
+        
+        /* Custom Flow Style for Deep Dive Page */
+        .flow-detail-card {
+            border-left: 5px solid var(--color-accent);
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+        .flow-title {
+            color: var(--color-accent);
+            font-weight: 900;
+            letter-spacing: 0.05em;
+        }
+
+        /* Responsive Spacing */
+        .section-padding-large {
+            padding: 6rem 1rem;
+        }
+        @media (min-width: 640px) {
+            .section-padding-large {
+                padding: 8rem 6rem;
+            }
+        }
+    </style>
+    <script>
+        // Global state for open menus (Retained from main index)
+        let isMenuOpen = false;
+        let isMobileMenuOpen = false;
+
+        function toggleUnifiedMenu(buttonElement) {
+            const menuPanel = document.getElementById('unified-menu-overlay');
+            const navButtons = document.querySelectorAll('.nav-link');
+            if (isMobileMenuOpen) toggleMobileMenu();
+            const isTargetActive = buttonElement.classList.contains('active-button');
+            navButtons.forEach(btn => {
+                btn.classList.remove('active-button');
+                btn.setAttribute('aria-expanded', 'false');
+            });
+            document.querySelectorAll('.sub-category-title.open').forEach(title => {
+                title.classList.remove('open');
+                title.setAttribute('aria-expanded', 'false');
+                const content = title.nextElementSibling;
+                if (content) content.style.maxHeight = null;
+            });
+            if (isMenuOpen && isTargetActive) {
+                menuPanel.classList.remove('open');
+                isMenuOpen = false;
+                menuPanel.setAttribute('aria-hidden', 'true');
+            } else {
+                menuPanel.classList.add('open');
+                buttonElement.classList.add('active-button');
+                buttonElement.setAttribute('aria-expanded', 'true');
+                isMenuOpen = true;
+                menuPanel.setAttribute('aria-hidden', 'false');
+            }
+        }
+        
+        function closeUnifiedMenu() {
+            const menuPanel = document.getElementById('unified-menu-overlay');
+            if (!menuPanel.classList.contains('open')) return;
+            menuPanel.classList.remove('open');
+            menuPanel.setAttribute('aria-hidden', 'true');
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                btn.classList.remove('active-button');
+                btn.setAttribute('aria-expanded', 'false');
+            });
+            isMenuOpen = false;
+            document.querySelectorAll('.sub-category-title.open').forEach(title => {
+                title.classList.remove('open');
+                title.setAttribute('aria-expanded', 'false');
+                const content = title.nextElementSibling;
+                if (content) content.style.maxHeight = null;
+            });
+        }
+
+        function toggleSubMenu(titleElement) {
+            const content = titleElement.nextElementSibling;
+            const isOpening = !content.classList.contains('open');
+
+            titleElement.classList.toggle('open');
+            titleElement.setAttribute('aria-expanded', isOpening ? 'true' : 'false');
+            
+            if (!isOpening) {
+                content.classList.remove('open');
+                content.style.maxHeight = null;
+            } else {
+                const column = titleElement.closest('div');
+                column.querySelectorAll('.sub-category-title.open').forEach(otherTitle => {
+                    if (otherTitle !== titleElement) {
+                        otherTitle.classList.remove('open');
+                        otherTitle.setAttribute('aria-expanded', 'false');
+                        const otherContent = otherTitle.nextElementSibling;
+                        if (otherContent) otherContent.style.maxHeight = null;
+                    }
+                });
+
+                content.classList.add('open');
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+            const toggleButton = document.querySelector('button[aria-controls="mobile-menu"]');
+
+            menu.classList.toggle('hidden');
+            isMobileMenuOpen = !menu.classList.contains('hidden');
+
+            if (isMobileMenuOpen) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+                toggleButton.setAttribute('aria-expanded', 'true');
+                closeUnifiedMenu();
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>';
+                toggleButton.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // No scroll reveal needed on this page, just ensure menu links have titles
+            document.querySelectorAll('.menu-item-indented').forEach(link => {
+                link.setAttribute('title', link.textContent.trim());
+            });
+
+             // Global listeners for closing menus
+            document.addEventListener('click', (event) => {
+                const header = document.querySelector('header');
+                const isClickInsideHeader = header.contains(event.target);
+                
+                if (isMenuOpen && !isClickInsideHeader && window.innerWidth >= 768) { 
+                    closeUnifiedMenu();
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    if (isMenuOpen) {
+                        closeUnifiedMenu();
+                    }
+                    if (isMobileMenuOpen) {
+                        toggleMobileMenu();
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body class="antialiased">
+    <!-- Header / Navigation (Fixed) - Copied from index.html -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-md bg-white/95 border-b border-gray-200" role="banner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center h-16">
+            <a href="/" class="flex items-center space-x-2" onclick="closeUnifiedMenu(); if (isMobileMenuOpen) toggleMobileMenu();" aria-label="Go to Deamon homepage">
+                <svg class="h-6 w-6 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
+                </svg>
+                <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
+            </a>
+            
+            <nav class="hidden md:flex relative space-x-4 text-gray-800" role="navigation"> 
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">DEAMON</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link active-button" onclick="toggleUnifiedMenu(this)" aria-expanded="true" aria-controls="unified-menu-overlay">ACTION</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">LAB</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">EXPLORE</button>
+            </nav>
+
+            <button class="md:hidden text-black focus:outline-none" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
+                <svg id="mobile-menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Unified Navigation Overlay Panel (Desktop Only) - Copied and adjusted for context -->
+        <div id="unified-menu-overlay" class="hidden md:block" role="menu" aria-hidden="true">
+            <div class="max-w-7xl mx-auto px-8 py-8">
+                <div class="grid grid-cols-4 gap-12">
+                    <!-- Column 1: DEAMON -->
+                    <div>
+                        <div class="menu-column-title">DEAMON</div>
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false"><span>Home</span><span class="arrow text-xl" aria-hidden="true">▼</span></div>
+                        <div class="sub-menu-content" id="submenu-deamon-1">
+                            <a href="/#essence" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Brand Essence</a>
+                            <a href="/#philosophy" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Commitment & Principles</a>
+                            <a href="/#connection" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Architecture & Skills</a>
+                            <a href="/#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Research & Solutions</a>
+                            <a href="/#team" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Vision & Team</a>
+                            <a href="/#contact" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Connect with Us</a>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: ACTION (Active Menu) -->
+                    <div>
+                        <div class="menu-column-title">ACTION</div>
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false"><span>CUSTOM SOLUTIONS</span><span class="arrow text-xl" aria-hidden="true">▼</span></div>
+                        <div class="sub-menu-content" id="submenu-action-1">
+                            <a href="/actions/autonomous_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Autonomous Security</a>
+                            <a href="/actions/smart_factory.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Smart Factory Automation</a>
+                            <a href="/actions/custom_saas.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Custom SaaS Development</a>
+                        </div>
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false"><span>FUNCTION FOR GOOD</span><span class="arrow text-xl" aria-hidden="true">▼</span></div>
+                        <div class="sub-menu-content" id="submenu-action-2">
+                            <a href="/actions/disaster_rescue.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Disaster Rescue Robotics</a>
+                            <a href="/actions/urban_intelligence.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Urban Intelligence</a>
+                            <a href="/actions/energy_optimization.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Sustainable Energy Optimization</a>
+                        </div>
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false"><span>EXPLORATORY R&D</span><span class="arrow text-xl" aria-hidden="true">▼</span></div>
+                        <div class="sub-menu-content" id="submenu-action-3">
+                            <a href="/actions/ai_creative.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">AI Creative Expression</a>
+                            <a href="/actions/quantum_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Quantum Security Prototyping</a>
+                            <a href="/#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Technical Reports & Studies</a>
+                        </div>
+                        
+                        <!-- DEPLOYED PROJECTS Section - Finalized Style -->
+                        <div class="border-t-2 border-dashed border-gray-500 my-4"></div>
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>DEPLOYED PROJECTS</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-action-4">
+                            <a href="/actions/rebuilt_calculator.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Rebuilt Calculator (JS)</a>
+                            <a href="/actions/chat_app_v1.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Original Chat App (React)</a>
+                            <a href="/actions/legacy_game_sim.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Legacy Game Simulation</a>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: LAB -->
+                    <div>
+                        <div class="menu-column-title">LAB</div>
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false"><span>Research & Reports</span><span class="arrow text-xl" aria-hidden="true">▼</span></div>
+                        <div class="sub-menu-content" id="submenu-lab-1">
+                            <a href="/#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Research Outcomes</a>
+                            <a href="/#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Technical Reports</a>
+                        </div>
+                    </div>
+
+                    <!-- Column 4: EXPLORE -->
+                    <div>
+                        <div class="menu-column-title">EXPLORE</div>
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false"><span>Group & Connect</span><span class="arrow text-xl" aria-hidden="true">▼</span></div>
+                        <div class="sub-menu-content" id="submenu-explore-1">
+                            <a href="/#team" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Vision & Structure</a>
+                            <a href="/#contact" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Connect with Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Flat List - Unified) - Copied and adjusted for context -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2 z-30 overflow-y-auto max-h-[calc(100vh-68px)]" role="navigation">
+            <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">DEAMON</p>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Home</p>
+            <a href="/#essence" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Brand Essence</a>
+            <a href="/#philosophy" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Commitment & Principles</a>
+            <a href="/#connection" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Architecture & Skills</a>
+            <a href="/#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Research & Solutions</a>
+            <a href="/#team" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Vision & Team</a>
+            <a href="/#contact" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Connect with Us</a>
+
+            <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">ACTION</p>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">CUSTOM SOLUTIONS</p>
+            <a href="/actions/autonomous_security.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Autonomous Security</a>
+            <a href="/actions/smart_factory.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Smart Factory Automation</a>
+            <a href="/actions/custom_saas.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Custom SaaS Development</a>
+            
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">FUNCTION FOR GOOD</p>
+            <a href="/actions/disaster_rescue.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Disaster Rescue Robotics</a>
+            <a href="/actions/urban_intelligence.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Urban Intelligence</a>
+            <a href="/actions/energy_optimization.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Sustainable Energy Optimization</a>
+
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">EXPLORATORY R&D</p>
+            <a href="/actions/ai_creative.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">AI Creative Expression</a>
+            <a href="/actions/quantum_security.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Quantum Security Prototyping</a>
+            <a href="/#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Technical Reports & Studies</a>
+
+            <div class="border-t-2 border-dashed border-gray-500 mx-4 mt-4 pt-4"></div>
+            <p class="text-gray-700 font-semibold px-4 pt-2 pb-1 text-sm uppercase">DEPLOYED PROJECTS</p>
+            <a href="/actions/rebuilt_calculator.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Rebuilt Calculator (JS)</a>
+            <a href="/actions/chat_app_v1.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Original Chat App (React)</a>
+            <a href="/actions/legacy_game_sim.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Legacy Game Simulation</a>
+            
+            <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">LAB</p>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Research & Reports</p>
+            <a href="/#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Research Outcomes</a>
+            <a href="/#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Technical Reports</a>
+            
+            <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">EXPLORE</p>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Group & Connect</p>
+            <a href="/#team" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Vision & Structure</a>
+            <a href="/#contact" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Connect with Us</a>
+        </div>
+    </header>
+
+    <!-- Main Content Section: Architecture Deep Dive -->
+    <main class="pt-24 section-padding-large">
+        <div class="max-w-4xl mx-auto">
+
+            <!-- Title and Introduction -->
+            <div class="text-center mb-16">
+                <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">TECHNICAL ARCHITECTURE</p>
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-black mb-6">
+                    DEAMON FUSION FLOW <br><span style="color: var(--color-accent);">The 3-Stage Cycle of Unseen Power</span>
+                </h1>
+                <p class="text-xl text-gray-700 mx-auto max-w-2xl">
+                    All core Deamon projects follow a <b>Trinity Structure</b> connecting <b>Embedded, AI, and Web Solutions</b>. This architecture ensures technical reliability, enables intelligent decision-making, and creates a <b>circular flow</b> that transparently shares final results.
+                </p>
+            </div>
+
+            <!-- Flow Details with Project Example -->
+            <div class="space-y-12">
+                
+                <!-- Stage 1: Embedded System (The Unseen Daemon) -->
+                <div class="premium-card rounded-xl flow-detail-card" role="article">
+                    <p class="flow-title text-sm mb-2">STAGE 1 | PHYSICAL FOUNDATION</p>
+                    <h2 class="text-2xl font-bold mb-4 flex items-center text-black">
+                        <span class="text-4xl mr-3" aria-hidden="true">🛠️</span> 1. EMBEDDED SYSTEM: <span style="color: var(--color-accent);">UNWAVERING RELIABILITY</span>
+                    </h2>
+                    <p class="text-gray-700 mb-4">
+                        This stage is the <b>hardware heart</b> of the project. It drives the robot body and directly controls various components like servo and DC motors and sensors. In accordance with the <b>Daemon Principle</b>, the code in this area guarantees the system's unstoppable <span style="color: var(--color-accent); font-weight: 700;">Reliability</span>, operating ceaselessly like a <b>Daemon Process</b> in the background.
+                    </p>
+                    <hr class="my-4 border-gray-300">
+                    <p class="font-semibold text-gray-800">
+                        <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
+                        <li><b>Body Production & Control:</b> Key circuits and code for physical driving, such as the robot chassis, wheels, and motor drivers, are implemented at this stage.</li>
+                        <li><b>Sensor Data Collection:</b> All sensor data, including gyroscope and infrared sensors, to identify the robot's location and environment, is collected in real-time.</li>
+                    </ul>
+                </div>
+
+                <!-- Stage 2: AI Core (Cognitive Optimization) -->
+                <div class="premium-card rounded-xl flow-detail-card" role="article">
+                    <p class="flow-title text-sm mb-2">STAGE 2 | COGNITIVE OPTIMIZATION</p>
+                    <h2 class="text-2xl font-bold mb-4 flex items-center text-black">
+                        <span class="text-4xl mr-3" aria-hidden="true">🧠</span> 2. AI CORE: <span style="color: var(--color-accent);">RESPONSIBLE PRECISION</span>
+                    </h2>
+                    <p class="text-gray-700 mb-4">
+                        This stage involves <b>perceiving and predicting the situation</b> based on data collected from the Embedded System. The AI model transforms this raw data into <b>Intelligent Information</b>, helping the system actively resolve issues. Based on the <b>Responsible Precision</b> philosophy, the AI makes <span style="color: var(--color-accent); font-weight: 700;">accurate and efficient judgments</span> without wasting resources.
+                    </p>
+                    <hr class="my-4 border-gray-300">
+                    <p class="font-semibold text-gray-800">
+                        <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
+                        <li><b>Real-time Object Recognition:</b> Receiving the camera stream, the YOLO-based model accurately recognizes <b>people, movement, and potential threats</b>.</li>
+                        <li><b>Autonomous Path Decision:</b> Integrating sensor data and AI perception results to avoid obstacles and determine the optimal patrol route in real-time.</li>
+                    </ul>
+                </div>
+
+                <!-- Stage 3: Web Solution (Interface of Trust) -->
+                <div class="premium-card rounded-xl flow-detail-card" role="article">
+                    <p class="flow-title text-sm mb-2">STAGE 3 | INTERFACE OF TRUST</p>
+                    <h2 class="text-2xl font-bold mb-4 flex items-center text-black">
+                        <span class="text-4xl mr-3" aria-hidden="true">🌐</span> 3. WEB SOLUTION: <span style="color: var(--color-accent);">FUNCTION FOR GOOD</span>
+                    </h2>
+                    <p class="text-gray-700 mb-4">
+                        This is the <b>interface that transparently shows humans</b> the stable operation of the Embedded System and the intelligent judgments of the AI. The Web Solution provides remote control and monitoring capabilities, allowing users to trust and manage the system according to the <b>Function for Good</b> philosophy. This is the final stage that transforms <span style="color: var(--color-accent); font-weight: 700;">unseen power into visible results</span>.
+                    </p>
+                    <hr class="my-4 border-gray-300">
+                    <p class="font-semibold text-gray-800">
+                        <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
+                    </p>
+                    <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
+                        <li><b>Real-time Dashboard:</b> <b>Visualizing operational data</b> such as the robot's current location, battery status, and sensor status.</li>
+                        <li><b>Alerts and Event Logs:</b> Sending <b>immediate notifications</b> of people or dangerous situations recognized by the AI and recording detailed logs.</li>
+                        <li><b>Remote Control Interface:</b> Provides the ability for administrators to directly control the robot's movement via the web when necessary.</li>
+                    </ul>
+                </div>
+
+            </div>
+            
+            <!-- Conclusion CTA -->
+            <div class="text-center mt-20">
+                <h3 class="text-2xl font-bold mb-4 text-black">
+                    How can this architecture be applied to your projects?
+                </h3>
+                <p class="text-lg text-gray-600 mb-8">
+                    Deamon solves complex problems through this fusion flow, creating substantial value based on technical reliability.
+                </p>
+                <a href="/#contact" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-primary uppercase inline-flex items-center">
+                    Collaborate with Deamon
+                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer - Copied from index.html -->
+    <footer class="border-t border-gray-200 mt-12 py-10" role="contentinfo">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-10">
+                <div class="flex items-center space-x-3">
+                    <svg class="h-4 w-4 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
+                    </svg>
+                    <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
+                </div>
+                <p class="text-gray-500 font-medium">The power that runs unseen.</p>
+            </div>
+            
+            <div class="text-sm text-gray-600 mt-6">
+                <a href="mailto:deamon.software@gmail.com" class="hover:text-black transition duration-300">deamon.software@gmail.com</a>
+                <span class="mx-3" aria-hidden="true">|</span>
+                <a href="#" class="hover:text-black transition duration-300">Privacy Policy</a>
+            </div>
+            <p class="text-xs text-gray-400 mt-4">&copy; 2025 Deamon Software Group. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
