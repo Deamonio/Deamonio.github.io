@@ -32,12 +32,10 @@
             font-size: 1.05rem; /* Adjusted for better reading balance */
         }
 
-        /* Premium Module Style (Rounded and Soft Shadow) - MODIFIED: Border and Shadow enhanced */
+        /* Premium Module Style (Rounded and Soft Shadow) */
         .premium-card {
             background-color: var(--color-module-bg);
-            /* 수정: 명확한 미세 경계선 추가 */
             border: 1px solid var(--color-line-subtle); 
-            /* 수정: 그림자 투명도 강화 (0.05 -> 0.1) */
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -45,7 +43,7 @@
         .premium-card:hover {
             border-color: var(--color-deep-black); 
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1); 
-            transform: translateY(-2px); /* Reduced lift for subtlety */
+            transform: translateY(-2px);
         }
 
         /* CTA Button refinement */
@@ -92,7 +90,7 @@
         .nav-link {
             transition: color 0.3s, border-bottom 0.3s;
             border-bottom: 3px solid transparent; /* Default transparent border */
-            white-space: nowrap; /* 글자 길이에 따라 버튼 크기가 변하도록 텍스트 줄바꿈 방지 */
+            white-space: nowrap;
         }
 
         .nav-link:hover {
@@ -108,7 +106,7 @@
             border-bottom: 3px solid var(--color-accent); 
         }
 
-        /* Unified Navigation Panel Styles - FIX: Use max-height for fluid behavior and enable scrolling only when content overflows */
+        /* Unified Navigation Panel Styles */
         #unified-menu-overlay {
             position: fixed;
             top: 68px;
@@ -182,7 +180,7 @@
             padding-top: 0.75rem;
         }
 
-        /* Style for indented detail items - UPDATED: 상하 패딩을 늘려 글자 잘림 방지 */
+        /* Style for indented detail items */
         .menu-item-indented {
             padding-left: 1.5rem; /* Indentation */
             display: block;
@@ -270,7 +268,7 @@
         }
         /* ---------------------------------------------------------------------------------- */
 
-        /* ---------------------- Hero Background Effect: The Unseen Core (ADDED) ---------------------- */
+        /* ---------------------- Hero Background Effect: The Unseen Core ---------------------- */
         .hero-bg-effect {
             position: relative;
             overflow: hidden; /* Keep the effect contained */
@@ -310,7 +308,7 @@
             100% { stroke-dashoffset: 0; filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2)); } /* Settle with subtle shadow */
         }
 
-        /* NEW: Continuous Subtle Glow Animation */
+        /* Continuous Subtle Glow Animation */
         @keyframes subtle-glow {
             0% { filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2)); }
             100% { filter: drop-shadow(0 0 10px var(--color-accent)); } /* Accent Navy Glow */
@@ -384,12 +382,16 @@
 
             const isTargetActive = buttonElement.classList.contains('active-button');
 
-            // Close all active buttons first
-            navButtons.forEach(btn => btn.classList.remove('active-button'));
+            // Close all active buttons first and reset ARIA
+            navButtons.forEach(btn => {
+                btn.classList.remove('active-button');
+                btn.setAttribute('aria-expanded', 'false');
+            });
 
             // Reset all folding menus if closing or switching to a new button
             document.querySelectorAll('.sub-category-title.open').forEach(title => {
                 title.classList.remove('open');
+                title.setAttribute('aria-expanded', 'false');
                 const content = title.nextElementSibling;
                 if (content) content.style.maxHeight = null;
             });
@@ -399,11 +401,14 @@
                 // If the same active button is clicked, close the menu
                 menuPanel.classList.remove('open');
                 isMenuOpen = false;
+                menuPanel.setAttribute('aria-hidden', 'true');
             } else {
                 // Open the menu and set the active button
                 menuPanel.classList.add('open');
                 buttonElement.classList.add('active-button');
+                buttonElement.setAttribute('aria-expanded', 'true'); // Set target button to true
                 isMenuOpen = true;
+                menuPanel.setAttribute('aria-hidden', 'false');
             }
         }
         
@@ -413,11 +418,16 @@
             if (!menuPanel.classList.contains('open')) return; // Exit if already closed
 
             menuPanel.classList.remove('open');
-            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active-button'));
+            menuPanel.setAttribute('aria-hidden', 'true');
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                btn.classList.remove('active-button');
+                btn.setAttribute('aria-expanded', 'false'); // Ensure closure sets it to false
+            });
             isMenuOpen = false;
             // Also reset all folding menus when main menu is closed
             document.querySelectorAll('.sub-category-title.open').forEach(title => {
                 title.classList.remove('open');
+                title.setAttribute('aria-expanded', 'false');
                 const content = title.nextElementSibling;
                 if (content) content.style.maxHeight = null;
             });
@@ -425,10 +435,13 @@
 
         // Toggles the folding state of a sub-menu category
         function toggleSubMenu(titleElement) {
-            titleElement.classList.toggle('open');
             const content = titleElement.nextElementSibling; // Get the next element (the folding content div)
+            const isOpening = !content.classList.contains('open');
+
+            titleElement.classList.toggle('open');
+            titleElement.setAttribute('aria-expanded', isOpening ? 'true' : 'false');
             
-            if (content.classList.contains('open')) {
+            if (!isOpening) {
                 content.classList.remove('open');
                 content.style.maxHeight = null;
             } else {
@@ -437,32 +450,37 @@
                 column.querySelectorAll('.sub-category-title.open').forEach(otherTitle => {
                     if (otherTitle !== titleElement) {
                         otherTitle.classList.remove('open');
+                        otherTitle.setAttribute('aria-expanded', 'false');
                         const otherContent = otherTitle.nextElementSibling;
                         if (otherContent) otherContent.style.maxHeight = null;
                     }
                 });
 
                 content.classList.add('open');
-                // Set max-height for smooth transition based on content size (ensures dynamic height)
+                // Set max-height for smooth transition based on content size
                 content.style.maxHeight = content.scrollHeight + "px";
             }
         }
 
 
-        // Mobile Menu Toggle (MODIFIED: Handles icon change and state)
+        // Mobile Menu Toggle (MODIFIED: Handles icon change and state, including ARIA)
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('mobile-menu-icon');
+            const toggleButton = document.querySelector('button[aria-controls="mobile-menu"]');
+
             menu.classList.toggle('hidden');
             isMobileMenuOpen = !menu.classList.contains('hidden');
 
-            // Update icon
+            // Update icon and ARIA
             if (isMobileMenuOpen) {
                 icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>'; // X icon
+                toggleButton.setAttribute('aria-expanded', 'true');
                 // Close desktop menu if mobile menu opens
                 closeUnifiedMenu();
             } else {
                 icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>'; // Hamburger icon
+                toggleButton.setAttribute('aria-expanded', 'false');
             }
         }
 
@@ -518,22 +536,18 @@
             });
         });
 
-        // ADDED: Global listeners for closing menus (Escape key and click-outside)
+        // Global listeners for closing menus (Escape key and click-outside)
         document.addEventListener('click', (event) => {
             const header = document.querySelector('header');
             const unifiedMenu = document.getElementById('unified-menu-overlay');
-            const navButtons = document.querySelector('nav.md\\:flex');
 
-            // Check if the click is outside the header entirely (and we are on desktop where unified menu is used)
+            // If the menu is open, and the click is outside the header entirely (and we are on desktop where unified menu is used), close it.
             const isClickInsideHeader = header.contains(event.target);
-            const isClickTargetAButton = navButtons.contains(event.target);
             
-            // If the menu is open, and the click is outside the header/nav buttons, close it.
             if (isMenuOpen && !isClickInsideHeader && window.innerWidth >= 768) { 
                 closeUnifiedMenu();
             }
-            // If the menu is open, and the click is inside the header but not on a button/link that is supposed to keep it open, close it.
-            // Simplified: The closeUnifiedMenu() will be called when an internal link is clicked inside the menu.
+            // Note: Clicks on links inside the unified menu automatically call closeUnifiedMenu() via inline onclick handlers.
         });
 
         document.addEventListener('keydown', (event) => {
@@ -551,31 +565,31 @@
 </head>
 <body class="antialiased">
     <!-- Header / Navigation (Fixed) -->
-    <header class="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-md bg-white/95 border-b border-gray-200">
+    <header class="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-md bg-white/95 border-b border-gray-200" role="banner">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center h-16">
             <!-- Logo (Top Left Logo: No Animation) -->
-            <a href="#" class="flex items-center space-x-2" onclick="closeUnifiedMenu(); if (isMobileMenuOpen) toggleMobileMenu();">
+            <a href="#" class="flex items-center space-x-2" onclick="closeUnifiedMenu(); if (isMobileMenuOpen) toggleMobileMenu();" aria-label="Go to Deamon homepage">
                 <!-- SVG path is conceptual: the unseen path of the daemon -->
-                <svg class="h-6 w-6 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg class="h-6 w-6 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
                 </svg>
                 <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
             </a>
             
             <!-- Desktop Navigation Menu (Click-to-Open Unified Panel) -->
-            <nav class="hidden md:flex relative space-x-4 text-gray-800"> 
+            <nav class="hidden md:flex relative space-x-4 text-gray-800" role="navigation"> 
                 <!-- 1. DEAMON -->
-                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">DEAMON</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">DEAMON</button>
                 <!-- 2. ACTION -->
-                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">ACTION</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">ACTION</button>
                 <!-- 3. LAB -->
-                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">LAB</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">LAB</button>
                 <!-- 4. EXPLORE -->
-                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">EXPLORE</button>
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">EXPLORE</button>
             </nav>
 
-            <!-- Mobile Menu Button (Hamburger/X) - MODIFIED: Added ID for icon change -->
-            <button class="md:hidden text-black focus:outline-none" onclick="toggleMobileMenu()">
+            <!-- Mobile Menu Button (Hamburger/X) - ADDED ARIA -->
+            <button class="md:hidden text-black focus:outline-none" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
                 <svg id="mobile-menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <!-- Initial Hamburger Icon -->
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
@@ -583,8 +597,8 @@
             </button>
         </div>
         
-        <!-- Unified Navigation Overlay Panel (Desktop Only) -->
-        <div id="unified-menu-overlay" class="hidden md:block">
+        <!-- Unified Navigation Overlay Panel (Desktop Only) - ADDED ARIA -->
+        <div id="unified-menu-overlay" class="hidden md:block" role="menu" aria-hidden="true">
             <div class="max-w-7xl mx-auto px-8 py-8">
                 <div class="grid grid-cols-4 gap-12">
 
@@ -592,19 +606,19 @@
                     <div>
                         <div class="menu-column-title">DEAMON</div>
                         
-                        <!-- Middle Classification 1: Home (Folding Trigger) -->
-                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                        <!-- Middle Classification 1: Essence & Principles (Folding Trigger) - ADDED ARIA -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
                             <span>Home</span>
-                            <span class="arrow text-xl">▼</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
                         </div>
-                        <div class="sub-menu-content">
+                        <div class="sub-menu-content" id="submenu-deamon-1">
                             <!-- Detail Items (Indented) -->
-                            <a href="#essence" onclick="closeUnifiedMenu()" class="menu-item-indented">Brand Essence</a>
-                            <a href="#philosophy" onclick="closeUnifiedMenu()" class="menu-item-indented">Commitment & Principles</a>
-                            <a href="#connection" onclick="closeUnifiedMenu()" class="menu-item-indented">Architecture & Skills</a>
-                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented">Research & Solutions</a>
-                            <a href="#team" onclick="closeUnifiedMenu()" class="menu-item-indented">Vision & Team</a>
-                            <a href="#contact" onclick="closeUnifiedMenu()" class="menu-item-indented">Connect with Us</a>
+                            <a href="#essence" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Brand Essence</a>
+                            <a href="#philosophy" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Commitment & Principles</a>
+                            <a href="#connection" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Architecture & Skills</a>
+                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Research & Solutions</a>
+                            <a href="#team" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Vision & Team</a>
+                            <a href="#contact" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Connect with Us</a>
                         </div>
 
                        <!-- Middle Classification 2: About (Folding Trigger) -->
@@ -620,61 +634,77 @@
                         
                     </div>
 
-                    <!-- Column 2: ACTION (MODIFIED to Prefix Categories) -->
+                    <!-- Column 2: ACTION -->
                     <div>
                         <div class="menu-column-title">ACTION</div>
                         
-                        <!-- Middle Classification 1: S - CUSTOM SOLUTIONS (Folding Trigger) -->
-                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                        <!-- Middle Classification 1: S - CUSTOM SOLUTIONS (Folding Trigger) - ADDED ARIA -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
                             <span>CUSTOM SOLUTIONS</span>
-                            <span class="arrow text-xl">▼</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
                         </div>
-                        <div class="sub-menu-content">
+                        <div class="sub-menu-content" id="submenu-action-1">
                             <!-- Detail Items (Indented) -->
-                            <a href="/actions/autonomous_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Autonomous Security</a>
-                            <a href="/actions/smart_factory.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Smart Factory Automation</a>
-                            <a href="/actions/custom_saas.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Custom SaaS Development</a>
+                            <a href="/actions/autonomous_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Autonomous Security</a>
+                            <a href="/actions/smart_factory.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Smart Factory Automation</a>
+                            <a href="/actions/custom_saas.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Custom SaaS Development</a>
                         </div>
 
-                        <!-- Middle Classification 2: G - FUNCTION FOR GOOD (Folding Trigger) -->
-                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                        <!-- Middle Classification 2: G - FUNCTION FOR GOOD (Folding Trigger) - ADDED ARIA -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
                             <span>FUNCTION FOR GOOD</span>
-                            <span class="arrow text-xl">▼</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
                         </div>
-                        <div class="sub-menu-content">
+                        <div class="sub-menu-content" id="submenu-action-2">
                             <!-- Detail Items (Indented) -->
-                            <a href="/actions/disaster_rescue.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Disaster Rescue Robotics</a>
-                            <a href="/actions/urban_intelligence.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Urban Intelligence</a>
-                            <a href="/actions/energy_optimization.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Sustainable Energy Optimization</a>
+                            <a href="/actions/disaster_rescue.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Disaster Rescue Robotics</a>
+                            <a href="/actions/urban_intelligence.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Urban Intelligence</a>
+                            <a href="/actions/energy_optimization.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Sustainable Energy Optimization</a>
                         </div>
                         
-                        <!-- Middle Classification 3: R - EXPLORATORY R&D (Folding Trigger) -->
-                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                        <!-- Middle Classification 3: R - EXPLORATORY R&D (Folding Trigger) - ADDED ARIA -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
                             <span>EXPLORATORY R&D</span>
-                            <span class="arrow text-xl">▼</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
                         </div>
-                        <div class="sub-menu-content">
+                        <div class="sub-menu-content" id="submenu-action-3">
                             <!-- Detail Items (Indented) -->
-                            <a href="/actions/ai_creative.html" onclick="closeUnifiedMenu()" class="menu-item-indented">AI Creative Expression</a>
-                            <a href="/actions/quantum_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Quantum Security Prototyping</a>
-                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented">Technical Reports & Studies</a>
+                            <a href="/actions/ai_creative.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">AI Creative Expression</a>
+                            <a href="/actions/quantum_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Quantum Security Prototyping</a>
+                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Technical Reports & Studies</a>
                         </div>
                         
+                        <!-- 구분선 변경: 두꺼운 점선으로 변경하여 시각적 분리 강조 -->
+                        <!-- UPDATED: border-gray-300 -> border-gray-500 -->
+                        <div class="border-t-2 border-dashed border-gray-500 my-4"></div>
+
+                        <!-- Middle Classification 4: TECHNICAL PROOFS (Folding Trigger) - NAME CHANGE APPLIED -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>DEPLOYED PROJECTS</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-action-4">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/actions/rebuilt_calculator.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Rebuilt Calculator (JS)</a>
+                            <a href="/actions/chat_app_v1.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Original Chat App (React)</a>
+                            <a href="/actions/legacy_game_sim.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Legacy Game Simulation</a>
+                        </div>
+
                     </div>
 
                     <!-- Column 3: LAB -->
                     <div>
                         <div class="menu-column-title">LAB</div>
                         
-                        <!-- Middle Classification 1: Research & Reports (Folding Trigger) -->
-                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                        <!-- Middle Classification 1: Research & Reports (Folding Trigger) - ADDED ARIA -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
                             <span>Research & Reports</span>
-                            <span class="arrow text-xl">▼</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
                         </div>
-                        <div class="sub-menu-content">
+                        <div class="sub-menu-content" id="submenu-lab-1">
                             <!-- Detail Items (Indented) -->
-                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented">Research Outcomes</a>
-                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented">Technical Reports</a>
+                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Research Outcomes</a>
+                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Technical Reports</a>
                         </div>
                         
                     </div>
@@ -683,15 +713,15 @@
                     <div>
                         <div class="menu-column-title">EXPLORE</div>
                         
-                        <!-- Middle Classification 1: Group & Connect (Folding Trigger) -->
-                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                        <!-- Middle Classification 1: Group & Connect (Folding Trigger) - ADDED ARIA -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
                             <span>Group & Connect</span>
-                            <span class="arrow text-xl">▼</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
                         </div>
-                        <div class="sub-menu-content">
+                        <div class="sub-menu-content" id="submenu-explore-1">
                             <!-- Detail Items (Indented) -->
-                            <a href="#team" onclick="closeUnifiedMenu()" class="menu-item-indented">Vision & Structure</a>
-                            <a href="#contact" onclick="closeUnifiedMenu()" class="menu-item-indented">Connect with Us</a>
+                            <a href="#team" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Vision & Structure</a>
+                            <a href="#contact" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Connect with Us</a>
                         </div>
                         
                     </div>
@@ -700,8 +730,8 @@
             </div>
         </div>
         
-        <!-- Mobile Menu (Flat List - Unified) - MODIFIED ACTION SECTION -->
-        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2 z-30 overflow-y-auto max-h-[calc(100vh-68px)]">
+        <!-- Mobile Menu (Flat List - Unified) - ADDED ARIA -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2 z-30 overflow-y-auto max-h-[calc(100vh-68px)]" role="navigation">
             <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">DEAMON</p>
             <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Home</p>
             <a href="#essence" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Brand Essence</a>
@@ -710,6 +740,10 @@
             <a href="#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Research & Solutions</a>
             <a href="#team" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Vision & Team</a>
             <a href="#contact" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Connect with Us</a>
+
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">About</p>
+            <a href="/Brand_identity.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">BI & CI</a>
+            <a href="/Fusion_Architecture_Deep_Dive.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Fusion Architecture</a>
 
             <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">ACTION</p>
             <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">CUSTOM SOLUTIONS</p>
@@ -727,6 +761,15 @@
             <a href="/actions/quantum_security.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Quantum Security Prototyping</a>
             <a href="#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Technical Reports & Studies</a>
 
+            <!-- 구분선 변경: 두꺼운 점선으로 변경 -->
+            <!-- UPDATED: border-gray-300 -> border-gray-500 -->
+            <div class="border-t-2 border-dashed border-gray-500 mx-4 mt-4 pt-4"></div>
+            <!-- NAME CHANGE APPLIED -->
+            <p class="text-gray-700 font-semibold px-4 pt-2 pb-1 text-sm uppercase">DEPLOYED PROJECTS</p>
+            <a href="/actions/rebuilt_calculator.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Rebuilt Calculator (JS)</a>
+            <a href="/actions/chat_app_v1.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Original Chat App (React)</a>
+            <a href="/actions/legacy_game_sim.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Legacy Game Simulation</a>
+            
             <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">LAB</p>
             <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Research & Reports</p>
             <a href="#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Research Outcomes</a>
@@ -748,7 +791,7 @@
         <div class="max-w-5xl mx-auto relative z-10">
             <!-- Animated Logo SVG (Large - Draw + Glow) -->
             <div class="scroll-reveal">
-                <svg class="h-40 w-40 sm:h-56 sm:w-56 mx-auto mb-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg class="h-40 w-40 sm:h-56 sm:w-56 mx-auto mb-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Deamon Logo: Stylized curved line representing an unseen path.">
                     <!-- Main Logo Animation Applied: Black stroke draw effect only -->
                     <path d="M 20 20 C 50 10, 50 90, 80 80" stroke-width="10" stroke-linecap="round" fill="none" class="logo-path-hero"/>
                 </svg>
@@ -759,7 +802,7 @@
                 THE POWER THAT RUNS UNSEEN.
             </h1>
 
-            <!-- Sub-Head (MODIFIED: New Text Applied) -->
+            <!-- Sub-Head -->
             <p class="text-xl sm:text-2xl text-gray-700 mb-16 max-w-4xl mx-auto scroll-reveal" style="transition-delay: 0.2s;">
                 Deamon declares the <b>genuine worth of technology</b>. We are the <b>unseen, unshakeable code</b> that completes the bedrock of <b>absolute trust</b>, running deep within the system's <b>essential operating core</b>.
             </p>
@@ -783,13 +826,13 @@
                 DEAMON'S ESSENCE: A <span style="color: var(--color-accent);">TECHNICAL DECLARATION</span> SUSTAINING THE SYSTEM'S CORE
             </h2>
             <div class="grid md:grid-cols-2 gap-10 text-left max-w-5xl mx-auto">
-                <div class="p-8 premium-card rounded-2xl scroll-reveal">
+                <div class="p-8 premium-card rounded-2xl scroll-reveal" role="article">
                     <h3 class="text-2xl font-bold mb-3 text-black uppercase">THE DAEMON PRINCIPLE</h3>
                     <p class="text-gray-600">
                         The true value of technology comes not from visible flair, but from the exploration of the system's <b>deepest roots</b>. We uphold the spirit of the <b>Daemon Process</b>, the fundamental concept in computer science that works silently and ceaselessly in the background.
                     </p>
                 </div>
-                <div class="p-8 premium-card rounded-2xl scroll-reveal" style="transition-delay: 0.2s;">
+                <div class="p-8 premium-card rounded-2xl scroll-reveal" style="transition-delay: 0.2s;" role="article">
                     <h3 class="text-2xl font-bold mb-3 text-black uppercase">OUR QUIET FORCE</h3>
                     <p class="text-gray-600">
                         Deamon's code is the quiet force that maintains the essential nature of the system: <b>Unwavering Reliability</b>. This commitment transcends mere functionality; it represents the technical responsibility to build a foundation that never fails.
@@ -808,9 +851,9 @@
             
             <div class="space-y-16">
                 <!-- Pillar 1: Reliability -->
-                <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal">
+                <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal" role="article">
                     <div class="md:col-span-3">
-                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">⚙️</div>
+                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start" aria-hidden="true">⚙️</div>
                     </div>
                     <div class="md:col-span-9 premium-card p-8 sm:p-10 rounded-2xl">
                         <h3 class="text-2xl sm:text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">UNWAVERING RELIABILITY</h3>
@@ -821,9 +864,9 @@
                 </div>
 
                 <!-- Pillar 2: Precision -->
-                <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal" style="transition-delay: 0.2s;">
+                <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal" style="transition-delay: 0.2s;" role="article">
                     <div class="md:col-span-3 order-1 md:order-none">
-                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">✨</div>
+                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start" aria-hidden="true">✨</div>
                     </div>
                     <div class="md:col-span-9 order-2 md:order-none premium-card p-8 sm:p-10 rounded-2xl">
                         <h3 class="text-2xl sm:text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">RESPONSIBLE PRECISION</h3>
@@ -834,9 +877,9 @@
                 </div>
 
                 <!-- Pillar 3: Function for Good -->
-                <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal" style="transition-delay: 0.4s;">
+                <div class="md:grid md:grid-cols-12 gap-12 items-start scroll-reveal" style="transition-delay: 0.4s;" role="article">
                     <div class="md:col-span-3">
-                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start">🌍</div>
+                        <div class="text-6xl sm:text-7xl mb-4 md:mb-0 flex items-center justify-center md:justify-start" aria-hidden="true">🌍</div>
                     </div>
                     <div class="md:col-span-9 premium-card p-8 sm:p-10 rounded-2xl">
                         <h3 class="text-2xl sm:text-3xl font-bold mb-3 text-black uppercase border-b pb-2 border-gray-300">FUNCTION FOR GOOD</h3>
@@ -859,50 +902,47 @@
             <!-- Vertical Flow Container (Accent for Flow Line and Markers) -->
             <div class="flow-container">
                 <!-- 1. Embedded System (Physical Root) -->
-                <div class="flow-item scroll-reveal" style="transition-delay: 0.2s;">
+                <div class="flow-item scroll-reveal" style="transition-delay: 0.2s;" role="article">
                     <div class="premium-card p-8 sm:p-10 rounded-2xl">
                         <h3 class="text-xl sm:text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
-                            <span class="text-3xl sm:text-4xl mr-3">🛠️</span> 1. EMBEDDED SYSTEM <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(PHYSICAL FOUNDATION)</span>
+                            <span class="text-3xl sm:text-4xl mr-3" aria-hidden="true">🛠️</span> 1. EMBEDDED SYSTEM <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(PHYSICAL FOUNDATION)</span>
                         </h3>
                         <p class="text-gray-600">
                             The Embedded System forms the <b>core pulse</b> of our architecture. Within it, <b>silent daemons</b> operate beneath the surface — coordinating sensors, managing signals, and maintaining the <b>heartbeat of the machine</b>. They ensure that even when unseen, the system’s rhythm never ceases. This is where <b>reliability begins</b> — deep in the circuitry, beyond what the eyes can see.
                         </p>
-                        <!-- REMOVED: Individual Detail Link -->
                     </div>
                 </div>
                 
                 <!-- 2. AI (Intelligence Core) -->
-                <div class="flow-item scroll-reveal" style="transition-delay: 0.4s;">
+                <div class="flow-item scroll-reveal" style="transition-delay: 0.4s;" role="article">
                     <div class="premium-card p-8 sm:p-10 rounded-2xl">
                         <h3 class="text-xl sm:text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
-                            <span class="text-3xl sm:text-4xl mr-3">🧠</span> 2. AI <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(COGNITIVE OPTIMIZATION LAYER)</span>
+                            <span class="text-3xl sm:text-4xl mr-3" aria-hidden="true">🧠</span> 2. AI <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(COGNITIVE OPTIMIZATION LAYER)</span>
                         </h3>
                         <p class="text-gray-600">
                             Above that foundation, AI acts as the <b>thinking pattern</b> of Deamon’s architecture. It observes the system’s state, <b>predicts what comes next</b>, and <b>adapts its logic before a problem arises</b>. Through <b>continuous optimization</b>, it transforms raw operation into <b>intelligent motion</b>, bridging precision with foresight — the mind that keeps the machine alive and aware.
                         </p>
-                        <!-- REMOVED: Individual Detail Link -->
                     </div>
                 </div>
 
                 <!-- 3. Web Solution (Access Interface) -->
-                <div class="flow-item scroll-reveal" style="transition-delay: 0.6s;">
+                <div class="flow-item scroll-reveal" style="transition-delay: 0.6s;" role="article">
                     <div class="premium-card p-8 sm:p-10 rounded-2xl">
                         <h3 class="text-xl sm:text-2xl font-bold mb-3 text-black flex items-center uppercase border-b pb-2 border-gray-300">
-                            <span class="text-3xl sm:text-4xl mr-3">🌐</span> 3. WEB SOLUTION <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(INTERFACE OF TRUST)</span>
+                            <span class="text-3xl sm:text-4xl mr-3" aria-hidden="true">🌐</span> 3. WEB SOLUTION <span class="ml-3 text-gray-500 text-sm hidden sm:inline">(INTERFACE OF TRUST)</span>
                         </h3>
                         <p class="text-gray-600">
                             Finally, the Web layer <b>unveils the invisible</b>. It is the <b>transparent reflection</b> of everything the daemons and AI are doing beneath. Here, users witness reliability in motion — data made visible, behavior made understandable. The interface doesn’t just display performance; it <b>conveys trust</b>, the final translation of Deamon’s <b>unseen power into human experience</b>.
                         </p>
-                        <!-- REMOVED: Individual Detail Link -->
                     </div>
                 </div>
             </div>
             
             <!-- ADDED: Single CTA for the entire Fusion Architecture flow -->
             <div class="text-center mt-12 scroll-reveal" style="transition-delay: 0.8s;">
-                <a href="/Fusion_Architecture_Deep_Dive.html" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-secondary uppercase inline-flex items-center">
-                    FUSION ARCHITECTURE DEEP DIVE
-                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                <a href="/details/flow-architecture.html" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-secondary uppercase inline-flex items-center">
+                    FULL ARCHITECTURE DEEP DIVE
+                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </a>
             </div>
             
@@ -925,7 +965,7 @@
             <div class="space-y-12">
 
                 <!-- Project 1: GlAISeR (Autonomous Security Robot) -->
-                <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal">
+                <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal" role="article">
                     <div class="md:flex md:space-x-10">
                         <div class="md:w-1/3 mb-4 md:mb-0">
                             <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">
@@ -951,7 +991,7 @@
                 </div>
 
                 <!-- Project 2: DiSRHiT (Disaster Search & Rescue Hand) -->
-                <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal" style="transition-delay: 0.2s;">
+                <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal" style="transition-delay: 0.2s;" role="article">
                     <div class="md:flex md:space-x-10">
                         <div class="md:w-1/3 mb-4 md:mb-0">
                             <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">
@@ -977,7 +1017,7 @@
                 </div>
 
                 <!-- Project 3: SSCAS (Smart Subway Congestion Analysis System) -->
-                <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal" style="transition-delay: 0.4s;">
+                <div class="premium-card p-8 sm:p-12 rounded-2xl scroll-reveal" style="transition-delay: 0.4s;" role="article">
                     <div class="md:flex md:space-x-10">
                         <div class="md:w-1/3 mb-4 md:mb-0">
                             <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">
@@ -1008,7 +1048,7 @@
             <div class="text-center mt-16 scroll-reveal" style="transition-delay: 0.6s;">
                 <a href="/projects_home.html" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-primary uppercase inline-flex items-center">
                     VIEW ALL DEAMON ACTIONS
-                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </a>
             </div>
             
@@ -1049,21 +1089,21 @@
                 <!-- Email/Contact (Stroke SVG) -->
                 <a href="mailto:deamon.software@gmail.com" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
                     <!-- Email SVG Icon (Stroke/Outline style) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-none stroke-current stroke-2 mr-2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M22 6l-10 7L2 6"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-none stroke-current stroke-2 mr-2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M22 6l-10 7L2 6"/></svg>
                     CONTACT US
                 </a>
                 
                 <!-- Instagram (Stroke SVG) -->
                 <a href="https://www.instagram.com/deamon.software" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
                     <!-- Instagram SVG Icon (Stroke/Outline style) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-none stroke-current stroke-2 mr-2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="5" ry="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7h.01" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-none stroke-current stroke-2 mr-2" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="5" ry="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7h.01" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     INSTAGRAM
                 </a>
                 
                 <!-- GitHub (Filled Clean SVG - Octocat is clearer when filled) -->
                 <a href="https://www.github.com/Deamonio" class="px-8 sm:px-12 py-3 sm:py-4 rounded-2xl text-lg font-semibold cta-primary uppercase flex items-center justify-center">
                     <!-- GitHub SVG Icon (Clean filled style) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-current mr-2" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.205 11.385.6.11.82-.26.82-.577v-1.13c-3.23.704-3.925-1.55-4.138-1.986-.17-.417-.833-1.042-1.015-1.06-.68-.016-1.117-.66-.19-.676.65-.016 1.17.65 1.353.99.782 1.348 2.052.96 2.533.737.087-.577.307-1.047.56-1.288-2.05-.23-4.2-1.022-4.2-4.555 0-1.005.358-1.83.947-2.47-.095-.23-.41-1.168.09-2.44 0 0 .77-.246 2.525.945.728-.203 1.5-.304 2.25-.308.75.004 1.52.105 2.25.308 1.755-1.19 2.525-.945 2.525-.945.5 1.272.175 2.21.09 2.44.59.64.947 1.465.947 2.47 0 3.543-2.15 4.32-4.207 4.552.333.284.627.84.627 1.696v3.134c0 .317.22.687.82.577C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-current mr-2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.205 11.385.6.11.82-.26.82-.577v-1.13c-3.23.704-3.925-1.55-4.138-1.986-.17-.417-.833-1.042-1.015-1.06-.68-.016-1.117-.66-.19-.676.65-.016 1.17.65 1.353.99.782 1.348 2.052.96 2.533.737.087-.577.307-1.047.56-1.288-2.05-.23-4.2-1.022-4.2-4.555 0-1.005.358-1.83.947-2.47-.095-.23-.41-1.168.09-2.44 0 0 .77-.246 2.525.945.728-.203 1.5-.304 2.25-.308.75.004 1.52.105 2.25.308 1.755-1.19 2.525-.945 2.525-.945.5 1.272.175 2.21.09 2.44.59.64.947 1.465.947 2.47 0 3.543-2.15 4.32-4.207 4.552.333.284.627.84.627 1.696v3.134c0 .317.22.687.82.577C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
                     GITHUB
                 </a>
                 
@@ -1074,12 +1114,12 @@
 
 
     <!-- Footer -->
-    <footer class="border-t border-gray-200 mt-12 py-10">
+    <footer class="border-t border-gray-200 mt-12 py-10" role="contentinfo">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
             <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-10">
                 <div class="flex items-center space-x-3">
                     <!-- Footer Logo SVG (Small - Black) -->
-                    <svg class="h-4 w-4 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="h-4 w-4 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
                     </svg>
                     <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
@@ -1089,7 +1129,7 @@
             
             <div class="text-sm text-gray-600 mt-6">
                 <a href="mailto:deamon.software@gmail.com" class="hover:text-black transition duration-300">deamon.software@gmail.com</a>
-                <span class="mx-3">|</span>
+                <span class="mx-3" aria-hidden="true">|</span>
                 <a href="#" class="hover:text-black transition duration-300">Privacy Policy</a>
             </div>
             <p class="text-xs text-gray-400 mt-4">&copy; 2025 Deamon Software Group. All Rights Reserved.</p>
