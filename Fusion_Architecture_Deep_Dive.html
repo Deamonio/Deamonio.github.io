@@ -67,7 +67,7 @@
             color: var(--color-background);
         }
         
-        /* Navigation & Menu Styles (from index.html) */
+        /* Navigation & Menu Styles */
         .active-nav {
             color: var(--color-deep-black) !important; 
             border-bottom: 3px solid var(--color-accent); 
@@ -115,11 +115,24 @@
         .menu-item-indented:hover { color: var(--color-accent); font-weight: 700; padding-left: 1.75rem; }
         #mobile-menu a:hover { color: var(--color-accent) !important; }
         
-        /* Custom Flow Style for Deep Dive Page */
+        /* Custom Flow Style for Deep Dive Page - MODIFIED FOR TIMELINE */
+        /* --- Mobile/Default Flow Styling --- */
         .flow-detail-card {
-            border-left: 5px solid var(--color-accent);
+            /* On mobile, use a clear accent border on the left to indicate flow/stage separation */
+            border-left: 4px solid var(--color-accent);
             padding: 2rem;
-            margin-bottom: 3rem;
+            margin-bottom: 3rem; 
+            position: relative;
+        }
+        @media (min-width: 640px) {
+            /* --- Tablet/Desktop Timeline Styling --- */
+            .flow-detail-card {
+                /* On desktop, switch to subtle internal border for depth, the vertical line/dot take over the flow visualization */
+                border-left: 1px solid var(--color-line-subtle); 
+                padding-left: 4rem; 
+                margin-bottom: 4rem; 
+                margin-left: 2.5rem; 
+            }
         }
         .flow-title {
             color: var(--color-accent);
@@ -262,7 +275,7 @@
     </script>
 </head>
 <body class="antialiased">
-    <!-- Header / Navigation (Fixed) - Copied from index.html -->
+    <!-- Header / Navigation (Fixed) -->
     <header class="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-md bg-white/95 border-b border-gray-200" role="banner">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center h-16">
             <a href="/" class="flex items-center space-x-2" onclick="closeUnifiedMenu(); if (isMobileMenuOpen) toggleMobileMenu();" aria-label="Go to Deamon homepage">
@@ -286,7 +299,7 @@
             </button>
         </div>
         
-        <!-- Unified Navigation Overlay Panel (Desktop Only) - Copied and adjusted for context -->
+        <!-- Unified Navigation Overlay Panel (Desktop Only) -->
         <div id="unified-menu-overlay" class="hidden md:block" role="menu" aria-hidden="true">
             <div class="max-w-7xl mx-auto px-8 py-8">
                 <div class="grid grid-cols-4 gap-12">
@@ -368,7 +381,7 @@
             </div>
         </div>
         
-        <!-- Mobile Menu (Flat List - Unified) - Copied and adjusted for context -->
+        <!-- Mobile Menu (Flat List - Unified) -->
         <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2 z-30 overflow-y-auto max-h-[calc(100vh-68px)]" role="navigation">
             <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">DEAMON</p>
             <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Home</p>
@@ -432,65 +445,85 @@
                 </p>
             </div>
 
-            <!-- Flow Details with Project Example -->
-            <div class="space-y-12">
+            <!-- Flow Details with Project Example - MODIFIED WITH TIMELINE -->
+            <div class="relative">
+                <!-- Vertical Flow Line (Desktop/Tablet) -->
+                <div class="hidden sm:block absolute left-0 top-0 h-full w-0.5 ml-6" style="background-color: var(--color-accent);"></div>
                 
                 <!-- Stage 1: Embedded System (The Unseen Daemon) -->
-                <div class="premium-card rounded-xl flow-detail-card" role="article">
-                    <p class="flow-title text-sm mb-2">STAGE 1 | PHYSICAL FOUNDATION</p>
-                    <h2 class="text-2xl font-bold mb-4 flex items-center text-black">
-                        <span class="text-4xl mr-3" aria-hidden="true">🛠️</span> 1. EMBEDDED SYSTEM: <span style="color: var(--color-accent);">UNWAVERING RELIABILITY</span>
-                    </h2>
-                    <p class="text-gray-700 mb-4">
-                        This stage is the <b>hardware heart</b> of the project. It drives the robot body and directly controls various components like servo and DC motors and sensors. In accordance with the <b>Daemon Principle</b>, the code in this area guarantees the system's unstoppable <span style="color: var(--color-accent); font-weight: 700;">Reliability</span>, operating ceaselessly like a <b>Daemon Process</b> in the background.
-                    </p>
-                    <hr class="my-4 border-gray-300">
-                    <p class="font-semibold text-gray-800">
-                        <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
-                    </p>
-                    <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
-                        <li><b>Body Production & Control:</b> Key circuits and code for physical driving, such as the robot chassis, wheels, and motor drivers, are implemented at this stage.</li>
-                        <li><b>Sensor Data Collection:</b> All sensor data, including gyroscope and infrared sensors, to identify the robot's location and environment, is collected in real-time.</li>
-                    </ul>
+                <div class="relative z-10">
+                    <!-- Flow Connector Dot -->
+                    <div class="hidden sm:block absolute left-0 top-0 mt-8 ml-4 w-4 h-4 rounded-full" style="background-color: var(--color-accent); border: 4px solid var(--color-background);"></div>
+                    
+                    <div class="premium-card rounded-xl flow-detail-card" role="article">
+                        <p class="flow-title text-sm mb-2">STAGE 1 | PHYSICAL FOUNDATION</p>
+                        <!-- MODIFIED: Reduced font size on mobile and added flex-wrap to prevent overflow -->
+                        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex flex-wrap items-center text-black">
+                            <span class="text-4xl mr-3" aria-hidden="true">🛠️</span> 1. EMBEDDED SYSTEM: <span style="color: var(--color-accent);">UNWAVERING RELIABILITY</span>
+                        </h2>
+                        <p class="text-gray-700 mb-4">
+                            This stage is the <b>hardware heart</b> of the project. It drives the robot body and directly controls various components like servo and DC motors and sensors. In accordance with the <b>Daemon Principle</b>, the code in this area guarantees the system's unstoppable <span style="color: var(--color-accent); font-weight: 700;">Reliability</span>, operating ceaselessly like a <b>Daemon Process</b> in the background.
+                        </p>
+                        <hr class="my-4 border-gray-300">
+                        <p class="font-semibold text-gray-800">
+                            <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
+                        </p>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
+                            <li><b>Body Production & Control:</b> Key circuits and code for physical driving, such as the robot chassis, wheels, and motor drivers, are implemented at this stage.</li>
+                            <li><b>Sensor Data Collection:</b> All sensor data, including gyroscope and infrared sensors, to identify the robot's location and environment, is collected in real-time.</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Stage 2: AI Core (Cognitive Optimization) -->
-                <div class="premium-card rounded-xl flow-detail-card" role="article">
-                    <p class="flow-title text-sm mb-2">STAGE 2 | COGNITIVE OPTIMIZATION</p>
-                    <h2 class="text-2xl font-bold mb-4 flex items-center text-black">
-                        <span class="text-4xl mr-3" aria-hidden="true">🧠</span> 2. AI CORE: <span style="color: var(--color-accent);">RESPONSIBLE PRECISION</span>
-                    </h2>
-                    <p class="text-gray-700 mb-4">
-                        This stage involves <b>perceiving and predicting the situation</b> based on data collected from the Embedded System. The AI model transforms this raw data into <b>Intelligent Information</b>, helping the system actively resolve issues. Based on the <b>Responsible Precision</b> philosophy, the AI makes <span style="color: var(--color-accent); font-weight: 700;">accurate and efficient judgments</span> without wasting resources.
-                    </p>
-                    <hr class="my-4 border-gray-300">
-                    <p class="font-semibold text-gray-800">
-                        <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
-                    </p>
-                    <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
-                        <li><b>Real-time Object Recognition:</b> Receiving the camera stream, the YOLO-based model accurately recognizes <b>people, movement, and potential threats</b>.</li>
-                        <li><b>Autonomous Path Decision:</b> Integrating sensor data and AI perception results to avoid obstacles and determine the optimal patrol route in real-time.</li>
-                    </ul>
+                <div class="relative z-10">
+                    <!-- Flow Connector Dot -->
+                    <div class="hidden sm:block absolute left-0 top-0 mt-8 ml-4 w-4 h-4 rounded-full" style="background-color: var(--color-accent); border: 4px solid var(--color-background);"></div>
+                    
+                    <div class="premium-card rounded-xl flow-detail-card" role="article">
+                        <p class="flow-title text-sm mb-2">STAGE 2 | COGNITIVE OPTIMIZATION</p>
+                        <!-- MODIFIED: Reduced font size on mobile and added flex-wrap to prevent overflow -->
+                        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex flex-wrap items-center text-black">
+                            <span class="text-4xl mr-3" aria-hidden="true">🧠</span> 2. AI CORE: <span style="color: var(--color-accent);">RESPONSIBLE PRECISION</span>
+                        </h2>
+                        <p class="text-gray-700 mb-4">
+                            This stage involves <b>perceiving and predicting the situation</b> based on data collected from the Embedded System. The AI model transforms this raw data into <b>Intelligent Information</b>, helping the system actively resolve issues. Based on the <b>Responsible Precision</b> philosophy, the AI makes <span style="color: var(--color-accent); font-weight: 700;">accurate and efficient judgments</span> without wasting resources.
+                        </p>
+                        <hr class="my-4 border-gray-300">
+                        <p class="font-semibold text-gray-800">
+                            <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
+                        </p>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
+                            <li><b>Real-time Object Recognition:</b> Receiving the camera stream, the YOLO-based model accurately recognizes <b>people, movement, and potential threats</b>.</li>
+                            <li><b>Autonomous Path Decision:</b> Integrating sensor data and AI perception results to avoid obstacles and determine the optimal patrol route in real-time.</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Stage 3: Web Solution (Interface of Trust) -->
-                <div class="premium-card rounded-xl flow-detail-card" role="article">
-                    <p class="flow-title text-sm mb-2">STAGE 3 | INTERFACE OF TRUST</p>
-                    <h2 class="text-2xl font-bold mb-4 flex items-center text-black">
-                        <span class="text-4xl mr-3" aria-hidden="true">🌐</span> 3. WEB SOLUTION: <span style="color: var(--color-accent);">FUNCTION FOR GOOD</span>
-                    </h2>
-                    <p class="text-gray-700 mb-4">
-                        This is the <b>interface that transparently shows humans</b> the stable operation of the Embedded System and the intelligent judgments of the AI. The Web Solution provides remote control and monitoring capabilities, allowing users to trust and manage the system according to the <b>Function for Good</b> philosophy. This is the final stage that transforms <span style="color: var(--color-accent); font-weight: 700;">unseen power into visible results</span>.
-                    </p>
-                    <hr class="my-4 border-gray-300">
-                    <p class="font-semibold text-gray-800">
-                        <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
-                    </p>
-                    <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
-                        <li><b>Real-time Dashboard:</b> <b>Visualizing operational data</b> such as the robot's current location, battery status, and sensor status.</li>
-                        <li><b>Alerts and Event Logs:</b> Sending <b>immediate notifications</b> of people or dangerous situations recognized by the AI and recording detailed logs.</li>
-                        <li><b>Remote Control Interface:</b> Provides the ability for administrators to directly control the robot's movement via the web when necessary.</li>
-                    </ul>
+                <div class="relative z-10">
+                    <!-- Flow Connector Dot -->
+                    <div class="hidden sm:block absolute left-0 top-0 mt-8 ml-4 w-4 h-4 rounded-full" style="background-color: var(--color-accent); border: 4px solid var(--color-background);"></div>
+                    
+                    <div class="premium-card rounded-xl flow-detail-card" role="article">
+                        <p class="flow-title text-sm mb-2">STAGE 3 | INTERFACE OF TRUST</p>
+                        <!-- MODIFIED: Reduced font size on mobile and added flex-wrap to prevent overflow -->
+                        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex flex-wrap items-center text-black">
+                            <span class="text-4xl mr-3" aria-hidden="true">🌐</span> 3. WEB SOLUTION: <span style="color: var(--color-accent);">FUNCTION FOR GOOD</span>
+                        </h2>
+                        <p class="text-gray-700 mb-4">
+                            This is the <b>interface that transparently shows humans</b> the stable operation of the Embedded System and the intelligent judgments of the AI. The Web Solution provides remote control and monitoring capabilities, allowing users to trust and manage the system according to the <b>Function for Good</b> philosophy. This is the final stage that transforms <span style="color: var(--color-accent); font-weight: 700;">unseen power into visible results</span>.
+                        </p>
+                        <hr class="my-4 border-gray-300">
+                        <p class="font-semibold text-gray-800">
+                            <span style="color: var(--color-accent);">PROJECT EXAMPLE:</span> <b>Night School Security Robot (GlAISeR)</b>
+                        </p>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-1">
+                            <li><b>Real-time Dashboard:</b> <b>Visualizing operational data</b> such as the robot's current location, battery status, and sensor status.</li>
+                            <li><b>Alerts and Event Logs:</b> Sending <b>immediate notifications</b> of people or dangerous situations recognized by the AI and recording detailed logs.</li>
+                            <li><b>Remote Control Interface:</b> Provides the ability for administrators to directly control the robot's movement via the web when necessary.</li>
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -512,7 +545,7 @@
         </div>
     </main>
 
-    <!-- Footer - Copied from index.html -->
+    <!-- Footer -->
     <footer class="border-t border-gray-200 mt-12 py-10" role="contentinfo">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
             <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-10">
