@@ -32,11 +32,13 @@
             font-size: 1.05rem; /* Adjusted for better reading balance */
         }
 
-        /* Premium Module Style (Rounded and Soft Shadow) */
+        /* Premium Module Style (Rounded and Soft Shadow) - MODIFIED: Border and Shadow enhanced */
         .premium-card {
             background-color: var(--color-module-bg);
-            border: 1px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+            /* 수정: 명확한 미세 경계선 추가 */
+            border: 1px solid var(--color-line-subtle); 
+            /* 수정: 그림자 투명도 강화 (0.05 -> 0.1) */
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -308,15 +310,23 @@
             100% { stroke-dashoffset: 0; filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2)); } /* Settle with subtle shadow */
         }
 
+        /* NEW: Continuous Subtle Glow Animation */
+        @keyframes subtle-glow {
+            0% { filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2)); }
+            100% { filter: drop-shadow(0 0 10px var(--color-accent)); } /* Accent Navy Glow */
+        }
+
         .logo-path-hero {
             stroke-dasharray: 200;
             stroke-dashoffset: 200;
             fill: none;
             stroke: var(--color-deep-black); /* Ensure it is always black */
-            /* Animation only uses draw and shadow effects, no color change */
-            animation: draw-only-black 2.0s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+            /* MODIFIED: Run drawing first (2.0s), then start continuous glow immediately (delay 2.0s) */
+            animation: 
+                draw-only-black 2.0s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                subtle-glow 3s ease-in-out 2.0s infinite alternate; /* Wait 2s for draw to finish, then pulse every 3s */
         }
-
+        
         /* 2. Slogan Gradient Effect (Smooth Transition) */
         .slogan-gradient {
             /* Smoother transition: Black fades out from 55% and Navy fades in by 75%, creating a soft blend over 20% range. */
@@ -552,7 +562,7 @@
                 <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
             </a>
             
-            <!-- Desktop Navigation Menu (Click-to-Open Unified Panel) - UPDATED ITEMS -->
+            <!-- Desktop Navigation Menu (Click-to-Open Unified Panel) -->
             <nav class="hidden md:flex relative space-x-4 text-gray-800"> 
                 <!-- 1. DEAMON -->
                 <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)">DEAMON</button>
@@ -573,7 +583,7 @@
             </button>
         </div>
         
-        <!-- Unified Navigation Overlay Panel (Desktop Only) - Now Scrollable and Fluid Height -->
+        <!-- Unified Navigation Overlay Panel (Desktop Only) -->
         <div id="unified-menu-overlay" class="hidden md:block">
             <div class="max-w-7xl mx-auto px-8 py-8">
                 <div class="grid grid-cols-4 gap-12">
@@ -599,19 +609,44 @@
                         
                     </div>
 
-                    <!-- Column 2: ACTION -->
+                    <!-- Column 2: ACTION (MODIFIED to Prefix Categories) -->
                     <div>
                         <div class="menu-column-title">ACTION</div>
                         
-                        <!-- Middle Classification 1: Fusion Architecture (Folding Trigger) -->
+                        <!-- Middle Classification 1: S - CUSTOM SOLUTIONS (Folding Trigger) -->
                         <div class="sub-category-title" onclick="toggleSubMenu(this)">
-                            <span>Portfolio & Works</span>
+                            <span>CUSTOM SOLUTIONS</span>
                             <span class="arrow text-xl">▼</span>
                         </div>
                         <div class="sub-menu-content">
                             <!-- Detail Items (Indented) -->
-                            <a href="#connection" onclick="closeUnifiedMenu()" class="menu-item-indented">Architecture Core</a>
-                            <a href="#team" onclick="closeUnifiedMenu()" class="menu-item-indented">Agility Posture</a>
+                            <a href="/actions/autonomous_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Autonomous Security</a>
+                            <a href="/actions/smart_factory.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Smart Factory Automation</a>
+                            <a href="/actions/custom_saas.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Custom SaaS Development</a>
+                        </div>
+
+                        <!-- Middle Classification 2: G - FUNCTION FOR GOOD (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                            <span>FUNCTION FOR GOOD</span>
+                            <span class="arrow text-xl">▼</span>
+                        </div>
+                        <div class="sub-menu-content">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/actions/disaster_rescue.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Disaster Rescue Robotics</a>
+                            <a href="/actions/urban_intelligence.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Urban Intelligence</a>
+                            <a href="/actions/energy_optimization.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Sustainable Energy Optimization</a>
+                        </div>
+                        
+                        <!-- Middle Classification 3: R - EXPLORATORY R&D (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                            <span>EXPLORATORY R&D</span>
+                            <span class="arrow text-xl">▼</span>
+                        </div>
+                        <div class="sub-menu-content">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/actions/ai_creative.html" onclick="closeUnifiedMenu()" class="menu-item-indented">AI Creative Expression</a>
+                            <a href="/actions/quantum_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Quantum Security Prototyping</a>
+                            <a href="#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented">Technical Reports & Studies</a>
                         </div>
                         
                     </div>
@@ -654,7 +689,7 @@
             </div>
         </div>
         
-        <!-- Mobile Menu (Flat List - Unified) - Now Scrollable via Tailwind Classes -->
+        <!-- Mobile Menu (Flat List - Unified) - MODIFIED ACTION SECTION -->
         <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2 z-30 overflow-y-auto max-h-[calc(100vh-68px)]">
             <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">DEAMON</p>
             <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Home</p>
@@ -666,9 +701,20 @@
             <a href="#contact" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Connect with Us</a>
 
             <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">ACTION</p>
-            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Portfolio & Works</p>
-            <a href="#connection" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Architecture Core</a>
-            <a href="#team" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Agility Posture</a>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">CUSTOM SOLUTIONS (S)</p>
+            <a href="/actions/autonomous_security.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Autonomous Security</a>
+            <a href="/actions/smart_factory.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Smart Factory Automation</a>
+            <a href="/actions/custom_saas.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Custom SaaS Development</a>
+            
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">FUNCTION FOR GOOD (G)</p>
+            <a href="/actions/disaster_rescue.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Disaster Rescue Robotics</a>
+            <a href="/actions/urban_intelligence.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Urban Intelligence</a>
+            <a href="/actions/energy_optimization.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Sustainable Energy Optimization</a>
+
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">EXPLORATORY R&D (R)</p>
+            <a href="/actions/ai_creative.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">AI Creative Expression</a>
+            <a href="/actions/quantum_security.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Quantum Security Prototyping</a>
+            <a href="#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Technical Reports & Studies</a>
 
             <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">LAB</p>
             <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Research & Reports</p>
@@ -710,7 +756,7 @@
             <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 scroll-reveal" style="transition-delay: 0.4s;">
                 <a href="/projects_home.html" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-primary uppercase">
-                    VIEW OUR SOLUTIONS
+                    VIEW OUR ACTIONS
                 </a>
                 <a href="#philosophy" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-secondary uppercase">
                     EXPLORE PHILOSOPHY
@@ -810,6 +856,7 @@
                         <p class="text-gray-600">
                             The Embedded System forms the <b>core pulse</b> of our architecture. Within it, <b>silent daemons</b> operate beneath the surface — coordinating sensors, managing signals, and maintaining the <b>heartbeat of the machine</b>. They ensure that even when unseen, the system’s rhythm never ceases. This is where <b>reliability begins</b> — deep in the circuitry, beyond what the eyes can see.
                         </p>
+                        <!-- REMOVED: Individual Detail Link -->
                     </div>
                 </div>
                 
@@ -822,6 +869,7 @@
                         <p class="text-gray-600">
                             Above that foundation, AI acts as the <b>thinking pattern</b> of Deamon’s architecture. It observes the system’s state, <b>predicts what comes next</b>, and <b>adapts its logic before a problem arises</b>. Through <b>continuous optimization</b>, it transforms raw operation into <b>intelligent motion</b>, bridging precision with foresight — the mind that keeps the machine alive and aware.
                         </p>
+                        <!-- REMOVED: Individual Detail Link -->
                     </div>
                 </div>
 
@@ -834,9 +882,19 @@
                         <p class="text-gray-600">
                             Finally, the Web layer <b>unveils the invisible</b>. It is the <b>transparent reflection</b> of everything the daemons and AI are doing beneath. Here, users witness reliability in motion — data made visible, behavior made understandable. The interface doesn’t just display performance; it <b>conveys trust</b>, the final translation of Deamon’s <b>unseen power into human experience</b>.
                         </p>
+                        <!-- REMOVED: Individual Detail Link -->
                     </div>
                 </div>
             </div>
+            
+            <!-- ADDED: Single CTA for the entire Fusion Architecture flow -->
+            <div class="text-center mt-12 scroll-reveal" style="transition-delay: 0.8s;">
+                <a href="/details/flow-architecture.html" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-secondary uppercase inline-flex items-center">
+                    FULL ARCHITECTURE DEEP DIVE
+                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+            
         </div>
     </section>
 
@@ -844,7 +902,7 @@
     <section id="solutions" class="section-padding border-t border-gray-200">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-3xl sm:text-4xl font-extrabold mb-12 scroll-reveal uppercase text-black">
-                PROOFS OF OUR <span style="color: var(--color-accent);">COMMITMENT</span>: DEAMON'S RESEARCH OUTCOMES
+                PROOFS OF OUR <span style="color: var(--color-accent);">COMMITMENT</span>: RESEARCH OUTCOMES & ACTIONS
             </h2>
             <p class="text-lg text-gray-600 mb-16 max-w-4xl mx-auto text-center scroll-reveal" style="transition-delay: 0.2s;">
                 Every creation under Deamon stands as a reflection of our commitment to purposeful technology. 
@@ -862,7 +920,7 @@
                             <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">
                                 GlAISeR — Autonomous School Security Robot
                             </h4>
-                            <p class="text-sm text-gray-500">Research Outcome 2024-Q2</p>
+                            <p class="text-sm text-gray-500">Research Outcome | 2024-Q2</p>
                         </div>
                         <div class="md:w-2/3 space-y-4">
                             <p class="text-gray-700">
@@ -888,7 +946,7 @@
                             <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">
                                 DiSRHiT — Disaster Search & Rescue Hand
                             </h4>
-                            <p class="text-sm text-gray-500">Research Outcome 2024-Q3</p>
+                            <p class="text-sm text-gray-500">Research Outcome | 2024-Q3</p>
                         </div>
                         <div class="md:w-2/3 space-y-4">
                             <p class="text-gray-700">
@@ -914,7 +972,7 @@
                             <h4 class="text-xl sm:text-2xl font-bold mb-2 uppercase text-black">
                                 SSCAS — Smart Subway Congestion Analysis System
                             </h4>
-                            <p class="text-sm text-gray-500">Research Outcome 2024-Q4</p>
+                            <p class="text-sm text-gray-500">Research Outcome | 2024-Q4</p>
                         </div>
                         <div class="md:w-2/3 space-y-4">
                             <p class="text-gray-700">
@@ -934,6 +992,15 @@
                 </div>
 
             </div>
+            
+            <!-- ADDED: Single CTA for Research Outcomes section -->
+            <div class="text-center mt-16 scroll-reveal" style="transition-delay: 0.6s;">
+                <a href="/projects_home.html" class="px-10 py-3.5 rounded-2xl text-lg font-semibold cta-primary uppercase inline-flex items-center">
+                    VIEW ALL DEAMON ACTIONS
+                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+            
         </div>
     </section>
 
@@ -955,7 +1022,7 @@
         </div>
     </section>
 
-    <!-- 7. Partnership & Contact (Revised to Vision Sharing) -->
+    <!-- 7. Partnership & Contact (Revised to Developer Group) -->
     <section id="contact" class="section-padding border-t border-gray-200">
         <div class="max-w-6xl mx-auto text-center p-8 sm:p-16 rounded-2xl premium-card" style="border-color: var(--color-deep-black);">
             <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 scroll-reveal uppercase text-black">
@@ -994,8 +1061,9 @@
         </div>
     </section>
 
+
     <!-- Footer -->
-    <footer class="border-t border-gray-200 mt-20 py-16">
+    <footer class="border-t border-gray-200 mt-12 py-10">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
             <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-10">
                 <div class="flex items-center space-x-3">
