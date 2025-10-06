@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEAMON Admin Login Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Theme Configuration (Copied for consistent styling) */
+        :root {
+            --color-deep-black: #000000; /* Pure Black for Text/Accent */
+            --color-background: #FFFFFF; /* Pure White Background */
+            --color-module-bg: #FAFAFA; /* Off-White for Modules (Subtle Depth) */
+            --color-line-subtle: #EEEEEE; /* Very Light Gray Separators */
+            --color-text-dim: #4B5563; /* Darker gray for dim text (gray-700) */
+            --color-accent: #191970; /* Navy Accent for conceptual highlights */
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-deep-black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* Login Card Style - Uses the theme's 'premium-card' aesthetic */
+        .login-card {
+            background-color: var(--color-module-bg);
+            border: 1px solid var(--color-line-subtle); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
+            max-width: 420px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 1.5rem; /* Rounded corners for minimalism */
+        }
+
+        .cta-primary {
+            background-color: var(--color-deep-black); 
+            color: var(--color-background); 
+            border: 2px solid var(--color-deep-black);
+            transition: all 0.3s ease;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .cta-primary:hover {
+            background-color: var(--color-accent); /* Hover state uses the accent color */
+            border-color: var(--color-accent);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        .input-style {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--color-line-subtle);
+            border-radius: 0.75rem;
+            width: 100%;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: white;
+            color: var(--color-deep-black);
+            font-weight: 500;
+        }
+        .input-style:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(25, 25, 112, 0.2); /* Soft shadow of accent color */
+        }
+    </style>
+    <script>
+        // Placeholder for future authentication logic
+        function handleLogin(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageBox = document.getElementById('login-message');
+
+            // Basic validation check
+            if (email === "" || password === "") {
+                messageBox.textContent = "로그인 정보를 모두 입력해주세요.";
+                messageBox.classList.remove('hidden');
+                messageBox.classList.remove('text-green-600');
+                messageBox.classList.add('text-red-600');
+                return;
+            }
+
+            // Simulate API call (replace with actual Firebase/backend call)
+            messageBox.textContent = "로그인 시도 중...";
+            messageBox.classList.remove('hidden');
+            messageBox.classList.remove('text-red-600');
+            messageBox.classList.add('text-gray-600');
+            
+            setTimeout(() => {
+                // In a real app, this is where you check credentials
+                if (email === "admin" && password === "password123") {
+                    messageBox.textContent = "로그인 성공! 관리자 대시보드로 이동합니다.";
+                    messageBox.classList.remove('text-red-600');
+                    messageBox.classList.remove('text-gray-600');
+                    messageBox.classList.add('text-green-600');
+                    // window.location.href = "/admin_dashboard.html"; // Redirect
+                } else {
+                    messageBox.textContent = "이메일 또는 비밀번호가 올바르지 않습니다.";
+                    messageBox.classList.remove('text-green-600');
+                    messageBox.classList.remove('text-gray-600');
+                    messageBox.classList.add('text-red-600');
+                }
+            }, 1500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('login-form');
+            if (form) {
+                form.addEventListener('submit', handleLogin);
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Login Container -->
+    <div class="login-card" role="main">
+        <div class="text-center mb-8">
+            <!-- DEAMON Logo/Branding -->
+            <a href="#" class="inline-flex items-center space-x-2 mb-2" aria-label="Deamon Admin Portal">
+                <svg class="h-6 w-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none"/>
+                </svg>
+                <span class="text-2xl font-black tracking-widest text-black">DEAMON</span>
+            </a>
+            <h1 class="text-3xl font-bold mt-2">관리자 로그인</h1>
+            <p class="text-sm text-gray-500 mt-1">시스템 관리를 위해 로그인 해주세요.</p>
+        </div>
+
+        <form id="login-form">
+            <div class="space-y-4">
+                <!-- Email/ID Input -->
+                <div>
+                    <label for="email" class="block text-sm font-semibold mb-2 text-gray-700">이메일 또는 ID</label>
+                    <input type="text" id="email" name="email" required class="input-style" placeholder="admin@deamon.com (Test ID: admin)">
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label for="password" class="block text-sm font-semibold mb-2 text-gray-700">비밀번호</label>
+                    <input type="password" id="password" name="password" required class="input-style" placeholder="비밀번호 (Test PW: password123)">
+                </div>
+            </div>
+
+            <!-- Message Box for Login Status -->
+            <div id="login-message" class="mt-4 text-center text-sm font-medium hidden" role="alert" aria-live="polite">
+                <!-- Messages appear here (e.g., Error, Success, Loading) -->
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="cta-primary w-full mt-6 py-3 rounded-xl transition duration-300 focus:outline-none focus:ring-4 focus:ring-blue-800 focus:ring-opacity-50">
+                로그인
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <a href="#" class="text-sm font-medium text-gray-500 hover:text-black transition duration-200">
+                비밀번호를 잊으셨나요?
+            </a>
+        </div>
+    </div>
+</body>
+</html>
