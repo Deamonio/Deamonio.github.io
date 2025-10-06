@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deamon Project ID Manual: Unseen Signature System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Theme Configuration (Pure Black & White / Rounded Minimalism) */
+        :root {
+            --color-deep-black: #000000; /* Pure Black for Text/Accent */
+            --color-background: #FFFFFF; /* Pure White Background */
+            --color-module-bg: #FAFAFA; /* Off-White for Modules (Subtle Depth) */
+            --color-line-subtle: #EEEEEE; /* Very Light Gray Separators */
+            --color-text-dim: #4B5563; /* Darker gray for dim text (gray-700) */
+            --color-glow: #F0F0F0; /* Soft White/Silver Glow */
+            --color-accent: #191970; /* Navy Accent for conceptual highlights */
+        }
+        
+        /* ADDED: Smooth Scroll for internal anchors */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-deep-black);
+            line-height: 1.7; /* Slightly tighter line height for professionalism */
+            font-size: 1.05rem; /* Adjusted for better reading balance */
+        }
+
+        /* Premium Module Style (Rounded and Soft Shadow) */
+        .premium-card {
+            background-color: var(--color-module-bg);
+            border: 1px solid var(--color-line-subtle); 
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .premium-card:hover {
+            border-color: var(--color-deep-black); 
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1); 
+            transform: translateY(-2px);
+        }
+
+        /* CTA Button refinement */
+        .cta-primary {
+            background-color: var(--color-deep-black); 
+            color: var(--color-background); 
+            border: 2px solid var(--color-deep-black);
+            transition: all 0.3s ease;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .cta-primary:hover {
+            background-color: #333333; 
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        /* Secondary CTA remains B&W */
+        .cta-secondary {
+            background-color: transparent;
+            color: var(--color-deep-black);
+            border: 2px solid var(--color-deep-black);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+        .cta-secondary:hover {
+            background-color: var(--color-deep-black);
+            color: var(--color-background);
+        }
+        
+        /* ---------------------- NAVIGATION BAR STYLES ---------------------- */
+
+        /* Mobile Scroll Active Link Style (Now uses Accent Color Underline) */
+        .active-nav {
+            color: var(--color-deep-black) !important; 
+            border-bottom: 3px solid var(--color-accent); /* Use ACCENT for highlight */
+            padding-bottom: 2px;
+            font-weight: 700;
+        }
+        
+        /* Desktop Nav Link for drop-down trigger (Hover & Active) */
+        .nav-link {
+            transition: color 0.3s, border-bottom 0.3s;
+            border-bottom: 3px solid transparent; /* Default transparent border */
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: var(--color-deep-black);
+            border-bottom: 3px solid var(--color-deep-black); /* Black border on general hover */
+        }
+
+        .nav-link.active-button {
+            font-weight: 700;
+            color: var(--color-deep-black);
+            position: relative;
+            /* Use ACCENT color underline when the drop-down is active/open */
+            border-bottom: 3px solid var(--color-accent); 
+        }
+
+        /* Unified Navigation Panel Styles */
+        #unified-menu-overlay {
+            position: fixed;
+            top: 68px;
+            left: 0;
+            right: 0;
+            /* FIX: Use max-height instead of fixed height for fluid content sizing */
+            max-height: calc(100vh - 68px); 
+            
+            overflow-y: auto; /* 내용이 넘칠 때만 스크롤 가능 */
+            -webkit-overflow-scrolling: touch; /* Improved iOS scrolling */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-100%);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-bottom: 1px solid var(--color-line-subtle); 
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); 
+            backdrop-filter: blur(5px);
+            z-index: 35;
+            padding: 2rem 0;
+        }
+        #unified-menu-overlay.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .menu-column-title {
+            color: var(--color-deep-black);
+            font-weight: 900; /* Extra bold for main column title */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            font-size: 1.125rem; /* Larger font size for main title */
+        }
+
+        /* New Styles for Middle Classification (Sub-Category & Folding) */
+        .sub-category-title {
+            color: var(--color-deep-black);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 0;
+            cursor: pointer; /* Indicate interactivity */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-line-subtle);
+            margin-top: 0.5rem;
+            transition: color 0.2s;
+        }
+        .sub-category-title:hover {
+            color: var(--color-accent);
+        }
+        .sub-category-title .arrow {
+            transition: transform 0.3s ease;
+        }
+        .sub-category-title.open .arrow {
+            transform: rotate(180deg);
+            color: var(--color-accent);
+        }
+
+        .sub-menu-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+            padding-top: 0;
+        }
+        .sub-menu-content.open {
+            padding-top: 0.75rem;
+        }
+
+        /* Style for indented detail items */
+        .menu-item-indented {
+            padding-left: 1.5rem; /* Indentation */
+            display: block;
+            color: var(--color-text-dim);
+            transition: color 0.2s, padding-left 0.2s;
+            padding-top: 0.5rem; 
+            padding-bottom: 0.5rem; 
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            /* Prevents long text from wrapping and clips it with ellipsis */
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .menu-item-indented:hover {
+            color: var(--color-accent);
+            font-weight: 700;
+            padding-left: 1.75rem; /* Subtle movement on hover */
+        }
+
+
+        /* Mobile Menu Link Hover (Uses Accent Color) */
+        #mobile-menu a:hover {
+            color: var(--color-accent) !important;
+        }
+        
+        /* ---------------------- Custom Styles for Manual Page ---------------------- */
+        
+        /* Slogan Gradient for Main Title (Pulled from index.html concept) */
+        .slogan-gradient {
+            background: linear-gradient(70deg, var(--color-deep-black) 55%, var(--color-accent) 75%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; 
+            text-shadow: 0 3px 6px rgba(25, 25, 112, 0.3); /* Softer shadow from accent color */
+        }
+        
+        .manual-container h1 {
+            font-size: 3rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        
+        .manual-container h2 {
+            font-weight: 900;
+            font-size: 2rem; /* 32px */
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            /* UPDATED: Thicker border with accent color */
+            border-bottom: 4px solid var(--color-accent);
+            color: var(--color-deep-black);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .manual-container h3 {
+            font-weight: 800; /* Made slightly bolder */
+            font-size: 1.5rem; /* 24px */
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--color-accent); /* Highlight subsection titles with accent */
+        }
+        .manual-container table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: var(--color-module-bg);
+            border: 1px solid var(--color-line-subtle);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08); /* Slightly stronger shadow */
+        }
+        .manual-container th, .manual-container td {
+            border: 1px solid var(--color-line-subtle);
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        /* UPDATED: Table Header Style (Accent Background) */
+        .manual-container th {
+            background-color: var(--color-accent); 
+            color: var(--color-background);
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        /* ADDED: Alternating row colors for data readability */
+        .manual-container tbody tr:nth-child(even) {
+            background-color: var(--color-line-subtle); 
+        }
+
+        .manual-container td:first-child, .manual-container td:nth-child(2) {
+            font-weight: 700;
+            text-align: center;
+        }
+        /* UPDATED: Formula Box Style (Accent Background) */
+        .manual-container .formula-box {
+            padding: 2.5rem 2rem;
+            background-color: var(--color-accent); /* Dark Navy */
+            color: var(--color-background); /* White text */
+            border-radius: 0.75rem;
+            text-align: center;
+            font-size: 1.5rem; /* Larger font size for formula */
+            font-weight: 900;
+            margin: 2.5rem 0;
+            overflow-x: auto;
+            box-shadow: 0 10px 20px rgba(25, 25, 112, 0.4); /* Stronger thematic shadow */
+        }
+        /* Override default scroll-reveal for this page as it's a manual and content flow is linear */
+        .scroll-reveal { opacity: 1; transform: none; animation: none; }
+        
+        /* ADDED: Custom List Styling for Procedure */
+        .manual-container .custom-list-style {
+            list-style: none;
+            padding-left: 1rem;
+        }
+        .manual-container .custom-list-style li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .manual-container .custom-list-style.list-disc li::before {
+            content: '•';
+            color: var(--color-accent);
+            font-size: 1.5rem;
+            line-height: 1;
+            position: absolute;
+            left: 0;
+            top: 0.15rem;
+            font-weight: 900;
+        }
+        .manual-container .custom-list-style.list-decimal li::before {
+            content: counter(section-counter) ".";
+            counter-increment: section-counter;
+            color: var(--color-accent);
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.5rem;
+            text-align: right;
+        }
+        
+        /* Responsive Layout Adjustments (Increased Spacing) - KEPT */
+        .section-padding {
+            padding: 8rem 1rem;
+        }
+        @media (min-width: 640px) {
+            .section-padding {
+                padding: 12rem 6rem; /* Slightly adjusted vertical padding */
+            }
+        }
+    </style>
+    <script>
+        // Global state for open menus - KEPT
+        let isMenuOpen = false; // Desktop Unified Menu
+        let isMobileMenuOpen = false; // Mobile Menu
+
+        // Toggles the visibility of the unified menu panel (Desktop) - KEPT
+        function toggleUnifiedMenu(buttonElement) {
+            const menuPanel = document.getElementById('unified-menu-overlay');
+            const navButtons = document.querySelectorAll('.nav-link');
+
+            // Close mobile menu if desktop menu opens
+            if (isMobileMenuOpen) toggleMobileMenu();
+
+            const isTargetActive = buttonElement.classList.contains('active-button');
+
+            // Close all active buttons first and reset ARIA
+            navButtons.forEach(btn => {
+                btn.classList.remove('active-button');
+                btn.setAttribute('aria-expanded', 'false');
+            });
+
+            // Reset all folding menus if closing or switching to a new button
+            document.querySelectorAll('.sub-category-title.open').forEach(title => {
+                title.classList.remove('open');
+                title.setAttribute('aria-expanded', 'false');
+                const content = title.nextElementSibling;
+                if (content) content.style.maxHeight = null;
+            });
+
+
+            if (isMenuOpen && isTargetActive) {
+                // If the same active button is clicked, close the menu
+                menuPanel.classList.remove('open');
+                isMenuOpen = false;
+                menuPanel.setAttribute('aria-hidden', 'true');
+            } else {
+                // Open the menu and set the active button
+                menuPanel.classList.add('open');
+                buttonElement.classList.add('active-button');
+                buttonElement.setAttribute('aria-expanded', 'true'); // Set target button to true
+                isMenuOpen = true;
+                menuPanel.setAttribute('aria-hidden', 'false');
+            }
+        }
+        
+        // Closes the unified menu and removes active state (Desktop) - KEPT
+        function closeUnifiedMenu() {
+            const menuPanel = document.getElementById('unified-menu-overlay');
+            if (!menuPanel.classList.contains('open')) return; // Exit if already closed
+
+            menuPanel.classList.remove('open');
+            menuPanel.setAttribute('aria-hidden', 'true');
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                btn.classList.remove('active-button');
+                btn.setAttribute('aria-expanded', 'false'); // Ensure closure sets it to false
+            });
+            isMenuOpen = false;
+            // Also reset all folding menus when main menu is closed
+            document.querySelectorAll('.sub-category-title.open').forEach(title => {
+                title.classList.remove('open');
+                title.setAttribute('aria-expanded', 'false');
+                const content = title.nextElementSibling;
+                if (content) content.style.maxHeight = null;
+            });
+        }
+
+        // Toggles the folding state of a sub-menu category - KEPT
+        function toggleSubMenu(titleElement) {
+            const content = titleElement.nextElementSibling; // Get the next element (the folding content div)
+            const isOpening = !content.classList.contains('open');
+
+            titleElement.classList.toggle('open');
+            titleElement.setAttribute('aria-expanded', isOpening ? 'true' : 'false');
+            
+            if (!isOpening) {
+                content.classList.remove('open');
+                content.style.maxHeight = null;
+            } else {
+                // Before opening, close all others in the same column
+                const column = titleElement.closest('div');
+                column.querySelectorAll('.sub-category-title.open').forEach(otherTitle => {
+                    if (otherTitle !== titleElement) {
+                        otherTitle.classList.remove('open');
+                        otherTitle.setAttribute('aria-expanded', 'false');
+                        const otherContent = otherTitle.nextElementSibling;
+                        if (otherContent) otherContent.style.maxHeight = null;
+                    }
+                });
+
+                content.classList.add('open');
+                // Set max-height for smooth transition based on content size
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        }
+
+
+        // Mobile Menu Toggle (MODIFIED: Handles icon change and state, including ARIA) - KEPT
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+            const toggleButton = document.querySelector('button[aria-controls="mobile-menu"]');
+
+            menu.classList.toggle('hidden');
+            isMobileMenuOpen = !menu.classList.contains('hidden');
+
+            // Update icon and ARIA
+            if (isMobileMenuOpen) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>'; // X icon
+                toggleButton.setAttribute('aria-expanded', 'true');
+                // Close desktop menu if mobile menu opens
+                closeUnifiedMenu();
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>'; // Hamburger icon
+                toggleButton.setAttribute('aria-expanded', 'false');
+            }
+        }
+        
+        // ADDED: Handles dynamic max-height recalculation on resize for open sub-menus (Desktop only) - KEPT
+        function handleResize() {
+            // Only applies if unified menu is currently open on desktop view
+            if (isMenuOpen && window.innerWidth >= 768) {
+                document.querySelectorAll('.sub-menu-content.open').forEach(content => {
+                    // Recalculate and set max-height based on new scroll height
+                    content.style.maxHeight = content.scrollHeight + "px";
+                });
+            }
+        }
+
+        // Scroll Reveal and Active Navigation Logic - MODIFIED (Removed unused ScrollReveal logic for Manual page)
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 2. Active Navigation Observer setup --- (Keep for mobile scroll highlight)
+            const sections = document.querySelectorAll('section[id]');
+            const navObserverOptions = {
+                root: null,
+                rootMargin: '-30% 0px -30% 0px', 
+                threshold: 0
+            };
+
+            const navObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Clear active states on mobile links
+                        document.querySelectorAll('#mobile-menu a').forEach(link => link.classList.remove('active-nav'));
+                        
+                        // Apply active class to mobile link
+                        document.querySelectorAll(`#mobile-menu a[href="#${entry.target.id}"]`).forEach(link => {
+                             link.classList.add('active-nav');
+                        });
+                    }
+                });
+            }, navObserverOptions);
+
+            sections.forEach(section => navObserver.observe(section));
+
+            // --- 3. Tooltip (title attribute) for truncated menu items ---
+            document.querySelectorAll('.menu-item-indented').forEach(link => {
+                link.setAttribute('title', link.textContent.trim());
+            });
+        });
+        
+        // Add the resize listener for dynamic menu stability
+        window.addEventListener('resize', handleResize);
+
+
+        // Global listeners for closing menus (Escape key and click-outside) - KEPT
+        document.addEventListener('click', (event) => {
+            const header = document.querySelector('header');
+            const unifiedMenu = document.getElementById('unified-menu-overlay');
+
+            // If the menu is open, and the click is outside the header entirely (and we are on desktop where unified menu is used), close it.
+            const isClickInsideHeader = header.contains(event.target);
+            
+            if (isMenuOpen && !isClickInsideHeader && window.innerWidth >= 768) { 
+                closeUnifiedMenu();
+            }
+            // Note: Clicks on links inside the unified menu automatically call closeUnifiedMenu() via inline onclick handlers.
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                if (isMenuOpen) {
+                    closeUnifiedMenu();
+                }
+                if (isMobileMenuOpen) {
+                    toggleMobileMenu(); // toggle handles closing logic
+                }
+            }
+        });
+
+    </script>
+</head>
+<body class="antialiased">
+    <!-- Header / Navigation (Fixed) - KEPT -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-md bg-white/95 border-b border-gray-200" role="banner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center h-16">
+            <!-- Logo (Top Left Logo: No Animation) -->
+            <a href="/index.html" class="flex items-center space-x-2" onclick="closeUnifiedMenu(); if (isMobileMenuOpen) toggleMobileMenu();" aria-label="Go to Deamon homepage">
+                <!-- SVG path is conceptual: the unseen path of the daemon -->
+                <svg class="h-6 w-6 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
+                </svg>
+                <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
+            </a>
+            
+            <!-- Desktop Navigation Menu (Click-to-Open Unified Panel) -->
+            <nav class="hidden md:flex relative space-x-4 text-gray-800" role="navigation"> 
+                <!-- 1. DEAMON -->
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">DEAMON</button>
+                <!-- 2. ACTION -->
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">ACTION</button>
+                <!-- 3. LAB -->
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">LAB</button>
+                <!-- 4. EXPLORE -->
+                <button class="py-2 px-3 text-sm font-medium transition duration-300 flex items-center uppercase nav-link" onclick="toggleUnifiedMenu(this)" aria-expanded="false" aria-controls="unified-menu-overlay">EXPLORE</button>
+            </nav>
+
+            <!-- Mobile Menu Button (Hamburger/X) - KEPT -->
+            <button class="md:hidden text-black focus:outline-none" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
+                <svg id="mobile-menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Initial Hamburger Icon -->
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Unified Navigation Overlay Panel (Desktop Only) - KEPT -->
+        <div id="unified-menu-overlay" class="hidden md:block" role="menu" aria-hidden="true">
+            <div class="max-w-7xl mx-auto px-8 py-8">
+                <div class="grid grid-cols-4 gap-12">
+
+                    <!-- Column 1: DEAMON -->
+                    <div>
+                        <div class="menu-column-title">DEAMON</div>
+                        
+                        <!-- Middle Classification 1: Essence & Principles (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>Home</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-deamon-1">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/index.html#essence" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Brand Essence</a>
+                            <a href="/index.html#philosophy" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Commitment & Principles</a>
+                            <a href="/index.html#connection" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Architecture & Skills</a>
+                            <a href="/index.html#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Research & Solutions</a>
+                            <a href="/index.html#team" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Vision & Team</a>
+                            <a href="/index.html#contact" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Connect with Us</a>
+                        </div>
+
+                       <!-- Middle Classification 2: About (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)">
+                            <span>About</span>
+                            <span class="arrow text-xl">▼</span>
+                        </div>
+                        <div class="sub-menu-content">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/Brand_identity.html" onclick="closeUnifiedMenu()" class="menu-item-indented">BI & CI</a>
+                            <a href="/Fusion_Architecture_Deep_Dive.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Fusion Architecture</a>
+                            <a href="/Unseen_Signature.html" onclick="closeUnifiedMenu()" class="menu-item-indented">Unseen Signature</a>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Column 2: ACTION -->
+                    <div>
+                        <div class="menu-column-title">ACTION</div>
+                        
+                        <!-- Middle Classification 1: S - CUSTOM SOLUTIONS (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>CUSTOM SOLUTIONS</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-action-1">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/actions/autonomous_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Autonomous Security</a>
+                            <a href="/actions/smart_factory.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Smart Factory Automation</a>
+                            <a href="/actions/custom_saas.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Custom SaaS Development</a>
+                        </div>
+
+                        <!-- Middle Classification 2: G - FUNCTION FOR GOOD (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>FUNCTION FOR GOOD</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-action-2">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/actions/disaster_rescue.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Disaster Rescue Robotics</a>
+                            <a href="/actions/urban_intelligence.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Urban Intelligence</a>
+                            <a href="/actions/energy_optimization.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Sustainable Energy Optimization</a>
+                        </div>
+                        
+                        <!-- Middle Classification 3: R - EXPLORATORY R&D (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>EXPLORATORY R&D</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-action-3">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/actions/ai_creative.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">AI Creative Expression</a>
+                            <a href="/actions/quantum_security.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Quantum Security Prototyping</a>
+                            <a href="/index.html#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Technical Reports & Studies</a>
+                        </div>
+                        
+                        <!-- 구분선 변경: 두꺼운 점선으로 변경하여 시각적 분리 강조 -->
+                        <!-- UPDATED: border-gray-300 -> border-gray-500 -->
+                        <div class="border-t-2 border-dashed border-gray-500 my-4"></div>
+
+                        <!-- Middle Classification 4: DEPLOYED PROJECTS (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>DEPLOYED PROJECTS</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-action-4">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/actions/rebuilt_calculator.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Rebuilt Calculator (JS)</a>
+                            <a href="/actions/chat_app_v1.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Original Chat App (React)</a>
+                            <a href="/actions/legacy_game_sim.html" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Legacy Game Simulation</a>
+                            <a href="#manual" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Project ID Manual (Current)</a>
+                        </div>
+
+                    </div>
+
+                    <!-- Column 3: LAB - KEPT -->
+                    <div>
+                        <div class="menu-column-title">LAB</div>
+                        
+                        <!-- Middle Classification 1: Research & Reports (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>Research & Reports</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-lab-1">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/index.html#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Research Outcomes</a>
+                            <a href="/index.html#solutions" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Technical Reports</a>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Column 4: EXPLORE - KEPT -->
+                    <div>
+                        <div class="menu-column-title">EXPLORE</div>
+                        
+                        <!-- Middle Classification 1: Group & Connect (Folding Trigger) -->
+                        <div class="sub-category-title" onclick="toggleSubMenu(this)" role="button" tabindex="0" aria-expanded="false">
+                            <span>Group & Connect</span>
+                            <span class="arrow text-xl" aria-hidden="true">▼</span>
+                        </div>
+                        <div class="sub-menu-content" id="submenu-explore-1">
+                            <!-- Detail Items (Indented) -->
+                            <a href="/index.html#team" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Vision & Structure</a>
+                            <a href="/index.html#contact" onclick="closeUnifiedMenu()" class="menu-item-indented" role="menuitem">Connect with Us</a>
+                        </div>
+                        
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Flat List - Unified) - KEPT -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 p-4 space-y-2 z-30 overflow-y-auto max-h-[calc(100vh-68px)]" role="navigation">
+            <p class="text-gray-800 font-bold px-4 pt-2 uppercase border-b pb-1">DEAMON</p>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Home</p>
+            <a href="/index.html#essence" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Brand Essence</a>
+            <a href="/index.html#philosophy" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Commitment & Principles</a>
+            <a href="/index.html#connection" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Architecture & Skills</a>
+            <a href="/index.html#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Research & Solutions</a>
+            <a href="/index.html#team" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Vision & Team</a>
+            <a href="/index.html#contact" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Connect with Us</a>
+
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">About</p>
+            <a href="/Brand_identity.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">BI & CI</a>
+            <a href="/Fusion_Architecture_Deep_Dive.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Fusion Architecture</a>
+            <a href="/Unseen_Signature.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Unseen Signature</a>
+
+            <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">ACTION</p>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">CUSTOM SOLUTIONS</p>
+            <a href="/actions/autonomous_security.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Autonomous Security</a>
+            <a href="/actions/smart_factory.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Smart Factory Automation</a>
+            <a href="/actions/custom_saas.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Custom SaaS Development</a>
+            
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">FUNCTION FOR GOOD</p>
+            <a href="/actions/disaster_rescue.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Disaster Rescue Robotics</a>
+            <a href="/actions/urban_intelligence.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Urban Intelligence</a>
+            <a href="/actions/energy_optimization.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Sustainable Energy Optimization</a>
+
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">EXPLORATORY R&D</p>
+            <a href="/actions/ai_creative.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">AI Creative Expression</a>
+            <a href="/actions/quantum_security.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Quantum Security Prototyping</a>
+            <a href="/index.html#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Technical Reports & Studies</a>
+
+            <!-- 구분선 변경: 두꺼운 점선으로 변경 -->
+            <!-- UPDATED: border-gray-300 -> border-gray-500 -->
+            <div class="border-t-2 border-dashed border-gray-500 mx-4 mt-4 pt-4"></div>
+            <!-- NAME CHANGE APPLIED -->
+            <p class="text-gray-700 font-semibold px-4 pt-2 pb-1 text-sm uppercase">DEPLOYED PROJECTS</p>
+            <a href="/actions/rebuilt_calculator.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Rebuilt Calculator (JS)</a>
+            <a href="/actions/chat_app_v1.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Original Chat App (React)</a>
+            <a href="/actions/legacy_game_sim.html" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Legacy Game Simulation</a>
+            <a href="#manual" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Project ID Manual (Current)</a>
+            
+            <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">LAB</p>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Research & Reports</p>
+            <a href="/index.html#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Research Outcomes</a>
+            <a href="/index.html#solutions" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Technical Reports</a>
+            
+            <p class="text-gray-800 font-bold px-4 pt-4 uppercase border-b pb-1">EXPLORE</p>
+            <p class="text-gray-700 font-semibold px-6 pt-2 pb-1 text-sm">Group & Connect</p>
+            <a href="/index.html#team" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Vision & Structure</a>
+            <a href="/index.html#contact" onclick="toggleMobileMenu()" class="block py-1.5 px-8 text-gray-600 transition duration-200">Connect with Us</a>
+        </div>
+    </header>
+
+    <!-- Project ID Manual Content -->
+    <section id="manual" class="section-padding pt-32 min-h-screen">
+        <div class="max-w-6xl mx-auto manual-container">
+            <h1 class="text-4xl sm:text-5xl font-extrabold mb-8 uppercase text-center slogan-gradient">
+                😈 Deamon Project ID Manual: Unseen Signature System
+            </h1>
+
+            <!-- 1. Overview -->
+            <div id="overview">
+                <h2 class="text-center">1. OVERVIEW: THE ID BECOMES A TECHNICAL DECLARATION</h2>
+                <p class="text-gray-700 max-w-4xl mx-auto mb-6 text-center">
+                    Deamon's Project ID is not just a simple identification code, but a technical declaration that reflects the philosophy of the <strong>'Unseen Connection'</strong>. This system is designed to engrave <strong>'Unwavering Reliability'</strong> and <strong>'Responsible Precision'</strong> into the code's signature.
+                </p>
+                
+                <h3 class="text-center">ID Structure Formula (Total 14–16 Digits)</h3>
+                <div class="formula-box">
+                    $$[ID] = [P] \ [YYMM] \ [EAWDC] \ [X] \ [Project Code] \ [Checksum]$$
+                </div>
+                <div class="border-t-2 border-dashed border-gray-400 my-8"></div>
+            </div>
+
+            <!-- 2. Detailed ID Component Manual -->
+            <div id="components">
+                <h2>2. DETAILED ID COMPONENT MANUAL</h2>
+
+                <!-- A. Prefix (P) -->
+                <div id="prefix">
+                    <h3>A. Prefix (P) - 1 Digit (Required)</h3>
+                    <p class="text-gray-700 mb-4">
+                        This reflects Deamon's <strong>'Function for Good'</strong> philosophy by classifying the ultimate goal of the project.
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Type</th>
+                                <th>Meaning</th>
+                                <th>Example Project</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>G</strong></td>
+                                <td>**Good**</td>
+                                <td>Public/Rescue solutions for a better life and sustainable society.</td>
+                                <td>Disaster rescue robot, energy efficiency optimization system.</td>
+                            </tr>
+                            <tr>
+                                <td>**S**</td>
+                                <td>**Solution**</td>
+                                <td>Custom innovation solutions and commercial services for general clients.</td>
+                                <td>Smart factory, general B2B/B2C services.</td>
+                            </tr>
+                            <tr>
+                                <td>**R**</td>
+                                <td>**Research**</td>
+                                <td>Internal R&D, pure technology experiments, exploration for creative/artistic expression.</td>
+                                <td>Horror TV experiment, AI interaction method research.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- B. Time Stamp (YYMM) -->
+                <div id="timestamp" class="mt-8">
+                    <h3>B. Time Stamp (YYMM) - 4 Digits (Required)</h3>
+                    <p class="text-gray-700">
+                        Indicates the year and month the project was officially started or registered. (E.g., Oct 25 $\rightarrow$ <strong>2510</strong>)
+                    </p>
+                </div>
+
+                <!-- C. Fusion Type (EAWDC) -->
+                <div id="fusion-type" class="mt-8">
+                    <h3>C. Fusion Type (EAWDC) - 5 Digits (Required)</h3>
+                    <p class="text-gray-700 mb-4">
+                        Indicates the technological areas used from Deamon's 5 core architectures, marking the depth of the <strong>'Unseen Connection'</strong>. Enter the corresponding code if used, or <strong>0 (Zero)</strong> if not used.
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Code</th>
+                                <th>Technology Area</th>
+                                <th>If Used</th>
+                                <th>If Not Used</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>E</td>
+                                <td>Embedded (Control, Firmware, Sensor)</td>
+                                <td>**E**</td>
+                                <td>**0**</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>A</td>
+                                <td>AI (Cognition, Intelligence, Analysis, Modeling)</td>
+                                <td>**A**</td>
+                                <td>**0**</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>W</td>
+                                <td>Web (Interface, Front-end, UX)</td>
+                                <td>**W**</td>
+                                <td>**0**</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>D</td>
+                                <td>Data (DB, Storage, Pipeline, Management)</td>
+                                <td>**D**</td>
+                                <td>**0**</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>C</td>
+                                <td>Communication (Network, API, Backend Server)</td>
+                                <td>**C**</td>
+                                <td>**0**</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="text-gray-600 text-sm italic mt-2"><strong>Example:</strong> For AI analysis backend only: <strong>0A0DC</strong></p>
+                </div>
+
+                <!-- D. Specialty Code (X) -->
+                <div id="specialty-code" class="mt-8">
+                    <h3>D. Specialty Code (X) - 1 Digit (Required/Special)</h3>
+                    <p class="text-gray-700 mb-4">
+                        A reserved field for special or future technologies not covered by EAWDC.
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Type</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>**0**</td>
+                                <td>None</td>
+                                <td>No special technology used (Most projects)</td>
+                            </tr>
+                            <tr>
+                                <td>**B**</td>
+                                <td>Blockchain</td>
+                                <td>Distributed ledger technology, NFT, Smart Contract</td>
+                            </tr>
+                            <tr>
+                                <td>**Q**</td>
+                                <td>Quantum</td>
+                                <td>Quantum computing or quantum security technology</td>
+                            </tr>
+                            <tr>
+                                <td>**H**</td>
+                                <td>Hardware</td>
+                                <td>Specialized hardware/ASIC design</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- E. Project Code -->
+                <div id="project-code" class="mt-8">
+                    <h3>E. Project Code - 3 Digits (Required)</h3>
+                    <p class="text-gray-700">
+                        A unique sequential number assigned within each Prefix (G, S, R). Starts from <strong>001</strong>.
+                    </p>
+                </div>
+
+                <!-- F. Checksum -->
+                <div id="checksum" class="mt-8">
+                    <h3>F. Checksum - 1–3 Digits (Required)</h3>
+                    <p class="text-gray-700">
+                        A verification code to ensure <strong>'Unwavering Reliability'</strong>. It validates for typos or errors in the ID, calculated using the <strong>Modulus 9 method</strong>, etc.
+                    </p>
+                    <div class="border-t-2 border-dashed border-gray-400 my-8"></div>
+                </div>
+            </div>
+
+            <!-- 3. ID Generation and Verification Procedure -->
+            <div id="procedure">
+                <h2>3. ID GENERATION AND VERIFICATION PROCEDURE</h2>
+
+                <h3 class="mt-4">Step 1: Project Nature and Technology Confirmation</h3>
+                <ul class="custom-list-style list-disc text-gray-700 space-y-2 ml-4">
+                    <li>Prefix (P): Select one from G, S, or R</li>
+                    <li>Fusion Type (EAWDCX): Confirm the 6-digit code based on the technology stack used.</li>
+                    <li>YYMM / Project Code: Enter the confirmed date and sequence number.</li>
+                </ul>
+
+                <h3>Step 2: Checksum Calculation</h3>
+                <ol class="custom-list-style list-decimal text-gray-700 space-y-2 ml-4">
+                    <li>Convert all characters of the ID to numbers according to predefined rules. (G=7, S=19, E=5, A=1, W=23, D=4, C=3)</li>
+                    <li>Sum all converted numbers to find the <strong>Total Sum</strong>.</li>
+                    <li>Confirm the Checksum value by taking the <strong>remainder when Total Sum is divided by 9</strong>.</li>
+                </ol>
+
+                <h3>Step 3: Final ID Completion</h3>
+                <ul class="custom-list-style list-disc text-gray-700 space-y-2 ml-4">
+                    <li>The calculated Checksum value is finally appended to the end of the ID.</li>
+                </ul>
+
+                <table class="mt-8 max-w-lg mx-auto">
+                    <thead>
+                        <tr>
+                            <th>Example: Disaster Rescue Robot</th>
+                            <th>**G 2406 EAWDC 0 005 8**</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>**Analysis**</td>
+                            <td class="text-left text-gray-700">
+                                **G**ood project starting June 2024. Uses all core technologies (EAWDC), no special technology (X), 5th sequence number. Verification code **8**.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="border-t-2 border-dashed border-gray-400 my-8"></div>
+            </div>
+
+            <!-- 4. ID Maintenance and Management -->
+            <div id="maintenance">
+                <h2>4. ID MAINTENANCE AND MANAGEMENT</h2>
+                <ul class="custom-list-style list-disc text-gray-700 space-y-3 ml-4">
+                    <li><strong>Exclusive Sequence:</strong> Each Prefix (G, S, R) must manage a separate sequence number (Project Code).</li>
+                    <li><strong>Fusion Type Modification:</strong> If the technology stack changes during the project, the ID must be re-issued reflecting the **latest technology stack**.</li>
+                    <li><strong>Checksum Validity:</strong> When entering the ID into a database or system, validity must be checked using the Checksum to maintain **data integrity**.</li>
+                </ul>
+            </div>
+            
+        </div>
+    </section>
+    
+    <!-- Footer - KEPT -->
+    <footer class="border-t border-gray-200 mt-12 py-10" role="contentinfo">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-10">
+                <div class="flex items-center space-x-3">
+                    <!-- Footer Logo SVG (Small - Black) -->
+                    <svg class="h-4 w-4 text-black" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M 20 20 C 50 10, 50 90, 80 80" stroke="var(--color-deep-black)" stroke-width="12" stroke-linecap="round" fill="none" class="logo-path-small"/>
+                    </svg>
+                    <span class="text-xl font-bold tracking-widest text-black">DEAMON</span>
+                </div>
+                <p class="text-gray-500 font-medium">The power that runs unseen.</p>
+            </div>
+            
+            <div class="text-sm text-gray-600 mt-6">
+                <a href="mailto:deamon.software@gmail.com" class="hover:text-black transition duration-300">deamon.software@gmail.com</a>
+                <span class="mx-3" aria-hidden="true">|</span>
+                <a href="#" class="hover:text-black transition duration-300">Privacy Policy</a>
+            </div>
+            <p class="text-xs text-gray-400 mt-4">&copy; 2025 Deamon Software Group. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
