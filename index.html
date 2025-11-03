@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Deamon: The Unseen Force</title>
+    <title>Deamon</title>
+    <link rel="icon" href="favicon.ico" />
     <!-- Load Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font Setting -->
@@ -34,8 +35,7 @@
         background: #f1f1f1;
       }
 
-      /* Mega Menu Trigger Setup */
-      /* 이 클래스는 헤더의 높이만큼 메뉴가 아래로 내려오도록 보정합니다. (h-16 = 4rem = 64px) */
+      /* Mega Menu Trigger Setup (Desktop Hover) */
       .mega-menu-dropdown {
         top: 4rem; /* h-16 (4rem)에 맞춰 위치 조정 */
         transition: opacity 0.2s ease, transform 0.2s ease;
@@ -43,20 +43,30 @@
         transform: translateY(-5px);
         pointer-events: none;
       }
-      /* JS로 hidden 클래스를 제거하고 이 클래스를 추가하여 애니메이션을 표시합니다. */
       .mega-menu-dropdown.is-active {
         opacity: 1;
         transform: translateY(0);
         pointer-events: auto;
       }
 
+      /* Folding Menu Styling for Mobile (Accordion) */
+      .mobile-submenu-content {
+        /* Initial state is handled by max-height: 0; style attribute in HTML */
+        /* transition-all utility class handles the transition timing */
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      /* Custom class to handle arrow rotation */
+      .mobile-menu-button.is-expanded svg {
+        transform: rotate(180deg);
+      }
+
       /* New layout utility for centering 3 columns */
-      /* 3열 이하 레이아웃을 중앙에 배치하기 위한 Tailwind 커스텀 유틸리티 */
       .centered-menu {
-        max-width: 60rem; /* max-w-5xl (64rem) 보다 약간 작게 설정 */
+        max-width: 60rem;
         margin-left: auto;
         margin-right: auto;
-        /* 내부 항목이 중앙 정렬되도록 flex 속성 추가 */
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -68,25 +78,89 @@
       }
     </style>
     <script>
-      // Mobile Menu Toggle Function
+      // --- Mobile Menu Functions ---
+
+      // Global function to collapse all mobile folding sections
+      function collapseAllMobileSections(exceptButton = null) {
+        const expandedSubmenus = document.querySelectorAll(
+          ".mobile-submenu-content.is-expanded"
+        );
+        const expandedButtons = document.querySelectorAll(
+          ".mobile-menu-button.is-expanded"
+        );
+
+        expandedSubmenus.forEach((submenu) => {
+          submenu.classList.remove("is-expanded");
+          submenu.style.maxHeight = "0";
+          // Ensure padding is reset when collapsing
+          submenu.style.paddingBottom = "0";
+        });
+
+        expandedButtons.forEach((button) => {
+          if (button !== exceptButton) {
+            button.classList.remove("is-expanded");
+          }
+        });
+      }
+
+      // Mobile Menu Toggle Function (for hamburger icon)
       function toggleMenu() {
         const menu = document.getElementById("mobile-menu");
         const menuIcon = document.getElementById("menu-icon");
         const closeIcon = document.getElementById("close-icon");
 
+        // Toggle visibility
         menu.classList.toggle("hidden");
         menuIcon.classList.toggle("hidden");
         closeIcon.classList.toggle("hidden");
+
+        // If closing the main menu, collapse all submenus
+        if (menu.classList.contains("hidden")) {
+          collapseAllMobileSections();
+        }
       }
 
-      // JavaScript for Mega Menu Hover Logic (Updated to use is-active class for CSS transition)
+      // Folding Menu Logic for Mobile Sections (Accordion)
+      function toggleMobileMenuSection(button) {
+        // Find the submenu content sibling (the div immediately after the button)
+        const submenuContent = button.nextElementSibling;
+
+        // 1. Collapse all other open sections (Accordion behavior)
+        collapseAllMobileSections(button);
+
+        // 2. Toggle the current section
+        const isExpanded = submenuContent.classList.contains("is-expanded");
+
+        if (isExpanded) {
+          // Collapse
+          submenuContent.classList.remove("is-expanded");
+          button.classList.remove("is-expanded");
+          submenuContent.style.maxHeight = "0";
+          submenuContent.style.paddingBottom = "0";
+        } else {
+          // Expand
+          submenuContent.classList.add("is-expanded");
+          button.classList.add("is-expanded");
+
+          // For smooth transition, set max-height to scrollHeight dynamically
+          // Need to calculate padding from the content div (px-3 pb-4 -> 1rem/16px bottom padding)
+          const contentPadding = 16;
+          // Set max height immediately to enable the CSS transition
+          submenuContent.style.maxHeight =
+            submenuContent.scrollHeight + contentPadding + "px";
+          // Apply padding after expanding. Note: The padding class is on the inner div, but this adds a visual effect.
+          // Using style directly on the submenu content to control the space.
+          submenuContent.style.paddingBottom = "1rem";
+        }
+      }
+
+      // --- Desktop Mega Menu & Header Scroll Logic ---
       document.addEventListener("DOMContentLoaded", () => {
         const header = document.querySelector("header");
         const triggers = [
           { selector: ".mega-menu-trigger-deamon", menuId: "deamon-menu" },
           { selector: ".mega-menu-trigger-action", menuId: "action-menu" },
           { selector: ".mega-menu-trigger-lab", menuId: "lab-menu" },
-          // ADDED: Archive and Note triggers
           { selector: ".mega-menu-trigger-archive", menuId: "archive-menu" },
           { selector: ".mega-menu-trigger-note", menuId: "note-menu" },
         ];
@@ -99,7 +173,6 @@
           menuElements.forEach((menu) => {
             if (menu && menu !== exceptMenu) {
               menu.classList.remove("is-active");
-              // Use delay to ensure transition finishes before hiding completely
               setTimeout(() => menu.classList.add("hidden"), 200);
             }
           });
@@ -109,23 +182,18 @@
           if (!menuToShow) return;
           hideAllMenus(menuToShow);
           menuToShow.classList.remove("hidden");
-          // Add a slight delay to ensure 'hidden' is removed before starting transition
           setTimeout(() => menuToShow.classList.add("is-active"), 10);
         };
 
         const handleMouseLeave = (menuToHide) => {
           if (!menuToHide) return;
-          // Delay hiding to allow movement between menu item and dropdown
           setTimeout(() => {
-            // Check if the mouse is hovering over any active trigger or the menu itself
             const isHoveringTrigger = triggers.some((t) =>
               document.querySelector(t.selector + ":hover")
             );
 
-            // Only hide if the mouse is not currently over the dropdown AND not over any trigger item
             if (!menuToHide.matches(":hover") && !isHoveringTrigger) {
               menuToHide.classList.remove("is-active");
-              // Use another delay to ensure transition finishes before hiding completely
               setTimeout(() => menuToHide.classList.add("hidden"), 200);
             }
           }, 50);
@@ -140,30 +208,23 @@
           .filter((item) => item.trigger && item.menu);
 
         allTriggers.forEach(({ trigger, menu }) => {
-          // Show menu on trigger hover
           trigger.addEventListener("mouseenter", () =>
             handleMouseEnter(trigger, menu)
           );
-          // Hide menu when mouse leaves the trigger (handled in leave function)
           trigger.addEventListener("mouseleave", () => handleMouseLeave(menu));
 
-          // Keep menu open if mouse enters menu
           menu.addEventListener("mouseenter", () => {
             menu.classList.remove("hidden");
             menu.classList.add("is-active");
           });
 
-          // Hide menu when mouse leaves the menu itself
           menu.addEventListener("mouseleave", () => {
             menu.classList.remove("is-active");
-            // Delay hiding completely to allow transition to finish
             setTimeout(() => menu.classList.add("hidden"), 200);
           });
         });
 
-        // Hide all menus when the mouse leaves the entire header area (safety net)
         header.addEventListener("mouseleave", (event) => {
-          // Check if the relatedTarget is outside the header and menus
           const related = event.relatedTarget;
           const isLeavingHeader = !related || !header.contains(related);
 
@@ -176,16 +237,13 @@
         const headerElement = document.getElementById("main-header");
 
         function handleScroll() {
-          // Check if the page is scrolled more than 5 pixels (to detect scroll start)
           if (window.scrollY > 5) {
-            // If scrolled, add the border/shadow classes
             headerElement.classList.add(
               "border-b",
               "border-gray-200/70",
               "shadow-sm"
             );
           } else {
-            // If at the top, remove the border/shadow classes
             headerElement.classList.remove(
               "border-b",
               "border-gray-200/70",
@@ -194,10 +252,7 @@
           }
         }
 
-        // Attach the scroll event listener
         window.addEventListener("scroll", handleScroll);
-
-        // Initial check in case the user loads the page scrolled down
         handleScroll();
       });
     </script>
@@ -329,7 +384,7 @@
       </symbol>
     </svg>
 
-    <!-- 1. Header/Navigation (Notion Style) - MODIFIED: Removed initial border classes; ID added for JS -->
+    <!-- 1. Header/Navigation (Notion Style) -->
     <header
       id="main-header"
       class="sticky top-0 z-50 bg-white backdrop-blur-sm relative group header-shadow-transition"
@@ -399,7 +454,7 @@
               </a>
             </div>
 
-            <!-- 4. ARCHIVE MEGA MENU (Link Group) - MODIFIED to be a trigger -->
+            <!-- 4. ARCHIVE MEGA MENU (Link Group) -->
             <div
               class="mega-menu-trigger-archive relative h-full flex items-center"
             >
@@ -413,7 +468,7 @@
             <!-- Separator: Note와 Archive 사이에 구분선 -->
             <span class="border-l border-gray-300 h-4 mx-4"></span>
 
-            <!-- 5. NOTE MEGA MENU (Link Group) - MODIFIED to be a trigger -->
+            <!-- 5. NOTE MEGA MENU (Link Group) -->
             <div
               class="mega-menu-trigger-note relative h-full flex items-center"
             >
@@ -477,7 +532,7 @@
         </div>
       </div>
 
-      <!-- *** Mega Menu Dropdowns - Full Width *** -->
+      <!-- *** Mega Menu Dropdowns - Full Width (Desktop only) *** -->
 
       <!-- 1. DEAMON Mega Menu Dropdown (1 Column - Centered) -->
       <div
@@ -911,7 +966,7 @@
       <!-- 5. NOTE Mega Menu Dropdown (4 Columns - Full Width) -->
       <div
         id="note-menu"
-        class="mega-menu-dropdown absolute left-0 right-0 hidden bg-white shadow-xl rounded-b-xl border border-gray-100 border-t-0 pt-4 pb-8"
+        class="mega-menu-dropdown absolute left-0 right-0 top-16 hidden bg-white shadow-xl rounded-b-xl border border-gray-100 border-t-0 pt-4 pb-8"
         style="z-index: 1000"
       >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1040,165 +1095,563 @@
         </div>
       </div>
 
-      <!-- JavaScript for Mega Menu Hover Logic -->
-      <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const header = document.querySelector("header");
-          const triggers = [
-            { selector: ".mega-menu-trigger-deamon", menuId: "deamon-menu" },
-            { selector: ".mega-menu-trigger-action", menuId: "action-menu" },
-            { selector: ".mega-menu-trigger-lab", menuId: "lab-menu" },
-            // UPDATED: Added new triggers
-            { selector: ".mega-menu-trigger-archive", menuId: "archive-menu" },
-            { selector: ".mega-menu-trigger-note", menuId: "note-menu" },
-          ];
-
-          const menuElements = triggers
-            .map((t) => document.getElementById(t.menuId))
-            .filter(Boolean); // Filter out nulls
-
-          const hideAllMenus = (exceptMenu = null) => {
-            menuElements.forEach((menu) => {
-              if (menu && menu !== exceptMenu) {
-                menu.classList.remove("is-active");
-                // Use delay to ensure transition finishes before hiding completely
-                setTimeout(() => menu.classList.add("hidden"), 200);
-              }
-            });
-          };
-
-          const handleMouseEnter = (trigger, menuToShow) => {
-            if (!menuToShow) return;
-            hideAllMenus(menuToShow);
-            menuToShow.classList.remove("hidden");
-            // Add a slight delay to ensure 'hidden' is removed before starting transition
-            setTimeout(() => menuToShow.classList.add("is-active"), 10);
-          };
-
-          const handleMouseLeave = (menuToHide) => {
-            if (!menuToHide) return;
-            // Delay hiding to allow movement between menu item and dropdown
-            setTimeout(() => {
-              // Check if the mouse is hovering over any active trigger or the menu itself
-              const isHoveringTrigger = triggers.some((t) =>
-                document.querySelector(t.selector + ":hover")
-              );
-
-              // Only hide if the mouse is not currently over the dropdown AND not over any trigger item
-              if (!menuToHide.matches(":hover") && !isHoveringTrigger) {
-                menuToHide.classList.remove("is-active");
-                // Use another delay to ensure transition finishes before hiding completely
-                setTimeout(() => menuToHide.classList.add("hidden"), 200);
-              }
-            }, 50);
-          };
-
-          const allTriggers = triggers
-            .map(({ selector, menuId }) => {
-              const trigger = document.querySelector(selector);
-              const menu = document.getElementById(menuId);
-              return { trigger, menu };
-            })
-            .filter((item) => item.trigger && item.menu);
-
-          allTriggers.forEach(({ trigger, menu }) => {
-            // Show menu on trigger hover
-            trigger.addEventListener("mouseenter", () =>
-              handleMouseEnter(trigger, menu)
-            );
-            // Hide menu when mouse leaves the trigger (handled in leave function)
-            trigger.addEventListener("mouseleave", () =>
-              handleMouseLeave(menu)
-            );
-
-            // Keep menu open if mouse enters menu
-            menu.addEventListener("mouseenter", () => {
-              menu.classList.remove("hidden");
-              menu.classList.add("is-active");
-            });
-
-            // Hide menu when mouse leaves the menu itself
-            menu.addEventListener("mouseleave", () => {
-              menu.classList.remove("is-active");
-              // Delay hiding completely to allow transition to finish
-              setTimeout(() => menu.classList.add("hidden"), 200);
-            });
-          });
-
-          // Hide all menus when the mouse leaves the entire header area (safety net)
-          header.addEventListener("mouseleave", (event) => {
-            // Check if the relatedTarget is outside the header and menus
-            const related = event.relatedTarget;
-            const isLeavingHeader = !related || !header.contains(related);
-
-            if (isLeavingHeader) {
-              hideAllMenus();
-            }
-          });
-
-          // --- Custom Scroll Logic for Header Border ---
-          const headerElement = document.getElementById("main-header");
-
-          function handleScroll() {
-            // Check if the page is scrolled more than 5 pixels (to detect scroll start)
-            if (window.scrollY > 5) {
-              // If scrolled, add the border/shadow classes
-              headerElement.classList.add(
-                "border-b",
-                "border-gray-200/70",
-                "shadow-sm"
-              );
-            } else {
-              // If at the top, remove the border/shadow classes
-              headerElement.classList.remove(
-                "border-b",
-                "border-gray-200/70",
-                "shadow-sm"
-              );
-            }
-          }
-
-          // Attach the scroll event listener
-          window.addEventListener("scroll", handleScroll);
-
-          // Initial check in case the user loads the page scrolled down
-          handleScroll();
-        });
-      </script>
-
-      <!-- Mobile Menu (Hidden by Default) -->
+      <!-- Mobile Menu (Hidden by Default) - REFACTORED FOR ACCORDION -->
       <div
         id="mobile-menu"
         class="hidden md:hidden bg-white/95 border-b border-gray-200 absolute w-full shadow-lg"
       >
-        <div class="px-4 pt-2 pb-3 space-y-1 sm:px-3">
-          <!-- Updated Mobile Nav Links to match desktop primary links -->
-          <a
-            href="#"
-            class="block px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-            >Deamon</a
-          >
-          <a
-            href="#"
-            class="block px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-            >Action</a
-          >
-          <a
-            href="#"
-            class="block px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-            >Lab</a
-          >
-          <a
-            href="#"
-            class="block px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-            >Archive</a
-          >
-          <a
-            href="#"
-            class="block px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-            >Note</a
-          >
+        <div id="mobile-nav-links" class="px-4 pt-2 pb-3 space-y-1 sm:px-3">
+          <!-- Mobile Folding Section 1: DEAMON -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
+            >
+              Deamon
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-deamon-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from DEAMON Mega Menu (1 Column Philosophy) -->
+              <div class="px-3 pb-4">
+                <h4
+                  class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                >
+                  Philosophy
+                </h4>
+                <ul class="space-y-1">
+                  <li>
+                    <a
+                      href="#"
+                      class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                      >Code Integrity</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                      >Precision in Action</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                      >Societal Impact</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Folding Section 2: ACTION -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
+            >
+              Action
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-action-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from ACTION Mega Menu (3 Columns stacked vertically) -->
+              <div class="px-3 pb-4 space-y-4">
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Deployment
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Quick Start</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >API Keys</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Serverless Setup</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >On-Premise</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Monitoring
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Dashboard</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Anomaly Detection</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Alerts Config</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Scaling
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Horizontal Scaling</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Load Balancing</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Capacity Planning</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Folding Section 3: LAB -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
+            >
+              Lab
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-lab-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from LAB Mega Menu (2 Columns stacked vertically) -->
+              <div class="px-3 pb-4 space-y-4">
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Experiments
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Quantum Trials</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Biometric Fusion</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Future Interfaces</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Prototypes
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >AI Code Gen</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Modular Hardware</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Folding Section 4: ARCHIVE (Multi-Column stacking) -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
+            >
+              Archive
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-archive-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from ARCHIVE Mega Menu (5 Columns stacked vertically) -->
+              <div class="px-3 pb-4 space-y-4">
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Historical Data
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Project Archives</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Legacy Repos</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Past Benchmarks</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Documentation
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Release Notes</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Tech Papers</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Patent Records</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Security
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Incident Reports</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Audit Trail</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Media
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Press Releases</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Brand Assets</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Extended
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Storage Policy</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Folding Section 5: NOTE -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
+            >
+              Note
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-note-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from NOTE Mega Menu (4 Columns stacked vertically) -->
+              <div class="px-3 pb-4 space-y-4">
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Leadership
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >CEO's Corner</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Tech Blog</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Ethical AI</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Productivity
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Flow Optimization</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Code Collab</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Community
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Dev Spotlights</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Events & Webinars</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Future
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Beta Roadmaps</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Q&A Sessions</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Mobile CTA/Auth kept at the bottom -->
         <div
           class="pt-4 pb-3 border-t border-gray-200 flex flex-col space-y-2 px-4"
         >
@@ -2079,7 +2532,7 @@
         <div
           class="mt-12 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-sm text-black"
         >
-          <p>&copy; 2024 Deamon Software. All rights reserved.</p>
+          <p>&copy; Deamon Software. All rights reserved.</p>
           <div class="mt-4 md:mt-0 flex items-center space-x-2">
             <!-- Language Selector Mockup --><span
               class="inline-flex items-center space-x-1 p-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50"
