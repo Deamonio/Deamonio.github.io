@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Deamon: The Unseen Force</title>
+    <title>Deamon</title>
+    <link rel="icon" href="favicon.ico" />
     <!-- Load Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font Setting -->
@@ -34,29 +35,38 @@
         background: #f1f1f1;
       }
 
-      /* Mega Menu Trigger Setup */
-      /* This class adjusts the position so the menu drops down below the header height. (h-16 = 4rem = 64px) */
+      /* Mega Menu Trigger Setup (Desktop Hover) */
       .mega-menu-dropdown {
-        top: 4rem; /* Adjust position to match h-16 (4rem) */
+        top: 4rem; /* adjust position to match h-16 (4rem) */
         transition: opacity 0.2s ease, transform 0.2s ease;
         opacity: 0;
         transform: translateY(-5px);
         pointer-events: none;
       }
-      /* When JS removes the hidden class and adds this class, the animation displays. */
       .mega-menu-dropdown.is-active {
         opacity: 1;
         transform: translateY(0);
         pointer-events: auto;
       }
 
+      /* Folding Menu Styling for Mobile (Accordion) */
+      .mobile-submenu-content {
+        /* Initial state is handled by max-height: 0; style attribute in HTML */
+        /* transition-all utility class handles the transition timing */
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      /* Custom class to handle arrow rotation */
+      .mobile-menu-button.is-expanded svg {
+        transform: rotate(180deg);
+      }
+
       /* New layout utility for centering 3 columns */
-      /* Custom Tailwind utility for centering 3 or fewer columns */
       .centered-menu {
-        max-width: 60rem; /* Set slightly smaller than max-w-5xl (64rem) */
+        max-width: 60rem;
         margin-left: auto;
         margin-right: auto;
-        /* Add flex properties so inner items are centered */
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -66,235 +76,238 @@
       .header-shadow-transition {
         transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
       }
-      
-      /* Mobile Mega Menu Toggle Visibility on small screens */
-      /* On mobile, we need to show the dropdown menu content within the mobile menu itself,
-         below the trigger link, not in the fixed mega-menu area. 
-         We use `!hidden` and `!opacity-100` classes in JS for mobile toggle.
-      */
-      .mega-menu-content-mobile {
-        /* Initially hidden on mobile/desktop, managed by JS on desktop hover or mobile click */
-        max-height: 0;
-        overflow: hidden;
-        /* Padding transition ensures smooth visual flow */
-        transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out; 
-        padding-top: 0; /* Resetting padding for closed state */
-        padding-bottom: 0;
-      }
-      .mega-menu-content-mobile.is-open-mobile {
-        max-height: 500px; /* Sufficient height for smooth transition */
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+
+      /* Mobile menu container scroll adjustment */
+      #mobile-menu {
+        max-height: calc(100vh - 4rem); /* Header height is 4rem (h-16) */
+        overflow-y: auto;
+        position: fixed; /* Fixes mobile menu relative to viewport */
+        top: 4rem;
       }
 
-      /* Chevron rotation for mobile menus */
-      .chevron-icon {
-        /* Default state: 0deg (pointing down, indicating closed/ready to open) */
-        transform: rotate(0deg);
-        transition: transform 0.3s ease-in-out;
+      /* -------------------------------------------------------------------------- */
+      /* --- Custom CSS for the Action Gallery Grid (Section 5) --- */
+      .action-gallery {
+        display: grid;
+        /* Desktop layout: 12 columns for fine-grained control */
+        grid-template-columns: repeat(12, 1fr);
+        gap: 2rem; /* Reduced gap for a tighter puzzle feel */
       }
-      .chevron-icon.rotate {
-        /* Rotated state: 180deg (pointing up, indicating open/ready to close) */
-        transform: rotate(180deg);
+
+      /* Card Sizes (Desktop - Puzzle Layout) */
+      /* Card 1: Daemon Agent (Wide Banner on top) */
+      .card-1 {
+        grid-column: span 12;
       }
-      
+      /* Card 2: Custom Agents (Medium Square, positioned top left) */
+      .card-2 {
+        grid-column: span 5;
+        min-height: 400px;
+      }
+      /* Card 3: Enterprise Search (Narrow Tall Card, positioned top right next to card 2) */
+      .card-3 {
+        grid-column: span 7;
+        min-height: 400px;
+      }
+      /* Card 4: Mobile Team (Wide Bottom Card, positioned below card 2 and overlapping with 3's flow) */
+      .card-4 {
+        grid-column: span 7;
+        min-height: 400px;
+      }
+      /* Card 5: Resize Workflows (Small Square, fits next to card 4) */
+      .card-5 {
+        grid-column: span 5;
+        min-height: 400px;
+      }
+
+      /* Mobile Layout (All Stacked) */
+      @media (max-width: 1023px) {
+        .action-gallery {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+        .card-1,
+        .card-2,
+        .card-3,
+        .card-4,
+        .card-5 {
+          grid-column: span 1;
+          grid-row: span 1;
+          min-height: auto;
+        }
+      }
     </style>
     <script>
-      // Screen size detection for switching event handlers
-      const isDesktop = () => window.innerWidth >= 768; // md breakpoint
+      // --- Mobile Menu Functions ---
 
-      // Mobile Menu Toggle Function (Hamburger menu)
+      // Global function to collapse all mobile folding sections (Modified: removed "exceptButton" logic)
+      function collapseAllMobileSections() {
+        const expandedSubmenus = document.querySelectorAll(
+          ".mobile-submenu-content.is-expanded"
+        );
+        const expandedButtons = document.querySelectorAll(
+          ".mobile-menu-button.is-expanded"
+        );
+
+        expandedSubmenus.forEach((submenu) => {
+          submenu.classList.remove("is-expanded");
+          submenu.style.maxHeight = "0";
+          submenu.style.paddingBottom = "0";
+        });
+
+        expandedButtons.forEach((button) => {
+          button.classList.remove("is-expanded");
+        });
+      }
+
+      // Mobile Menu Toggle Function (for hamburger icon)
       function toggleMenu() {
         const menu = document.getElementById("mobile-menu");
         const menuIcon = document.getElementById("menu-icon");
         const closeIcon = document.getElementById("close-icon");
 
+        // Toggle visibility
         menu.classList.toggle("hidden");
         menuIcon.classList.toggle("hidden");
         closeIcon.classList.toggle("hidden");
-        
-        // When closing the main mobile menu, hide all mega menu mobile content too
-        if (menu.classList.contains('hidden')) {
-             document.querySelectorAll('.mega-menu-content-mobile').forEach(content => {
-                content.classList.remove('is-open-mobile');
-            });
-             document.querySelectorAll('.chevron-icon').forEach(icon => {
-                icon.classList.remove('rotate');
-            });
+
+        // If closing the main menu, collapse all submenus
+        if (menu.classList.contains("hidden")) {
+          // Keep collapseAllMobileSections call here if user wants submenus collapsed on main menu close
+          collapseAllMobileSections();
         }
       }
 
-      // Main Mega Menu Logic Handler
-      const MegaMenu = {
-        triggers: [
-          { selector: ".mega-menu-trigger-deamon", menuId: "deamon-menu", mobileContentId: "deamon-mobile-content" },
-          { selector: ".mega-menu-trigger-action", menuId: "action-menu", mobileContentId: "action-mobile-content" },
-          { selector: ".mega-menu-trigger-lab", menuId: "lab-menu", mobileContentId: "lab-mobile-content" },
-          { selector: ".mega-menu-trigger-archive", menuId: "archive-menu", mobileContentId: "archive-mobile-content" },
-          { selector: ".mega-menu-trigger-note", menuId: "note-menu", mobileContentId: "note-mobile-content" },
-        ],
-        menuElements: [],
+      // Folding Menu Logic for Mobile Sections (Non-Accordion/Multiple Open)
+      function toggleMobileMenuSection(button) {
+        // Find the submenu content sibling (the div immediately after the button)
+        const submenuContent = button.nextElementSibling;
 
-        init: function() {
-          this.menuElements = this.triggers
-            .map((t) => document.getElementById(t.menuId))
-            .filter(Boolean);
+        // Toggle the current section
+        const isExpanded = submenuContent.classList.contains("is-expanded");
 
-          window.addEventListener("resize", this.rebindEvents.bind(this));
-          this.rebindEvents();
-          this.setupHeaderScroll();
-          this.setupGlobalMouseLeave();
-        },
+        if (isExpanded) {
+          // Collapse
+          submenuContent.classList.remove("is-expanded");
+          button.classList.remove("is-expanded");
+          submenuContent.style.maxHeight = "0";
+          submenuContent.style.paddingBottom = "0";
+        } else {
+          // Expand
+          submenuContent.classList.add("is-expanded");
+          button.classList.add("is-expanded");
 
-        rebindEvents: function() {
-          const desktopMode = isDesktop();
-          this.triggers.forEach(({ selector, menuId, mobileContentId }) => {
-            const trigger = document.querySelector(selector); // div.mega-menu-trigger-*
-            const menu = document.getElementById(menuId);
-            const mobileContent = document.getElementById(mobileContentId);
-            const anchor = trigger?.querySelector('a'); // The main link element
+          // For smooth transition, set max-height to scrollHeight dynamically
+          // Need to calculate padding from the content div (px-3 pb-4 -> 1rem/16px bottom padding)
+          const contentPadding = 16;
+          // Set max height immediately to enable the CSS transition. Use scrollHeight for content + padding.
+          submenuContent.style.maxHeight =
+            submenuContent.scrollHeight + contentPadding + "px";
+          // Apply padding for visual effect/spacing
+          submenuContent.style.paddingBottom = "1rem";
+        }
+      }
 
-            if (!trigger || !menu || !anchor) return;
+      // --- Desktop Mega Menu & Header Scroll Logic ---
+      document.addEventListener("DOMContentLoaded", () => {
+        const header = document.querySelector("header");
+        const triggers = [
+          { selector: ".mega-menu-trigger-deamon", menuId: "deamon-menu" },
+          { selector: ".mega-menu-trigger-action", menuId: "action-menu" },
+          { selector: ".mega-menu-trigger-lab", menuId: "lab-menu" },
+          { selector: ".mega-menu-trigger-archive", menuId: "archive-menu" },
+          { selector: ".mega-menu-trigger-note", menuId: "note-menu" },
+        ];
 
-            // 1. Cleanup existing handlers 
-            trigger.onclick = null; // Clear mobile click handler from the parent div
-            anchor.onmouseenter = null;
-            anchor.onmouseleave = null;
-            menu.onmouseenter = null;
-            menu.onmouseleave = null;
+        const menuElements = triggers
+          .map((t) => document.getElementById(t.menuId))
+          .filter(Boolean); // Filter out nulls
 
-            if (desktopMode) {
-              // 2. Desktop: Hover events for the fixed mega menu
-              anchor.addEventListener("mouseenter", this.handleMouseEnter.bind(this, trigger, menu));
-              anchor.addEventListener("mouseleave", this.handleMouseLeave.bind(this, menu));
-              menu.addEventListener("mouseenter", this.handleDesktopMenuEnter.bind(this, menu));
-              menu.addEventListener("mouseleave", this.handleDesktopMenuLeave.bind(this, menu));
-              
-            } else {
-              // 3. Mobile: Click events (Folding) - Attach to the outer div. 
-              // The logic below ensures only the top-level anchor click triggers the toggle.
-              trigger.onclick = (e) => {
-                  // Check if the click target or any of its parents is the *main* anchor element.
-                  // This is the most reliable way to check if the user intended to click the menu button (text/icon).
-                  if (e.target.closest('a') === anchor) {
-                      e.preventDefault(); // Prevents navigating to '#' 
-                      this.handleMobileClick(trigger, mobileContent);
-                  }
-              };
-              this.hideDesktopMenus(menu); // Ensure desktop menus are closed on mobile switch
-            }
-          });
-          // Ensure all fixed mega menus are hidden when moving to mobile view
-          if (!desktopMode) {
-              this.menuElements.forEach(menu => this.hideDesktopMenus(menu));
-          }
-        },
-
-        // --- Desktop Hover Logic (Unchanged) ---
-
-        hideDesktopMenus: function(exceptMenu = null) {
-          this.menuElements.forEach((menu) => {
+        const hideAllMenus = (exceptMenu = null) => {
+          menuElements.forEach((menu) => {
             if (menu && menu !== exceptMenu) {
               menu.classList.remove("is-active");
-              // Use delay to ensure transition finishes before hiding completely
               setTimeout(() => menu.classList.add("hidden"), 200);
             }
           });
-        },
+        };
 
-        handleMouseEnter: function(trigger, menuToShow) {
-          if (!menuToShow || !isDesktop()) return;
-          this.hideDesktopMenus(menuToShow);
+        const handleMouseEnter = (trigger, menuToShow) => {
+          if (!menuToShow) return;
+          hideAllMenus(menuToShow);
           menuToShow.classList.remove("hidden");
           setTimeout(() => menuToShow.classList.add("is-active"), 10);
-        },
+        };
 
-        handleMouseLeave: function(menuToHide) {
-          if (!menuToHide || !isDesktop()) return;
+        const handleMouseLeave = (menuToHide) => {
+          if (!menuToHide) return;
           setTimeout(() => {
-            const isHoveringTrigger = this.triggers.some((t) =>
+            const isHoveringTrigger = triggers.some((t) =>
               document.querySelector(t.selector + ":hover")
             );
+
             if (!menuToHide.matches(":hover") && !isHoveringTrigger) {
               menuToHide.classList.remove("is-active");
               setTimeout(() => menuToHide.classList.add("hidden"), 200);
             }
           }, 50);
-        },
+        };
 
-        handleDesktopMenuEnter: function(menu) {
-            if (!isDesktop()) return;
+        const allTriggers = triggers
+          .map(({ selector, menuId }) => {
+            const trigger = document.querySelector(selector);
+            const menu = document.getElementById(menuId);
+            return { trigger, menu };
+          })
+          .filter((item) => item.trigger && item.menu);
+
+        allTriggers.forEach(({ trigger, menu }) => {
+          trigger.addEventListener("mouseenter", () =>
+            handleMouseEnter(trigger, menu)
+          );
+          trigger.addEventListener("mouseleave", () => handleMouseLeave(menu));
+
+          menu.addEventListener("mouseenter", () => {
             menu.classList.remove("hidden");
             menu.classList.add("is-active");
-        },
+          });
 
-        handleDesktopMenuLeave: function(menu) {
-            if (!isDesktop()) return;
+          menu.addEventListener("mouseleave", () => {
             menu.classList.remove("is-active");
             setTimeout(() => menu.classList.add("hidden"), 200);
-        },
-
-        setupGlobalMouseLeave: function() {
-          const header = document.querySelector("header");
-          header.addEventListener("mouseleave", (event) => {
-            if (!isDesktop()) return;
-            const related = event.relatedTarget;
-            const isLeavingHeader = !related || !header.contains(related);
-            if (isLeavingHeader) {
-              this.hideDesktopMenus();
-            }
           });
-        },
+        });
 
+        header.addEventListener("mouseleave", (event) => {
+          const related = event.relatedTarget;
+          const isLeavingHeader = !related || !header.contains(related);
 
-        // --- Mobile Click/Folding Logic (Updated) ---
+          if (isLeavingHeader) {
+            hideAllMenus();
+          }
+        });
 
-        handleMobileClick: function(trigger, contentToToggle) {
-          if (!contentToToggle) return;
-          
-          const icon = trigger.querySelector('.chevron-icon');
+        // --- Custom Scroll Logic for Header Border ---
+        const headerElement = document.getElementById("main-header");
 
-          // Close all other mobile menus and reset their icons
-          document.querySelectorAll('.mega-menu-content-mobile').forEach(content => {
-             if (content !== contentToToggle) {
-                 content.classList.remove('is-open-mobile');
-                 const otherTrigger = content.closest('[class*="mega-menu-trigger-"]');
-                 otherTrigger?.querySelector('.chevron-icon')?.classList.remove('rotate');
-             }
-          });
-
-          // Toggle the clicked mobile menu content
-          contentToToggle.classList.toggle('is-open-mobile');
-          
-          // Toggle the clicked menu's icon rotation
-          icon?.classList.toggle('rotate');
-        },
-        
-        // --- Scroll Logic (Unchanged) ---
-        setupHeaderScroll: function() {
-            const headerElement = document.getElementById("main-header");
-            function handleScroll() {
-                if (window.scrollY > 5) {
-                    headerElement.classList.add(
-                        "border-b",
-                        "border-gray-200/70",
-                        "shadow-sm"
-                    );
-                } else {
-                    headerElement.classList.remove(
-                        "border-b",
-                        "border-gray-200/70",
-                        "shadow-sm"
-                    );
-                }
-            }
-            window.addEventListener("scroll", handleScroll);
-            handleScroll();
+        function handleScroll() {
+          if (window.scrollY > 5) {
+            headerElement.classList.add(
+              "border-b",
+              "border-gray-200/70",
+              "shadow-sm"
+            );
+          } else {
+            headerElement.classList.remove(
+              "border-b",
+              "border-gray-200/70",
+              "shadow-sm"
+            );
+          }
         }
-      };
-      
-      document.addEventListener("DOMContentLoaded", () => {
-        MegaMenu.init();
+
+        window.addEventListener("scroll", handleScroll);
+        handleScroll();
       });
     </script>
   </head>
@@ -506,7 +519,7 @@
               >
             </div>
 
-            <!-- Separator: Note와 Archive 사이에 구분선 -->
+            <!-- Separator between Note and Archive -->
             <span class="border-l border-gray-300 h-4 mx-4"></span>
 
             <!-- 5. NOTE MEGA MENU (Link Group) -->
@@ -573,7 +586,7 @@
         </div>
       </div>
 
-      <!-- *** Mega Menu Dropdowns - Full Width (Desktop Only) *** -->
+      <!-- *** Mega Menu Dropdowns - Full Width (Desktop only) *** -->
 
       <!-- 1. DEAMON Mega Menu Dropdown (1 Column - Centered) -->
       <div
@@ -585,7 +598,6 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <!-- 1 Column Centering: Uses centered-menu wrapper -->
           <div class="mega-menu-container centered-menu -mx-4">
-            <!-- Column 1: Philosophy (w-full sm:w-1/3 is used for centering) -->
             <div class="w-full sm:w-1/3 px-4 mb-8">
               <div class="flex items-center space-x-2 mb-4">
                 <svg class="w-4 h-4 text-deamon-primary">
@@ -1007,7 +1019,7 @@
       <!-- 5. NOTE Mega Menu Dropdown (4 Columns - Full Width) -->
       <div
         id="note-menu"
-        class="mega-menu-dropdown absolute left-0 right-0 hidden bg-white shadow-xl rounded-b-xl border border-gray-100 border-t-0 pt-4 pb-8"
+        class="mega-menu-dropdown absolute left-0 right-0 top-16 hidden bg-white shadow-xl rounded-b-xl border border-gray-100 border-t-0 pt-4 pb-8"
         style="z-index: 1000"
       >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1042,7 +1054,7 @@
                 <li>
                   <a
                     href="#"
-                    class="text-gray-600 hover:text-deamon-secondary transition duration-150 block text-sm p-1 rounded-md"
+                    class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
                     ><span class="block truncate">Ethical AI</span></a
                   >
                 </li>
@@ -1070,7 +1082,7 @@
                 <li>
                   <a
                     href="#"
-                    class="text-gray-600 hover:text-deamon-secondary transition duration-150 block text-sm p-1 rounded-md"
+                    class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
                     ><span class="block truncate">Code Collab</span></a
                   >
                 </li>
@@ -1099,7 +1111,7 @@
                   <a
                     href="#"
                     class="text-gray-600 hover:text-deamon-secondary transition duration-150 block text-sm p-1 rounded-md"
-                    ><span class="block truncate">Events & Webinars</span></a
+                    >Events & Webinars</a
                   >
                 </li>
               </ul>
@@ -1127,7 +1139,7 @@
                   <a
                     href="#"
                     class="text-gray-600 hover:text-deamon-secondary transition duration-150 block text-sm p-1 rounded-md"
-                    ><span class="block truncate">Q&A Sessions</span></a
+                    >Q&A Sessions</a
                   >
                 </li>
               </ul>
@@ -1136,129 +1148,563 @@
         </div>
       </div>
 
-      <!-- Mobile Menu (Hidden by Default) - NOW INCLUDING INLINE MEGA MENU CONTENT -->
+      <!-- Mobile Menu (Hidden by Default) - REFACTORED FOR ACCORDION -->
       <div
         id="mobile-menu"
         class="hidden md:hidden bg-white/95 border-b border-gray-200 absolute w-full shadow-lg"
       >
-        <div class="px-4 pt-2 pb-3 space-y-1 sm:px-3">
-          <!-- 1. DEAMON Mobile Link Group -->
-          <div class="mega-menu-trigger-deamon">
-            <a
-              href="#"
-              class="flex justify-between items-center px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-              >Deamon
-              <svg class="chevron-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-            </a
+        <div id="mobile-nav-links" class="px-4 pt-2 pb-3 space-y-1 sm:px-3">
+          <!-- Mobile Folding Section 1: DEAMON -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
             >
-            <div id="deamon-mobile-content" class="mega-menu-content-mobile pl-4 pr-3 bg-gray-50/70 rounded-b-lg">
-                <div class="space-y-2">
-                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-2">Philosophy</h4>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Code Integrity</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Precision in Action</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Societal Impact</a>
-                </div>
-            </div>
-          </div>
-          
-          <!-- 2. ACTION Mobile Link Group -->
-          <div class="mega-menu-trigger-action">
-            <a
-              href="#"
-              class="flex justify-between items-center px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-              >Action
-              <svg class="chevron-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-            </a
+              Deamon
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-deamon-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
             >
-             <div id="action-mobile-content" class="mega-menu-content-mobile pl-4 pr-3 bg-gray-50/70 rounded-b-lg">
-                <div class="space-y-2">
-                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-2">Deployment</h4>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Quick Start</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">API Keys</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Serverless Setup</a>
-                </div>
-                <div class="space-y-2 mt-4">
-                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Monitoring</h4>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Dashboard</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Anomaly Detection</a>
-                </div>
-            </div>
-          </div>
-          
-          <!-- 3. LAB Mobile Link Group -->
-          <div class="mega-menu-trigger-lab">
-            <a
-              href="#"
-              class="flex justify-between items-center px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-              >Lab
-              <svg class="chevron-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-            </a
-            >
-             <div id="lab-mobile-content" class="mega-menu-content-mobile pl-4 pr-3 bg-gray-50/70 rounded-b-lg">
-                <div class="space-y-2">
-                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-2">Experiments</h4>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Quantum Trials</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Future Interfaces</a>
-                </div>
-            </div>
-          </div>
-          
-          <!-- 4. ARCHIVE Mobile Link Group -->
-          <div class="mega-menu-trigger-archive">
-            <a
-              href="#"
-              class="flex justify-between items-center px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-              >Archive
-              <svg class="chevron-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-            </a
-            >
-            <div id="archive-mobile-content" class="mega-menu-content-mobile pl-4 pr-3 bg-gray-50/70 rounded-b-lg">
-                <div class="space-y-2">
-                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-2">Historical Data</h4>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Project Archives</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Legacy Repos</a>
-                </div>
-                <div class="space-y-2 mt-4">
-                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Documentation</h4>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Release Notes</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Tech Papers</a>
-                </div>
+              <!-- Content from DEAMON Mega Menu (1 Column Philosophy) -->
+              <div class="px-3 pb-4">
+                <h4
+                  class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                >
+                  Philosophy
+                </h4>
+                <ul class="space-y-1">
+                  <li>
+                    <a
+                      href="#"
+                      class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                      >Code Integrity</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                      >Precision in Action</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                      >Societal Impact</a
+                    >
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          <!-- 5. NOTE Mobile Link Group -->
-          <div class="mega-menu-trigger-note">
-            <a
-              href="#"
-              class="flex justify-between items-center px-3 py-2 rounded-lg text-base font-medium text-black hover:bg-gray-100"
-              >Note
-              <svg class="chevron-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-            </a
+          <!-- Mobile Folding Section 2: ACTION -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
             >
-            <div id="note-mobile-content" class="mega-menu-content-mobile pl-4 pr-3 bg-gray-50/70 rounded-b-lg">
-                <div class="space-y-2">
-                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-2">Leadership</h4>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">CEO's Corner</a>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Tech Blog</a>
+              Action
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-action-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from ACTION Mega Menu (3 Columns stacked vertically) -->
+              <div class="px-3 pb-4 space-y-4">
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Deployment
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Quick Start</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >API Keys</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Serverless Setup</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >On-Premise</a
+                      >
+                    </li>
+                  </ul>
                 </div>
-                <div class="space-y-2 mt-4">
-                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Community</h4>
-                  <a href="#" class="block text-sm py-1 pl-2 text-gray-700 hover:text-deamon-secondary transition duration-150">Events & Webinars</a>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Monitoring
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Dashboard</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Anomaly Detection</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Alerts Config</a
+                      >
+                    </li>
+                  </ul>
                 </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Scaling
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Horizontal Scaling</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Load Balancing</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Capacity Planning</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-          
+
+          <!-- Mobile Folding Section 3: LAB -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
+            >
+              Lab
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-lab-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from LAB Mega Menu (2 Columns stacked vertically) -->
+              <div class="px-3 pb-4 space-y-4">
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Experiments
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Quantum Trials</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Biometric Fusion</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Future Interfaces</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Prototypes
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >AI Code Gen</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Modular Hardware</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Folding Section 4: ARCHIVE (Multi-Column stacking) -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
+            >
+              Archive
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-archive-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from ARCHIVE Mega Menu (5 Columns stacked vertically) -->
+              <div class="px-3 pb-4 space-y-4">
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Historical Data
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Project Archives</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Legacy Repos</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Past Benchmarks</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Documentation
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Release Notes</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Tech Papers</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Patent Records</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Security
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Incident Reports</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Audit Trail</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Media
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Press Releases</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Brand Assets</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Extended
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Storage Policy</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Folding Section 5: NOTE -->
+          <div class="border-b border-gray-100">
+            <button
+              onclick="toggleMobileMenuSection(this)"
+              class="mobile-menu-button w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-black hover:bg-gray-100 rounded-lg transition duration-150"
+            >
+              Note
+              <svg
+                class="w-4 h-4 transform transition-transform duration-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id="mobile-note-content"
+              class="mobile-submenu-content overflow-hidden transition-all duration-300 ease-in-out"
+              style="max-height: 0"
+            >
+              <!-- Content from NOTE Mega Menu (4 Columns stacked vertically) -->
+              <div class="px-3 pb-4 space-y-4">
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Leadership
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >CEO's Corner</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Tech Blog</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Ethical AI</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Productivity
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Flow Optimization</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Code Collab</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Community
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Dev Spotlights</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Events & Webinars</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4
+                    class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-2"
+                  >
+                    Future
+                  </h4>
+                  <ul class="space-y-1">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Beta Roadmaps</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-gray-700 hover:text-deamon-secondary block text-sm p-1 rounded-md"
+                        >Q&A Sessions</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Mobile CTA/Auth kept at the bottom -->
         <div
           class="pt-4 pb-3 border-t border-gray-200 flex flex-col space-y-2 px-4"
         >
@@ -1277,9 +1723,9 @@
     </header>
 
     <main>
-      <!-- 2. Hero Section: Core Philosophy (Image size maximized, text size reduced) -->
+      <!-- 2. Hero Section: Core Philosophy (bg-white) -->
       <section
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 text-center"
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 text-center bg-white"
       >
         <!-- Illustration: max-h-80 -> max-h-[30rem] (480px)로 변경하여 크기 최대화 --><img
           src="123.png"
@@ -1327,8 +1773,171 @@
         </div>
       </section>
 
-      <!-- 3. Deamon's Philosophy: Trust and Responsibility -->
-      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      <!-- 3. Deamon's Core Essence: The Daemon Process and Unwavering Reliability (bg-[#f6f5f4]) -->
+      <section class="bg-[#f6f5f4] py-24 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-4xl font-extrabold text-center mb-4 text-black">
+            Deamon's Essence
+          </h2>
+          <p class="text-xl text-black text-center mb-16 max-w-3xl mx-auto">
+            We are the unseen force ensuring absolute system stability and
+            performance.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Card 1: The Daemon Principle -->
+            <div
+              class="p-8 border border-gray-200 rounded-xl shadow-lg transition duration-300 bg-white flex flex-col items-center text-center"
+            >
+              <h3 class="text-xl font-bold text-deamon-primary mb-4">
+                The Daemon Principle
+              </h3>
+              <!-- SVG 1: Processor/Core -->
+              <div class="w-24 h-24 mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  version="1.1"
+                  id="Layer_1_Core"
+                  viewBox="0 0 512 512"
+                  xml:space="preserve"
+                >
+                  <path
+                    style="fill: #ff3f62"
+                    d="M411.159,77.556h-38.794h-23.273H325.82h-46.536h-23.273h-23.273h-46.544h-23.273h-23.273h-38.794 c-7.23,0-13.689,3.297-17.959,8.468c-1.898,2.299-3.362,4.968-4.268,7.883c-0.68,2.186-1.046,4.51-1.046,6.92v38.81v23.273v23.273 v46.539v23.273v23.273v46.552v23.273v23.273v38.794c0,12.851,10.42,23.273,23.273,23.273h38.794h23.273h23.273h46.544h23.273h23.273 h46.536h23.273h23.273h38.794c12.853,0,23.273-10.422,23.273-23.273v-38.794v-23.273v-23.273v-46.552v-23.273v-23.273v-46.539 v-23.273v-23.273v-38.808C434.432,87.976,424.012,77.556,411.159,77.556z"
+                  />
+                  <g>
+                    <path
+                      style="fill: #ffa733"
+                      d="M186.194,77.556V23.273C186.194,10.42,175.774,0,162.922,0c-12.853,0-23.273,10.42-23.273,23.273 v54.283h23.273H186.194z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M372.365,77.556V23.273C372.365,10.42,361.945,0,349.092,0S325.82,10.42,325.82,23.273v54.283 h23.273H372.365z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M279.284,77.556V23.273C279.284,10.42,268.864,0,256.011,0s-23.273,10.42-23.273,23.273v54.283 h23.273H279.284z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M325.82,434.43v54.297c0,12.851,10.42,23.273,23.273,23.273s23.273-10.422,23.273-23.273V434.43 h-23.273H325.82z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M139.649,434.43v54.297c0,12.851,10.42,23.273,23.273,23.273c12.853,0,23.273-10.422,23.273-23.273 V434.43h-23.273H139.649z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M232.738,434.43v54.297c0,12.851,10.42,23.273,23.273,23.273s23.273-10.422,23.273-23.273V434.43 h-23.273H232.738z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M434.432,186.182h54.295c12.853,0,23.273-10.42,23.273-23.273c0-12.853-10.42-23.273-23.273-23.273 h-54.295v23.273V186.182z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M434.432,372.364h54.295c12.853,0,23.273-10.422,23.273-23.273c0-12.854-10.42-23.273-23.273-23.273 h-54.295v23.273V372.364z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M434.432,279.267h54.295c12.853,0,23.273-10.422,23.273-23.273c0-12.854-10.42-23.273-23.273-23.273 h-54.295v23.273V279.267z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M77.582,325.818H23.273C10.42,325.818,0,336.237,0,349.091c0,12.851,10.42,23.273,23.273,23.273 h54.309v-23.273V325.818z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M77.582,139.636H23.273C10.42,139.636,0,150.056,0,162.909c0,12.853,10.42,23.273,23.273,23.273 h54.309v-23.273V139.636z"
+                    />
+                    <path
+                      style="fill: #ffa733"
+                      d="M77.582,232.721H23.273C10.42,232.721,0,243.139,0,255.994c0,12.851,10.42,23.273,23.273,23.273 h54.309v-23.273V232.721z"
+                    />
+                  </g>
+                  <path
+                    style="fill: #d8143a"
+                    d="M77.582,349.091v23.273v38.794c0,12.851,10.42,23.273,23.273,23.273h38.794h23.273h23.273h46.544 h23.273v-93.097h-62.059c-12.853,0-23.273-10.422-23.273-23.273V193.939c0-12.853,10.42-23.273,23.273-23.273h62.059V77.556h-23.273 h-46.544h-23.273h-23.273h-38.794c-12.853,0-23.273,10.42-23.273,23.273v38.808v23.273v23.273v46.539v23.273v23.273v46.552 C77.582,325.818,77.582,349.091,77.582,349.091z"
+                  />
+                  <path
+                    style="fill: #acabb1"
+                    d="M318.062,170.667h-62.051H256h-62.048c-12.853,0-23.273,10.42-23.273,23.273v124.121 c0,12.851,10.42,23.273,23.273,23.273H256h0.011h62.051c12.853,0,23.273-10.422,23.273-23.273V193.939 C341.335,181.087,330.915,170.667,318.062,170.667z"
+                  />
+                  <path
+                    style="fill: #898890"
+                    d="M193.952,170.667c-12.853,0-23.273,10.42-23.273,23.273v124.121c0,12.851,10.42,23.273,23.273,23.273 H256V170.667H193.952z"
+                  />
+                </svg>
+              </div>
+              <p class="text-black text-sm max-w-xs">
+                Technology's worth is rooted in its unseen support—the Daemon's
+                spirit. We provide the ceaseless stability that keeps the entire
+                system running.
+              </p>
+            </div>
+
+            <!-- Card 2: Our Quiet Force -->
+            <div
+              class="p-8 border border-gray-200 rounded-xl shadow-lg transition duration-300 bg-white flex flex-col items-center text-center"
+            >
+              <h3 class="text-xl font-bold text-deamon-primary mb-4">
+                Our Quiet Force
+              </h3>
+              <!-- SVG 2: Quiet Force/Flow -->
+              <div class="w-24 h-24 mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  version="1.1"
+                  id="Layer_1_Flow"
+                  viewBox="0 0 473.931 473.931"
+                  xml:space="preserve"
+                >
+                  <circle
+                    style="fill: #ffc10e"
+                    cx="236.966"
+                    cy="236.966"
+                    r="236.966"
+                  />
+                  <g>
+                    <circle
+                      style="fill: #333333"
+                      cx="164.937"
+                      cy="155.227"
+                      r="37.216"
+                    />
+                    <circle
+                      style="fill: #333333"
+                      cx="305.664"
+                      cy="155.227"
+                      r="37.216"
+                    />
+                  </g>
+                  <path
+                    style="fill: #efefef"
+                    d="M361.076,316.534c7.154,2.78,10.694,10.836,7.91,17.99l-10.073,25.904 c-2.78,7.154-10.836,10.698-17.99,7.914L112.825,279.61c-7.154-2.78-10.698-10.836-7.914-17.994l10.077-25.9 c2.78-7.154,10.836-10.694,17.99-7.914L361.076,316.534z"
+                  />
+                  <path
+                    style="fill: #ffffff"
+                    d="M337.772,223.353c7.027-3.091,15.225,0.097,18.32,7.124l11.188,25.444 c3.091,7.023-0.094,15.225-7.121,18.316l-224.03,98.55c-7.027,3.091-15.229-0.101-18.32-7.128l-11.192-25.44 c-3.091-7.023,0.101-15.225,7.124-18.32L337.772,223.353z"
+                  />
+                </svg>
+              </div>
+              <p class="text-black text-sm max-w-xs">
+                Deamon's code is the silent power behind absolute stability. We
+                build an unfailing foundation that guarantees unwavering
+                reliability, going beyond mere function.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Deamon's Philosophy: Trust and Responsibility (bg-white) -->
+      <section
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 bg-white"
+      >
         <h2 class="text-4xl font-extrabold text-center mb-4 text-black">
           Deamon's Technical Philosophy.
         </h2>
@@ -1389,141 +1998,360 @@
           </div>
         </div>
 
-        <!-- Commitment Metrics Bar (Refined Trust Metrics) -->
-        <div
-          class="mt-16 pt-8 border-t border-gray-100 flex flex-wrap justify-between items-center text-center"
-        >
-          <div class="w-1/2 md:w-auto p-2">
-            <p class="text-xl font-extrabold text-black">99.999%</p>
-            <p class="text-xs text-black">Uptime Reliability</p>
+        <!-- 4.1 Static Text -->
+        <div class="mt-16 pt-0 border-t-0 text-center">
+          <div class="text-xl font-bold text-deamon-primary">
+            Technology with a Purpose. Building a Better Future, Silently.
           </div>
-          <div class="w-1/2 md:w-auto p-2">
-            <p class="text-xl font-extrabold text-black">30%</p>
-            <p class="text-xs text-black">Avg. Efficiency Improvement</p>
-          </div>
-          <div class="w-1/2 md:w-auto p-2">
-            <p class="text-xl font-extrabold text-black">AI, Web, Emb.</p>
-            <p class="text-xs text-black">Core Technologies Integrated</p>
-          </div>
-          <div class="w-1/2 md:w-auto p-2">
-            <p class="text-xl font-extrabold text-black">100+</p>
-            <p class="text-xs text-black">Innovative Solutions Researched</p>
-          </div>
+          <div class="text-lg text-deamon-primary mt-2">- Deamon -</div>
         </div>
       </section>
 
-      <!-- 4. Solutions: Unseen Connection -->
-      <section
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-t border-gray-100"
-      >
-        <div class="text-center mb-16">
-          <h2 class="text-4xl font-bold mb-4 text-black">
-            Visualize the Unseen Connection.
+      <!-- 5. Deamon's Core Actions (New Section: bg-white - Action Gallery Grid) -->
+      <section class="bg-white py-24 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <!-- Section Heading -->
+          <h2
+            class="text-5xl md:text-6xl font-extrabold text-black mb-16 max-w-4xl mx-auto text-center"
+          >
+            PROOFS OF OUR COMMITMENT
           </h2>
-          <p class="text-xl text-black max-w-2xl mx-auto">
-            AI, Web, and Embedded systems are precisely fused into one stream,
-            delivering optimized results without constraints.
-          </p>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <!-- Solution Card 1: Core System (uses deamon-secondary for icon) -->
-          <div
-            class="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
-          >
-            <div class="text-2xl mb-4 text-deamon-secondary">
-              <!-- System Icon SVG --><svg
-                class="w-8 h-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 21.5c-4.66 0-8.5-3.84-8.5-8.5v-7c0-1.1.9-2 2-2h13c1.1 0 2 .9 2 2v7c0 4.66-3.84 8.5-8.5 8.5zm-5-15h10m-10 4h10m-5 4h5"
-                ></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-2 text-black">
-              Embedded System Integrity
-            </h3>
-            <p class="text-black text-base">
-              Harnessing the reliability of deep-level embedded solutions,
-              ensuring hardware and core processes execute flawlessly.
-            </p>
-          </div>
+          <!-- Action Gallery Grid Container (Puzzle Layout) -->
+          <div class="action-gallery">
+            <!-- Card 1: DiSRHiT (Wide Banner on top, Image on Right) - White BG -->
+            <div
+              class="card-1 border border-gray-200 rounded-xl shadow-xl bg-white overflow-hidden"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-5 items-stretch h-full">
+                <!-- Right 3/5: Image Mockup (md:col-span-3) - Moved to be FIRST in source order (order-1 on mobile grid) -->
+                <div
+                  class="md:col-span-3 min-h-[250px] md:min-h-full order-1 md:order-none"
+                >
+                  <img
+                    src="DiSRHiT.jpg"
+                    alt="Motion Tracking Teleoperation Robot interface."
+                    class="w-full h-full object-cover"
+                    onerror="this.onerror=null; this.src='https://placehold.co/800x450/D9D9D9/000000?text=DiSRHiT+Robot+Mockup';"
+                  />
+                </div>
+                <!-- Left 2/5: Text Content (md:col-span-2) - Moved to be SECOND in source order (order-2 on mobile grid) -->
+                <div
+                  class="md:col-span-2 p-8 space-y-4 flex flex-col justify-center order-2 md:order-none"
+                >
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-3xl font-extrabold text-deamon-primary">
+                      DiSRHiT
+                    </h3>
+                    <!-- Type Badge: Research (Indigo) -->
+                    <span
+                      class="inline-flex items-center px-3 py-1 text-sm font-semibold leading-none rounded-full text-white bg-indigo-600"
+                    >
+                      Research
+                    </span>
+                  </div>
 
-          <!-- Solution Card 2: AI & Data Flow -->
-          <div
-            class="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
-          >
-            <div class="text-2xl mb-4 text-deamon-primary">
-              <!-- AI/Brain Icon SVG --><svg
-                class="w-8 h-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 19V6.5a2.5 2.5 0 015 0V19m-5-5h5m-5 0v3m5-3v3m2-12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
+                  <p class="text-base font-semibold text-black">
+                    Disaster Site Rescue Hand Tracking Robot
+                  </p>
+                  <p class="text-sm text-gray-700">
+                    **Motion Tracking Teleoperation Robot** for Delicate Rescue
+                    in Inaccessible Zones.
+                  </p>
+                  <!-- CTA Button (Black background, Green hover) -->
+                  <a
+                    href="#"
+                    class="mt-4 inline-flex items-center justify-center text-sm font-semibold bg-deamon-primary text-white px-4 py-2 rounded-lg hover:bg-deamon-secondary hover:text-black transition duration-300 shadow-md w-full sm:w-auto"
+                  >
+                    View Action Details
+                  </a>
+                </div>
+              </div>
             </div>
-            <h3 class="text-xl font-semibold mb-2 text-black">
-              Intelligent Core Essence
-            </h3>
-            <p class="text-black text-base">
-              AI that operates fundamentally, optimizing performance and
-              processing complex data streams into simple, actionable insights.
-            </p>
-          </div>
 
-          <!-- Solution Card 3: Web & Interface (uses deamon-secondary for icon) -->
-          <div
-            class="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
-          >
-            <div class="text-2xl mb-4 text-deamon-secondary">
-              <!-- Web/Cloud Icon SVG --><svg
-                class="w-8 h-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                ></path>
-              </svg>
+            <!-- Card 2: Custom Agents (Medium Square, Image on Top) - Gray BG -->
+            <!-- This card was already in the correct order: Image -> Text -->
+            <div
+              class="card-2 border border-gray-200 rounded-xl shadow-xl bg-deamon-gray flex flex-col"
+            >
+              <div class="flex-shrink-0 min-h-[200px]">
+                <img
+                  src="https://placehold.co/600x400/D9D9D9/000000?text=Agent+System+Dashboard"
+                  alt="Custom Agent Summary Interface."
+                  class="w-full h-full object-cover rounded-t-xl"
+                  onerror="this.onerror=null; this.src='https://placehold.co/600x400/D9D9D9/000000?text=Agent+System+Dashboard';"
+                />
+              </div>
+              <div class="p-6 space-y-3 flex-grow">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-2xl font-extrabold text-deamon-primary">
+                    Intelligent Task Flow
+                  </h3>
+                  <!-- Type Badge: Solution (Blue) -->
+                  <span
+                    class="inline-flex items-center px-3 py-1 text-sm font-semibold leading-none rounded-full text-white bg-blue-600"
+                  >
+                    Solution
+                  </span>
+                </div>
+                <p class="text-base text-gray-700">
+                  **Precision Workflow Mastery.** Our proprietary AI agents
+                  automate metric reporting, secure data filing, and complex
+                  administrative routines with high reliability.
+                </p>
+                <a
+                  href="#"
+                  class="mt-4 inline-flex items-center justify-center text-sm font-semibold bg-deamon-primary text-white px-4 py-2 rounded-lg hover:bg-deamon-secondary hover:text-black transition duration-300 shadow-md w-full"
+                >
+                  Explore Agents
+                </a>
+              </div>
             </div>
-            <h3 class="text-xl font-semibold mb-2 text-black">
-              Seamless Web Layer
-            </h3>
-            <p class="text-black text-base">
-              Minimalist and efficient interfaces flawlessly display the
-              precision and reliability of the underlying Deamon code.
-            </p>
+
+            <!-- Card 3: Enterprise Search (Narrow Tall Card, Text on Left/Image on Right) - White BG -->
+            <div
+              class="card-3 border border-gray-200 rounded-xl shadow-xl bg-white overflow-hidden"
+            >
+              <div class="grid grid-cols-1 sm:grid-cols-2 h-full items-stretch">
+                <!-- Right 1/2: Image Mockup - Moved to be FIRST in source order (order-1 on mobile grid) -->
+                <div class="min-h-[200px] sm:min-h-full order-1 sm:order-none">
+                  <img
+                    src="GLAiSeR.jpg"
+                    alt="Enterprise Search interface with multiple tool results."
+                    class="w-full h-full object-cover object-right"
+                    onerror="this.onerror=null; this.src='https://placehold.co/400x400/D9D9D9/000000?text=Enterprise+Search+View';"
+                  />
+                </div>
+                <!-- Left 1/2: Text Content - Moved to be SECOND in source order (order-2 on mobile grid) -->
+                <div
+                  class="p-6 space-y-4 flex flex-col justify-center order-2 sm:order-none"
+                >
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-extrabold text-deamon-primary">
+                      Unified Knowledge Core
+                    </h3>
+                    <!-- Type Badge: Solution (Blue) -->
+                    <span
+                      class="inline-flex items-center px-3 py-1 text-sm font-semibold leading-none rounded-full text-white bg-blue-600"
+                    >
+                      Solution
+                    </span>
+                  </div>
+                  <p class="text-base text-black">
+                    **Instant Knowledge Retrieval.** One enterprise-level search
+                    platform accesses all data (Git, Docs, Internal Databases)
+                    for immediate, contextual results across your organization.
+                  </p>
+                  <a
+                    href="#"
+                    class="mt-4 inline-flex items-center justify-center text-sm font-semibold bg-deamon-primary text-white px-4 py-2 rounded-lg hover:bg-deamon-secondary hover:text-black transition duration-300 shadow-md w-full"
+                  >
+                    Explore Search
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4: Mobile Team Projects (Wide Card, Image on Right/Text on Left) - Gray BG -->
+            <!-- Parent container uses flex-col-reverse on mobile, which handles the order inversion -->
+            <div
+              class="card-4 border border-gray-200 rounded-xl shadow-xl bg-deamon-gray flex flex-col-reverse lg:flex-row overflow-hidden"
+            >
+              <!-- Left 2/3: Text Content (lg:w-2/3) - Now appears LAST on mobile (due to flex-col-reverse) -->
+              <div class="lg:w-2/3 p-8 space-y-4 flex flex-col justify-center">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-3xl font-extrabold text-deamon-primary">
+                    Atlas Sync Platform
+                  </h3>
+                  <!-- Type Badge: Good (Green - No change) -->
+                  <span
+                    class="inline-flex items-center px-3 py-1 text-sm font-semibold leading-none rounded-full text-white bg-deamon-secondary"
+                  >
+                    Good
+                  </span>
+                </div>
+                <p class="text-lg text-gray-700">
+                  **Perfect Notes, Anywhere.** Flawless real-time
+                  synchronization and zero-loss data capture ensure your project
+                  knowledge is always current, whether you're in the office or
+                  on the move.
+                </p>
+                <a
+                  href="#"
+                  class="mt-4 inline-flex items-center justify-center text-sm font-semibold bg-deamon-primary text-white px-4 py-2 rounded-lg hover:bg-deamon-secondary hover:text-black transition duration-300 shadow-md w-full sm:w-auto"
+                >
+                  Download Mobile App
+                </a>
+              </div>
+              <!-- Right 1/3: Image Mockup (lg:w-1/3) - Now appears FIRST on mobile (due to flex-col-reverse) -->
+              <div class="lg:w-1/3 min-h-[200px] lg:min-h-full">
+                <img
+                  src="https://placehold.co/300x400/D9D9D9/000000?text=Mobile+App+Screenshot"
+                  alt="Mobile synchronization screenshot."
+                  class="w-full h-full object-cover"
+                  onerror="this.onerror=null; this.src='https://placehold.co/300x400/D9D9D9/000000?text=Mobile+App+Screenshot';"
+                />
+              </div>
+            </div>
+
+            <!-- Card 5: Nexus Hub (Small Feature Box) - White BG -->
+            <div
+              class="card-5 border border-gray-200 rounded-xl shadow-xl bg-white p-6 space-y-4 flex flex-col justify-between"
+            >
+              <!-- CTA and Mockup (Visual) - Moved to be FIRST in source order -->
+              <div>
+                <a
+                  href="#"
+                  class="mt-4 inline-flex items-center justify-center text-sm font-semibold bg-deamon-primary text-white px-4 py-2 rounded-lg hover:bg-deamon-secondary hover:text-black transition duration-300 shadow-md w-full mb-3"
+                >
+                  View Hub Details
+                </a>
+                <div
+                  class="p-2 bg-[#f6f5f4] border border-gray-300 rounded-lg flex items-center justify-center min-h-[150px]"
+                >
+                  <img
+                    src="https://placehold.co/600x300/F7F7F7/000000?text=HQ+Roadmap"
+                    alt="Roadmap Visualization"
+                    class="w-full h-auto rounded-md"
+                    onerror="this.onerror=null; this.src='https://placehold.co/600x300/F7F7F7/000000?text=HQ+Roadmap';"
+                  />
+                </div>
+              </div>
+              <!-- Text/Badge on top (Description) - Moved to be SECOND in source order -->
+              <div>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-2xl font-extrabold text-deamon-primary">
+                    Nexus Hub
+                  </h3>
+                  <!-- Type Badge: Solution (Blue) -->
+                  <span
+                    class="inline-flex items-center px-3 py-1 text-sm font-semibold leading-none rounded-full text-white bg-blue-600"
+                  >
+                    Solution
+                  </span>
+                </div>
+                <p class="text-base text-black">
+                  **Scalable Architecture.** Easily manage projects from small
+                  sprints to complex, enterprise-wide hubs without friction or
+                  performance degradation.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- 5. Application of Responsible Precision (uses deamon-secondary for text link) -->
+      <!-- 6. Solutions: Unseen Connection (bg-[#f6f5f4]) -->
+      <section class="bg-[#f6f5f4] py-24 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4 text-black">
+              Visualize the Unseen Connection.
+            </h2>
+            <p class="text-xl text-black max-w-2xl mx-auto">
+              AI, Web, and Embedded systems are precisely fused into one stream,
+              delivering optimized results without constraints.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <!-- Solution Card 1: Core System (uses deamon-secondary for icon) -->
+            <div
+              class="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
+            >
+              <div class="text-2xl mb-4 text-deamon-secondary">
+                <!-- System Icon SVG --><svg
+                  class="w-8 h-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 21.5c-4.66 0-8.5-3.84-8.5-8.5v-7c0-1.1.9-2 2-2h13c1.1 0 2 .9 2 2v7c0 4.66-3.84 8.5-8.5 8.5zm-5-15h10m-10 4h10m-5 4h5"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-2 text-black">
+                Embedded System Integrity
+              </h3>
+              <p class="text-black text-base">
+                Harnessing the reliability of deep-level embedded solutions,
+                ensuring hardware and core processes execute flawlessly.
+              </p>
+            </div>
+
+            <!-- Solution Card 2: AI & Data Flow -->
+            <div
+              class="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
+            >
+              <div class="text-2xl mb-4 text-deamon-primary">
+                <!-- AI/Brain Icon SVG --><svg
+                  class="w-8 h-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19V6.5a2.5 2.5 0 015 0V19m-5-5h5m-5 0v3m5-3v3m2-12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-2 text-black">
+                Intelligent Core Essence
+              </h3>
+              <p class="text-black text-base">
+                AI that operates fundamentally, optimizing performance and
+                processing complex data streams into simple, actionable
+                insights.
+              </p>
+            </div>
+
+            <!-- Solution Card 3: Web & Interface (uses deamon-secondary for icon) -->
+            <div
+              class="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
+            >
+              <div class="text-2xl mb-4 text-deamon-secondary">
+                <!-- Web/Cloud Icon SVG --><svg
+                  class="w-8 h-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-2 text-black">
+                Seamless Web Layer
+              </h3>
+              <p class="text-black text-base">
+                Minimalist and efficient interfaces flawlessly display the
+                precision and reliability of the underlying Deamon code.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Application of Responsible Precision (bg-white) -->
       <section
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-t border-gray-100"
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-t border-gray-100 bg-white"
       >
         <div class="text-center mb-16">
           <h2 class="text-4xl font-extrabold mb-4 max-w-3xl mx-auto text-black">
             Responsible Precision: Functions for Good.
           </h2>
-          <p
-            class="text-lg text-deamon-secondary font-medium hover:underline cursor-pointer"
-          >
+          <p class="text-lg text-deamon-primary font-medium cursor-pointer">
             View our latest research outcomes $\rightarrow$
           </p>
         </div>
@@ -1669,7 +2497,7 @@
               <svg
                 class="w-5 h-5 mb-3"
                 fill="none"
-                viewBox="0 0 24 24"
+                viewbox="0 0 24 24"
                 stroke="currentColor"
               >
                 <path
@@ -1709,161 +2537,163 @@
         </div>
       </section>
 
-      <!-- 7. CTA Grid: Research & Deployment (uses deamon-secondary for text link) -->
-      <section
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-t border-gray-100"
-      >
-        <h2 class="text-4xl font-extrabold text-center mb-16 text-black">
-          Start the Flow: Engage with Deamon.
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- Card 1: Core Research (Large) - Simplified body text -->
-          <div
-            class="lg:col-span-2 bg-deamon-gray p-8 rounded-xl flex flex-col justify-between"
-          >
-            <div class="space-y-4">
-              <div class="flex items-center space-x-3">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+      <!-- 8. CTA Grid: Research & Deployment (bg-[#f6f5f4]) -->
+      <section class="bg-[#f6f5f4] py-24 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-4xl font-extrabold text-center mb-16 text-black">
+            Start the Flow: Engage with Deamon.
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Card 1: Core Research (Large) - Simplified body text -->
+            <div
+              class="lg:col-span-2 bg-white p-8 rounded-xl flex flex-col justify-between"
+            >
+              <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 21.5c-4.66 0-8.5-3.84-8.5-8.5v-7c0-1.1.9-2 2-2h13c1.1 0 2 .9 2 2v7c0 4.66-3.84 8.5-8.5 8.5zm-5-15h10m-10 4h10m-5 4h5"
+                      stroke="#000000"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <h3 class="text-xl font-bold text-black">
+                    Core Research & White Papers
+                  </h3>
+                </div>
+                <p class="text-black">
+                  Deep dive into our innovative solutions, problem definitions,
+                  and verifiable performance metrics.
+                </p>
+                <a
+                  href="#"
+                  class="inline-flex items-center space-x-2 bg-deamon-primary text-white px-4 py-2 rounded-lg hover:bg-deamon-secondary transition duration-300 text-sm font-semibold mt-2"
                 >
-                  <path
-                    d="M12 21.5c-4.66 0-8.5-3.84-8.5-8.5v-7c0-1.1.9-2 2-2h13c1.1 0 2 .9 2 2v7c0 4.66-3.84 8.5-8.5 8.5zm-5-15h10m-10 4h10m-5 4h5"
-                    stroke="#000000"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                <h3 class="text-xl font-bold text-black">
-                  Core Research & White Papers
-                </h3>
+                  <!-- Download Icon --><svg
+                    class="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
+                  </svg>
+                  <span>Download Research Overview</span>
+                </a>
               </div>
-              <p class="text-black">
-                Deep dive into our innovative solutions, problem definitions,
-                and verifiable performance metrics.
-              </p>
-              <a
-                href="#"
-                class="inline-flex items-center space-x-2 bg-deamon-primary text-white px-4 py-2 rounded-lg hover:bg-deamon-secondary transition duration-300 text-sm font-semibold mt-2"
-              >
-                <!-- Download Icon --><svg
-                  class="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+              <!-- Visual Language/Design Element -->
+              <div class="mt-8 pt-4 border-t border-gray-300">
+                <h4 class="text-lg font-bold mb-2 text-black">
+                  Visual Language: The Core Essence
+                </h4>
+                <div
+                  class="h-20 bg-[#f6f5f4] rounded-lg border border-gray-300 flex items-center justify-center text-sm text-black"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
-                <span>Download Research Overview</span>
-              </a>
+                  Unseen Connection Visualization
+                </div>
+              </div>
             </div>
-            <!-- Visual Language/Design Element -->
-            <div class="mt-8 pt-4 border-t border-gray-300">
-              <h4 class="text-lg font-bold mb-2 text-black">
-                Visual Language: The Core Essence
-              </h4>
+
+            <!-- Card 2: Contact/Demo (uses deamon-secondary for icon and text link) -->
+            <div
+              class="bg-white p-6 border border-gray-200 rounded-xl flex flex-col justify-between"
+            >
+              <div class="space-y-4">
+                <div class="flex items-center space-x-3 text-deamon-secondary">
+                  <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <h3 class="text-xl font-bold text-black">
+                    Request a Deep Dive Demo
+                  </h3>
+                </div>
+                <p class="text-black">
+                  Schedule a session to see Deamon's responsible precision
+                  applied to your specific challenges.
+                </p>
+              </div>
+              <div class="mt-6">
+                <a
+                  href="#"
+                  class="text-sm font-semibold text-deamon-secondary hover:underline"
+                  >Connect with our Experts $\rightarrow$</a
+                >
+              </div>
               <div
-                class="h-20 bg-white rounded-lg border border-gray-300 flex items-center justify-center text-sm text-black"
+                class="h-32 bg-[#f6f5f4] mt-4 rounded-lg border border-gray-300 flex items-center justify-center text-xs text-black"
               >
-                Unseen Connection Visualization
+                Team Collaboration Mockup
               </div>
             </div>
-          </div>
 
-          <!-- Card 2: Contact/Demo (uses deamon-secondary for icon and text link) -->
-          <div
-            class="bg-white p-6 border border-gray-200 rounded-xl flex flex-col justify-between"
-          >
-            <div class="space-y-4">
-              <div class="flex items-center space-x-3 text-deamon-secondary">
-                <svg
-                  class="w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <h3 class="text-xl font-bold text-black">
-                  Request a Deep Dive Demo
-                </h3>
-              </div>
-              <p class="text-black">
-                Schedule a session to see Deamon's responsible precision applied
-                to your specific challenges.
-              </p>
-            </div>
-            <div class="mt-6">
-              <a
-                href="#"
-                class="text-sm font-semibold text-deamon-secondary hover:underline"
-                >Connect with our Experts $\rightarrow$</a
-              >
-            </div>
+            <!-- Card 3: Join the Vision (uses deamon-secondary for text link) -->
             <div
-              class="h-32 bg-gray-100 mt-4 rounded-lg border border-gray-300 flex items-center justify-center text-xs text-black"
+              class="bg-white p-6 border border-gray-200 rounded-xl flex flex-col justify-between"
             >
-              Team Collaboration Mockup
-            </div>
-          </div>
-
-          <!-- Card 3: Join the Vision (uses deamon-secondary for text link) -->
-          <div
-            class="bg-white p-6 border border-gray-200 rounded-xl flex flex-col justify-between"
-          >
-            <div class="space-y-4">
-              <div class="flex items-center space-x-3 text-black">
-                <svg
-                  class="w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20h5v-2a3 3 0 00-5.356-1.857M17 20v-2c0-.656-.126-1.283-.356-1.857M16 10.5a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm-2 1a5.5 5.5 0 01-11 0V3h11v8.5z"
-                  />
-                </svg>
-                <h3 class="text-xl font-bold">Join the Unseen Force</h3>
+              <div class="space-y-4">
+                <div class="flex items-center space-x-3 text-black">
+                  <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20h5v-2a3 3 0 00-5.356-1.857M17 20v-2c0-.656-.126-1.283-.356-1.857M16 10.5a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm-2 1a5.5 5.5 0 01-11 0V3h11v8.5z"
+                    />
+                  </svg>
+                  <h3 class="text-xl font-bold text-black">
+                    Join the Unseen Force
+                  </h3>
+                </div>
+                <p class="text-black">
+                  We seek engineers who value essence, stability, and functions
+                  for good.
+                </p>
               </div>
-              <p class="text-black">
-                We seek engineers who value essence, stability, and functions
-                for good.
-              </p>
-            </div>
-            <div class="mt-6">
-              <a
-                href="#"
-                class="text-sm font-semibold text-deamon-secondary hover:underline"
-                >View Open Roles $\rightarrow$</a
+              <div class="mt-6">
+                <a
+                  href="#"
+                  class="text-sm font-semibold text-deamon-secondary hover:underline"
+                  >View Open Roles $\rightarrow$</a
+                >
+              </div>
+              <div
+                class="h-32 bg-[#f6f5f4] mt-4 rounded-lg border border-gray-300 flex items-center justify-center text-xs text-black"
               >
-            </div>
-            <div
-              class="h-32 bg-gray-100 mt-4 rounded-lg border border-gray-300 flex items-center justify-center text-xs text-black"
-            >
-              Career Path Flowchart
+                Career Path Flowchart
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 8. Bottom CTA Banner (Final CTA) (uses deamon-secondary for text color) -->
+      <!-- 9. Bottom CTA Banner (Final CTA) (bg-deamon-primary) -->
       <section class="bg-deamon-primary py-20 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 class="text-4xl font-extrabold mb-4 text-white">
@@ -1883,7 +2713,7 @@
       </section>
     </main>
 
-    <!-- 9. Footer (uses deamon-secondary for social icons hover) -->
+    <!-- 10. Footer (uses deamon-secondary for social icons hover) -->
     <footer class="bg-white border-t border-gray-100 pt-16 pb-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
@@ -1910,7 +2740,7 @@
             </div>
             <p class="text-sm text-black">The Power that Runs Unseen</p>
 
-            <!-- 업데이트된 소셜 미디어 아이콘: GitHub, Instagram, Gmail, Facebook, YouTube 순서 -->
+            <!-- Updated Social Media Icons: GitHub, Instagram, Gmail, Facebook, YouTube Order -->
             <div class="flex space-x-4">
               <!-- Social Icons: GitHub -->
               <a
@@ -2029,7 +2859,7 @@
                 </svg>
               </a>
             </div>
-            <!-- /업데이트된 소셜 미디어 아이콘 -->
+            <!-- /Updated Social Media Icons -->
           </div>
 
           <!-- Column 2: Philosophy -->
@@ -2139,7 +2969,7 @@
         <div
           class="mt-12 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-sm text-black"
         >
-          <p>&copy; 2024 Deamon Software. All rights reserved.</p>
+          <p>&copy; Deamon Software. All rights reserved.</p>
           <div class="mt-4 md:mt-0 flex items-center space-x-2">
             <!-- Language Selector Mockup --><span
               class="inline-flex items-center space-x-1 p-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50"
@@ -2178,3 +3008,4 @@
     </footer>
   </body>
 </html>
+
